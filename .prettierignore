@@ -1,0 +1,7 @@
+node_modules
+
+/app/styles/
+/app/tailwind.css
+
+*.dat
+*.exe

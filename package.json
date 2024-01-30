@@ -1,0 +1,50 @@
+{
+  "name": "championship-manager-93-tools",
+  "version": "0.0.1",
+  "description": "Championship Manager 93 (plus add-ons) editing tools and documentation",
+  "private": false,
+  "license": "UNLICENSED",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "coverage": "rm -rf coverage/ && vitest run --coverage --silent",
+    "format": "prettier --write ./src",
+    "lint": "prettier --check ./src && eslint --max-warnings 0 --color --ext .ts,.tsx,.js --cache --cache-location .cache/eslint .",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "date-fns": "2.30.0",
+    "ramda": "0.29.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "8.3.1",
+    "@types/eslint": "8.56.2",
+    "@types/ramda": "0.29.10",
+    "@typescript-eslint/eslint-plugin": "6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "@vitest/coverage-v8": "1.1.1",
+    "c8": "9.1.0",
+    "eslint": "8.56.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-airbnb-typescript": "17.1.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-import-resolver-typescript": "3.6.1",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-no-only-tests": "3.1.0",
+    "eslint-plugin-react": "7.33.2",
+    "eslint-plugin-react-hooks": "4.6.0",
+    "prettier": "3.2.4",
+    "prettier-plugin-tailwindcss": "0.5.11",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
+    "typescript": "5.3.3",
+    "uuid": "9.0.1",
+    "vite-tsconfig-paths": "4.3.1",
+    "vitest": "1.1.1"
+  }
+}

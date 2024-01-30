@@ -6,6 +6,7 @@ Credit must be given to certain members of the `Championship Manager 93-94` face
 
 - `Andrew Pearson-Wright` - excellent tutorial videos and information around data editing.
 - `James Humphreys` - TEAMS.DAT guru.
+- `Gary Norton` - All around CM93 expert.
 
 ## Documentation
 
@@ -16,3 +17,7 @@ When editing the `.dat` files manually the following documentation will help you
 - [TEAM.DAT](./docs/TEAM.md) - most of what you need to know about editing the domestic team data.
 - [Codes](./docs/CODES.md) - some handy reference guides to map the codes in the above data files to what they mean in human-readable format.
 - [Hexadecimal reference](./docs/HEX.md) - a list of mappings between decimal to hexadecimal numbers.
+
+## Issues or questions
+
+If you have any issues or questions feel free to open an `Issue` with your problem.

@@ -27,10 +27,10 @@ There are slight differences in the columns for each version of CM.
 | 9         | Board confidence     | Hex representation of decimal number, eg. `29 = 1d` which is then the percentage amount |
 | 10 and 11 | Manager first name   | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
 | 12 and 13 | Manager surname      | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
-| 14        | **UNKNOWN**          | |
-| 15        | **UNKNOWN**          | |
+| 14        | Style of play        | |
+| 15        | Formation            | |
 | 16        | Manager reputation   | The reputation of the manager, see [Manager reputation](#Manager-reputation) |
-| 17        | **UNKNOWN**          | |
+| 17        | Manager character    | See mapping for [Character](./CODES.md) |
 | 18 and 19 | Assistant first name | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
 | 20 and 21 | Assistant first name | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
 
@@ -51,10 +51,10 @@ There are slight differences in the columns for each version of CM.
 | 11        | Board confidence     | Hex representation of decimal number, eg. `29 = 1d` which is then the percentage amount |
 | 12 and 13 | Manager first name   | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
 | 14 and 15 | Manager surname      | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
-| 16        | **UNKNOWN**          | |
-| 17        | **UNKNOWN**          | |
+| 16        | Style of play        | |
+| 17        | Formation            | |
 | 18        | Manager reputation   | The reputation of the manager, see [Manager reputation](#Manager-reputation) |
-| 19        | **UNKNOWN**          | |
+| 19        | Manager character    | See mapping for [Character](./CODES.md) |
 | 20 and 21 | Assistant first name | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
 | 22 and 23 | Assistant first name | See mapping for [First name](./CODES.md), although editing relevant `CMEXE` |
 
@@ -75,16 +75,16 @@ In CM94 the colours have are a 2 digit hexadecimal, like most data.
 | 2           | 02           | Red         |
 | 3           | 03           | Green       |
 | 4           | 04           | Blue        |
-| 5           | 05           | Blue 2      |
+| 5           | 05           | Blue 2 (pale yellow??)      |
 | 6           | 06           | Yellow      |
-| 7           | 07           |             |
-| 8           | 08           |             |
+| 7           | 07           | Pink        |
+| 8           | 08           | Grey        |
 | 9           | 09           | Orange      |
 | a           | 0a           | Dark Blue   |
 | b           | 0b           | Purple      |
 | c           | 0c           | Light Blue  |
-| d           | 0d           |             |
-| e           | 0e           |             |
+| d           | 0d           | Turquoise   |
+| e           | 0e           | Pale grey   |
 | f           | 0f           | Light Green |
 
 ## Attractiveness
@@ -100,6 +100,10 @@ This represents how attractive the team is when signing a player
 | 0d   | None         | Oxford, Brentford, Cambridge, Bristol C, Southend, plus 20 more |
 
 ## Money
+
+> Why do you want to sign Zidane when we have Tim Sherwood?
+>
+> -- <cite>Jack Walker, Blackburn owner</cite>
 
 Each club is assigned a value that when converted from hexadecimal to decimal is the starting money amount multiplier.
 
@@ -134,3 +138,11 @@ The value then maps to a rating:
 | 120 - 149     | Good |
 | less than 120 | Fair |
 | 255           | Randomised (either Fair or Unknown) |
+
+## Unknown columns
+
+> Do I not like that
+>
+> -- <cite>Graham Taylor</cite>
+
+There are currently a few columns which purpose has not yet been identified.

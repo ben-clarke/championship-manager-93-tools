@@ -1,11 +1,11 @@
 export default class PlayerClub {
   value: string;
 
-  constructor(value: string, nationalities: Record<string, string>) {
+  constructor(value: string, clubs: Record<string, string>, nationalities: Record<string, string>) {
     this.value =
       nationalities[
         (parseInt(value, 16) - FOREIGN_PLAYER_CODE_MODIFIER).toString(16).padStart(2, "0")
-      ];
+      ] || clubs[value];
   }
 
   toString(): string {

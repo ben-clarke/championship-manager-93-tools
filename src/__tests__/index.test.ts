@@ -1,7 +1,7 @@
-import { blah } from "src";
+import { main } from "src";
 
 describe("hex", () => {
   test("hex", () => {
-    blah();
+    main();
   });
 });

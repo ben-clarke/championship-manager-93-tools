@@ -8,4 +8,7 @@ export type DataType =
   | "first-name"
   | "surname"
   | "morale"
-  | "wages";
+  | "wages"
+  | "style-of-play"
+  | "formation"
+  | "version";

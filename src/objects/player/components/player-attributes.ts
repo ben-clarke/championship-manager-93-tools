@@ -72,4 +72,22 @@ export default class PlayerAttributes {
       this.stamina,
     ].join(",");
   }
+
+  toHumanReadable(): Record<string, string> {
+    return {
+      Passing: this.passing.toString(),
+      Tackling: this.tackling.toString(),
+      Pace: this.pace.toString(),
+      Heading: this.heading.toString(),
+      Flair: this.flair.toString(),
+      Creativity: this.creativity.toString(),
+      Goalscoring: this.goalscoring.toString(),
+      Agility: this.agility.toString(),
+      Aggression: this.aggression.toString(),
+      Influence: this.influence.toString(),
+      Temperament: this.temperament.toString(),
+      Consistency: this.consistency.toString(),
+      Stamina: this.stamina.toString(),
+    };
+  }
 }

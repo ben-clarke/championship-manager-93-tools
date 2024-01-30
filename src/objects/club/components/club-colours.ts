@@ -11,6 +11,13 @@ export default class ClubColours {
   toString(): string {
     return [this.text, this.background].join(",");
   }
+
+  toHumanReadable(prefix: string): Record<string, string> {
+    return {
+      [`${prefix} text`]: this.text,
+      [`${prefix} background`]: this.background,
+    };
+  }
 }
 
 const MAPPING: Record<string, string> = {
@@ -21,13 +28,13 @@ const MAPPING: Record<string, string> = {
   "04": "blue",
   "05": "blue2",
   "06": "yellow",
-  "07": "UNKNOWN 7",
-  "08": "UNKNOWN 8",
+  "07": "pink",
+  "08": "grey",
   "09": "orange",
   "0a": "dark blue",
   "0b": "purple",
   "0c": "light blue",
-  "0d": "UNKNOWN D", // TODO - BC | Burnley away??
-  "0e": "UNKNOWN E",
+  "0d": "turquoise",
+  "0e": "pale grey",
   "0f": "light green",
 };

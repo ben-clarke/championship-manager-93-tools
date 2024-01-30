@@ -1,5 +1,5 @@
 import { splitEvery } from "ramda";
-import { EDIT_FILE_DIRECTORY, EDIT_VERSION } from "../constants/file";
+import { getGameVersion } from "../constants/file";
 import Club, { Club93, Club94 } from "../objects/club";
 import { Version } from "../types/version";
 import BaseDataFile from "./base";
@@ -10,28 +10,23 @@ export default class Team extends BaseDataFile {
 
   teams: Club[];
 
-  firstNames: Record<string, string>;
+  constructor(fileDirectory: string, data: CMExeParser) {
+    super(fileDirectory);
 
-  surnames: Record<string, string>;
+    const firstNames = data.get("first-name");
+    const surnames = data.get("surname");
+    const versions = data.get("version");
 
-  clubs: Record<string, string>;
-
-  constructor() {
-    super(EDIT_FILE_DIRECTORY);
-
-    const data = new CMExeParser();
-    this.firstNames = data.get("first-name");
-    this.surnames = data.get("surname");
-    this.clubs = data.get("club");
-
-    const ClubClass = EDIT_VERSION === "93" ? Club93 : Club94;
+    const ClubClass = getGameVersion(versions) === "93" ? Club93 : Club94;
 
     const parsed = this.parseHex(ClubClass.getVersion());
     this.parsed = parsed.map((t) => splitEvery(2, t));
 
-    this.teams = this.parsed.map((t) => new ClubClass(t, this.firstNames, this.surnames));
+    this.teams = this.parsed.map((t) => new ClubClass(t, firstNames, surnames));
 
-    this.printTeams();
+    // this.printTeams();
+    // this.printAllDetailsInDecimal(data.get("club"));
+    // this.print(data.get("club"));
   }
 
   getFilename(): string {
@@ -43,6 +38,10 @@ export default class Team extends BaseDataFile {
     return splitEvery(chunk, this.hexes);
   }
 
+  toHumanReadable(): Record<string, string>[] {
+    return this.teams.map((t) => t.toHumanReadable());
+  }
+
   printTeams(): void {
     this.teams.forEach((t) => {
       // eslint-disable-next-line no-console
@@ -50,11 +49,11 @@ export default class Team extends BaseDataFile {
     });
   }
 
-  printAllDetailsInDecimal(): void {
+  printAllDetailsInDecimal(clubs: Record<string, string>): void {
     // eslint-disable-next-line no-console
     console.log(
       this.parsed.map((p, index) => {
-        const club = this.clubs[index.toString(16).padStart(2, "0")];
+        const club = clubs[index.toString(16).padStart(2, "0")];
         return `${club?.padEnd(12, " ") || "Unknown"}: ${p
           .map((y) => parseInt(y, 16).toString().padStart(3, " "))
           .join(", ")}`;
@@ -62,7 +61,7 @@ export default class Team extends BaseDataFile {
     );
   }
 
-  print(hex = false): void {
+  print(clubs: Record<string, string>, hex = false): void {
     const initial: Record<string, string[]> = {};
     const data = this.teams.reduce((acc, team, i) => {
       const value = team.unknown6;
@@ -71,7 +70,7 @@ export default class Team extends BaseDataFile {
       const inDec = (v: string): string => parseInt(v, 16).toString();
 
       const key = hex ? inHex(value) : inDec(value);
-      const club = this.clubs[i.toString(16).padStart(2, "0")];
+      const club = clubs[i.toString(16).padStart(2, "0")];
 
       if (Object.keys(acc).includes(key)) acc[key].push(club);
       else acc[key] = [club];
@@ -86,7 +85,7 @@ export default class Team extends BaseDataFile {
         const rest = values.length - examplesToShow;
         return `${value.splice(0, examplesToShow).join(", ")}, plus ${rest} more`;
       };
-      return `| ${code} |  | ${examples(value)} |`;
+      return `${code} --> ${examples(value)}`;
     });
     readme.forEach((r) => {
       // eslint-disable-next-line no-console

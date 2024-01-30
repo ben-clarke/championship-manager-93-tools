@@ -17,4 +17,11 @@ export default class Stadium {
   toString(): string {
     return `${this.capacity}(${this.seated})`;
   }
+
+  toHumanReadable(): Record<string, string> {
+    return {
+      Capacity: this.capacity.toString(),
+      "Seated capacity": this.seated.toString(),
+    };
+  }
 }

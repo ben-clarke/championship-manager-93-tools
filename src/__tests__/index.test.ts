@@ -1,7 +1,8 @@
-import { main } from "src";
+import { EDIT_FILE_DIRECTORY } from "src/constants/file";
+import { main } from "../index";
 
 describe("hex", () => {
   test("hex", () => {
-    main();
+    main("action", EDIT_FILE_DIRECTORY);
   });
 });

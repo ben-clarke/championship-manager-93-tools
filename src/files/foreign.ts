@@ -13,7 +13,6 @@ export default class Foreign extends BaseDataFile {
 
     const players = parsePlayers(this.hexes, this.HISTORY_FIRST_INDEX);
     this.players = players.map((p) => new ForeignPlayer(p, data));
-    this.printForeignPlayers();
   }
 
   getFilename(): string {

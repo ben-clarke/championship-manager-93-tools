@@ -1,18 +1,18 @@
 export default class ClubAttraction {
-  attractiveness: Attractiveness;
+  value: Status;
 
   constructor(value: string) {
-    this.attractiveness = MAPPING[value];
+    this.value = MAPPING[value];
   }
 
   toString(): string {
-    return this.attractiveness;
+    return this.value.toString();
   }
 }
 
-export type Attractiveness = "super" | "high" | "medium" | "low" | "none";
+export type Status = "super" | "high" | "medium" | "low" | "none";
 
-const MAPPING: Record<string, Attractiveness> = {
+const MAPPING: Record<string, Status> = {
   11: "super",
   10: "high",
   "0f": "medium",

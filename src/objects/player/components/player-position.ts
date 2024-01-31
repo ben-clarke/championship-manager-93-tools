@@ -1,4 +1,6 @@
 export default class PlayerPosition {
+  isGk: boolean;
+
   position: string;
 
   side: string;
@@ -12,6 +14,8 @@ export default class PlayerPosition {
     leftSided: string,
     central: string,
   ) {
+    this.isGk = !!this.getAttribute(gk, "GK");
+
     this.position = [
       this.getAttribute(gk, "GK"),
       this.getAttribute(def, "D"),
@@ -31,6 +35,14 @@ export default class PlayerPosition {
   }
 
   toString(): string {
+    if (this.isGk) return this.position;
     return [this.position, this.side].toString();
+  }
+
+  toHumanReadable(): Record<string, string> {
+    return {
+      Position: this.position,
+      Side: this.side,
+    };
   }
 }

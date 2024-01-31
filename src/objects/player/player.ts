@@ -1,7 +1,8 @@
 import { splitEvery } from "ramda";
+import CMExeParser from "../../files/cm-exe-parser";
+import Character from "../components/character";
 import PersonName from "../components/person-name";
 import Age from "./components/age";
-import Character from "./components/character";
 import CurrentSkill from "./components/current-skill";
 import InjuryProneness from "./components/injury-proneness";
 import InjuryStatus from "./components/injury-status";
@@ -42,13 +43,13 @@ export abstract class Player {
 
   history: PlayerHistory[];
 
-  constructor(
-    player: string[],
-    firstNames: Record<string, string>,
-    surnames: Record<string, string>,
-    nationalities: Record<string, string>,
-    clubs: Record<string, string>,
-  ) {
+  constructor(player: string[], data: CMExeParser) {
+    const firstNames = data.get("first-name");
+    const surnames = data.get("surname");
+    const nationalities = data.get("nationality");
+    const clubs = data.get("club");
+    const nonDomesticClubs = data.get("non-domestic-club");
+
     const [
       firstName1,
       firstName2,
@@ -127,7 +128,7 @@ export abstract class Player {
       .filter(([year]) => year !== "ff")
       .map(
         ([year, club, games, goals]) =>
-          new PlayerHistory(year, club, games, goals, clubs, nationalities),
+          new PlayerHistory(year, club, games, goals, clubs, nonDomesticClubs, nationalities),
       );
 
     // Not used by default - only foreign players
@@ -153,5 +154,24 @@ export abstract class Player {
       this.club,
       this.history,
     ].join(",");
+  }
+
+  toHumanReadable(): Record<string, string> {
+    return {
+      Club: this.club?.toString() || "",
+      "First name": this.firstName.toString(),
+      Surname: this.surname.toString(),
+      "Transfer status": this.transferStatus.toString(),
+      "Injury status": this.injuryStatus.toString(),
+      ...this.position.toHumanReadable(),
+      Age: this.age.toString(),
+      Character: this.character.toString(),
+      Nationality: this.nationality.toString(),
+      "Current skill": this.currentSkill.toString(),
+      "Potential skill": this.potentialSkill.toString(),
+      "Injury proneness": this.injuryProneness.toString(),
+      ...this.attributes.toHumanReadable(),
+      History: this.history.toString(),
+    };
   }
 }

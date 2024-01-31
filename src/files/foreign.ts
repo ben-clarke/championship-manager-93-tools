@@ -1,4 +1,3 @@
-import { EDIT_FILE_DIRECTORY } from "../constants/file";
 import { ForeignPlayer } from "../objects/player";
 import BaseDataFile from "./base";
 import CMExeParser from "./cm-exe-parser";
@@ -9,20 +8,11 @@ export default class Foreign extends BaseDataFile {
 
   players: ForeignPlayer[];
 
-  constructor() {
-    super(EDIT_FILE_DIRECTORY);
-
-    const data = new CMExeParser();
-    const firstNames = data.get("first-name");
-    const surnames = data.get("surname");
-    const nationalities = data.get("nationality");
-    const club = data.get("club");
+  constructor(fileDirectory: string, data: CMExeParser) {
+    super(fileDirectory);
 
     const players = parsePlayers(this.hexes, this.HISTORY_FIRST_INDEX);
-    this.players = players.map(
-      (p) => new ForeignPlayer(p, firstNames, surnames, nationalities, club),
-    );
-    this.printForeignPlayers();
+    this.players = players.map((p) => new ForeignPlayer(p, data));
   }
 
   getFilename(): string {
@@ -32,6 +22,10 @@ export default class Foreign extends BaseDataFile {
   parseHex(): string[] {
     // Nothing special needed to get the data in working order.
     return [];
+  }
+
+  toHumanReadable(): Record<string, string>[] {
+    return this.players.map((p) => p.toHumanReadable());
   }
 
   printForeignPlayers(): void {

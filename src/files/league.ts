@@ -1,4 +1,4 @@
-import { EDIT_FILE_DIRECTORY } from "../constants/file";
+import { flatten } from "ramda";
 import Squad from "../objects/squad";
 import BaseDataFile from "./base";
 import CMExeParser from "./cm-exe-parser";
@@ -8,21 +8,14 @@ export default class League extends BaseDataFile {
 
   squads: Squad[];
 
-  constructor() {
-    super(EDIT_FILE_DIRECTORY);
-
-    const data = new CMExeParser();
-    const firstNames = data.get("first-name");
-    const surnames = data.get("surname");
-    const nationalities = data.get("nationality");
-    const clubs = data.get("club");
+  constructor(fileDirectory: string, data: CMExeParser) {
+    super(fileDirectory);
 
     const parsed = this.parseHex();
-    this.squads = parsed.map(
-      (t) => new Squad(t, this.HISTORY_FIRST_INDEX, firstNames, surnames, nationalities, clubs),
-    );
-
-    this.printSquads(clubs);
+    this.squads = parsed.map((t, i) => {
+      const club = i.toString(16).padStart(2, "0");
+      return new Squad(t, club, data, this.HISTORY_FIRST_INDEX);
+    });
   }
 
   getFilename(): string {
@@ -33,7 +26,7 @@ export default class League extends BaseDataFile {
     return this.hexes.split(TEAM_SEPARATOR).filter((t) => t);
   }
 
-  printSquads(clubs: Record<string, string>): void {
+  toString(clubs: Record<string, string>): void {
     this.squads.forEach((s, i) => {
       // eslint-disable-next-line no-console
       console.log(i, clubs[i.toString(16).padStart(2, "0")]);
@@ -42,6 +35,10 @@ export default class League extends BaseDataFile {
       // eslint-disable-next-line no-console
       console.log("");
     });
+  }
+
+  toHumanReadable(): Record<string, string>[] {
+    return flatten(this.squads.map((s) => s.toHumanReadable()));
   }
 }
 

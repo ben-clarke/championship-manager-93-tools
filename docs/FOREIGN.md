@@ -1,5 +1,9 @@
 # Foreign players
 
+> When the seagulls follow the trawler, it is because they think sardines will be thrown into the sea. Thank you.
+>
+> -- <cite>Eric Cantona</cite>
+
 The following document includes information regarding the `FOREIGN.DAT` file. It directly maps to the Foreign players list in the game.
 
 The `.dat` file represented using Hex numbering and in most cases each 2 digit combination of numbers represents a piece of information related to the player, the exceptions being the `first name` (1st and 2nd column) and `surname` (3rd and 4th column), which are both represented by 4 digits instead.

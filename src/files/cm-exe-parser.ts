@@ -4,6 +4,7 @@ import { splitEvery } from "ramda";
 import { fileURLToPath } from "url";
 import { EDIT_FILE_DIRECTORY } from "../constants/file";
 import { DataType } from "../types/executable";
+import { hexToUtf8 } from "../utils/conversion";
 import { buildData } from "./utils/cm-exe-builder";
 
 export default class CMExeParser {
@@ -20,6 +21,8 @@ export default class CMExeParser {
 
     this.data = splitEvery(2, raw);
 
+    fs.writeFileSync("/tmp/cm", this.data.map((d) => hexToUtf8(d)).join(""));
+
     this.retrieved = {
       nationality: {},
       character: {},
@@ -31,6 +34,9 @@ export default class CMExeParser {
       surname: {},
       morale: {},
       wages: {},
+      "style-of-play": {},
+      formation: {},
+      version: {},
     };
   }
 

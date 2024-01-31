@@ -13,6 +13,9 @@ const main = (): void => {
   printExecutableCodes(executable.data, "surname");
   printExecutableCodes(executable.data, "morale"); // TODO - BC Missing last bit because of % in message
   printExecutableCodes(executable.data, "wages");
+  printExecutableCodes(executable.data, "version");
+  printExecutableCodes(executable.data, "style-of-play");
+  printExecutableCodes(executable.data, "formation");
 };
 
 main();

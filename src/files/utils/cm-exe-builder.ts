@@ -102,6 +102,9 @@ const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   "injury-type": { required: "severe" },
   morale: { required: "feels he should" },
   wages: { required: "wants higher" },
+  "style-of-play": { required: "Long ball" },
+  formation: { required: "4-4-2" },
+  version: { required: "Championship Manager" },
 };
 
 interface DataTypeData {

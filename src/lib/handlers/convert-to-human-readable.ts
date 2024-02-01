@@ -8,15 +8,15 @@ import Team from "../files/team";
 import { createBackups } from "./utils.ts/file-backup";
 
 export const convertToHumanReadable = (inputDirectory: string): void => {
-  const data = new CMExeParser();
+  const data = new CMExeParser(inputDirectory);
 
   const foreign = new Foreign(inputDirectory, data);
   const team = new Team(inputDirectory, data);
   const league = new League(inputDirectory, data);
 
-  createHumanReadableFile("/Users/benclarke/Downloads", "FOREIGN.DAT", foreign.toHumanReadable());
-  createHumanReadableFile("/Users/benclarke/Downloads", "TEAM.DAT", team.toHumanReadable());
-  createHumanReadableFile("/Users/benclarke/Downloads", "LEAGUE.DAT", league.toHumanReadable());
+  createHumanReadableFile(inputDirectory, "FOREIGN.DAT", foreign.toHumanReadable());
+  createHumanReadableFile(inputDirectory, "TEAM.DAT", team.toHumanReadable());
+  createHumanReadableFile(inputDirectory, "LEAGUE.DAT", league.toHumanReadable());
 };
 
 export const createHumanReadableFile = (

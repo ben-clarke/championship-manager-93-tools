@@ -1,8 +1,6 @@
 import * as fs from "fs";
-import { dirname, resolve } from "path";
+import { resolve } from "path";
 import { splitEvery } from "ramda";
-import { fileURLToPath } from "url";
-import { EDIT_FILE_DIRECTORY } from "../constants/file";
 import { DataType } from "../types/executable";
 import { hexToUtf8 } from "../utils/conversion";
 import { buildData } from "./utils/cm-exe-builder";
@@ -14,10 +12,8 @@ export default class CMExeParser {
 
   retrieved: Record<DataType, Record<string, string>>;
 
-  constructor() {
-    const raw = fs
-      .readFileSync(resolve(__dirname, "../../game-edits", EDIT_FILE_DIRECTORY, this.FILE), "hex")
-      .toString();
+  constructor(fileDirectory: string) {
+    const raw = fs.readFileSync(resolve(fileDirectory, this.FILE), "hex").toString();
 
     this.data = splitEvery(2, raw);
 
@@ -53,8 +49,3 @@ export const getData = (parsed: string[], requiredDataType: DataType): Record<st
   const data = buildData(parsed, requiredDataType);
   return Object.values(data).reduce((acc, { code, value }) => ({ ...acc, [code]: value }), {});
 };
-
-// eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
-const __filename = fileURLToPath(import.meta.url);
-// eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
-const __dirname = dirname(__filename);

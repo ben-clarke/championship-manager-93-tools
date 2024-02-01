@@ -1,8 +1,8 @@
 import CMExeParser from "../files/cm-exe-parser";
 import { printExecutableCodes } from "../files/utils/cm-exe-builder";
 
-const main = (): void => {
-  const executable = new CMExeParser();
+const main = (inputDirectory: string): void => {
+  const executable = new CMExeParser(inputDirectory);
   printExecutableCodes(executable.data, "nationality");
   printExecutableCodes(executable.data, "character");
   printExecutableCodes(executable.data, "injury-type");
@@ -17,4 +17,4 @@ const main = (): void => {
   printExecutableCodes(executable.data, "formation");
 };
 
-main();
+main("");

@@ -1,12 +1,18 @@
 export default class ClubMoney {
-  money: number;
+  value: number;
 
   constructor(value: string) {
-    this.money = parseInt(value, 16) * MONEY_MULTIPLIER + MONEY_ADJUSTMENT;
+    this.value = parseInt(value, 16) * MONEY_MULTIPLIER + MONEY_ADJUSTMENT;
   }
 
   toString(): string {
-    return this.money.toString();
+    return this.value.toString();
+  }
+
+  static toHex(value: string): string {
+    return ((parseInt(value, 10) - MONEY_ADJUSTMENT) / MONEY_MULTIPLIER)
+      .toString(16)
+      .padStart(2, "0");
   }
 }
 

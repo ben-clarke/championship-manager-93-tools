@@ -1,4 +1,4 @@
-import { splitEvery } from "ramda";
+import { map, splitEvery } from "ramda";
 import { getGameVersion } from "../constants/file";
 import Club, { Club93, Club94 } from "../objects/club";
 import { Version } from "../types/version";
@@ -11,22 +11,9 @@ export default class Team extends BaseDataFile {
   teams: Club[];
 
   constructor(fileDirectory: string, data: CMExeParser) {
-    super(fileDirectory);
-
-    const firstNames = data.get("first-name");
-    const surnames = data.get("surname");
-    const versions = data.get("version");
-
-    const ClubClass = getGameVersion(versions) === "93" ? Club93 : Club94;
-
-    const parsed = this.parseHex(ClubClass.getVersion());
-    this.parsed = parsed.map((t) => splitEvery(2, t));
-
-    this.teams = this.parsed.map((t) => new ClubClass(t, firstNames, surnames));
-
-    // this.printTeams();
-    // this.printAllDetailsInDecimal(data.get("club"));
-    // this.print(data.get("club"));
+    super(fileDirectory, data);
+    this.parsed = [];
+    this.teams = [];
   }
 
   getFilename(): string {
@@ -34,15 +21,38 @@ export default class Team extends BaseDataFile {
   }
 
   parseHex(version: Version): string[] {
+    const hexes = this.read();
     const chunk = COLUMNS[version] * 2;
-    return splitEvery(chunk, this.hexes);
+    return splitEvery(chunk, hexes);
+  }
+
+  convertFromHex(): void {
+    const firstNames = this.data.get("first-name");
+    const surnames = this.data.get("surname");
+    const versions = this.data.get("version");
+
+    const ClubClass = getGameVersion(versions) === "93" ? Club93 : Club94;
+
+    const parsed = this.parseHex(ClubClass.getVersion());
+    this.parsed = parsed.map((t) => splitEvery(2, t));
+
+    this.teams = this.parsed.map((t) => new ClubClass(t, firstNames, surnames));
+  }
+
+  convertFromHumanReadable(): string[][] {
+    const ClubClass = getGameVersion(this.data.get("version")) === "93" ? Club93 : Club94;
+
+    const { headings, data } = this.readHuman();
+    return map((d) => ClubClass.toHex(d, headings, this.data), data);
   }
 
   toHumanReadable(): Record<string, string>[] {
+    this.convertFromHex();
     return this.teams.map((t) => t.toHumanReadable());
   }
 
   printTeams(): void {
+    this.convertFromHex();
     this.teams.forEach((t) => {
       // eslint-disable-next-line no-console
       console.log(t.toString());
@@ -50,6 +60,7 @@ export default class Team extends BaseDataFile {
   }
 
   printAllDetailsInDecimal(clubs: Record<string, string>): void {
+    this.convertFromHex();
     // eslint-disable-next-line no-console
     console.log(
       this.parsed.map((p, index) => {
@@ -62,6 +73,8 @@ export default class Team extends BaseDataFile {
   }
 
   print(clubs: Record<string, string>, hex = false): void {
+    this.convertFromHex();
+
     const initial: Record<string, string[]> = {};
     const data = this.teams.reduce((acc, team, i) => {
       const value = team.unknown6;

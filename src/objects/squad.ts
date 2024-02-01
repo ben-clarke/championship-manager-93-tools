@@ -1,3 +1,4 @@
+import { map } from "ramda";
 import CMExeParser from "../files/cm-exe-parser";
 import { parsePlayers } from "../files/utils/players";
 import { DomesticPlayer } from "./player";
@@ -22,5 +23,9 @@ export default class Squad {
 
   toHumanReadable(): Record<string, string>[] {
     return this.players.map((p) => p.toHumanReadable());
+  }
+
+  static toHex(players: string[][]): string[][] {
+    return map((d) => d, players);
   }
 }

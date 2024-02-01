@@ -90,4 +90,52 @@ export default class PlayerAttributes {
       Stamina: this.stamina.toString(),
     };
   }
+
+  static toHex(
+    passing: string,
+    tackling: string,
+    pace: string,
+    heading: string,
+    flair: string,
+    creativity: string,
+    goalscoring: string,
+    agility: string,
+    aggression: string,
+    influence: string,
+    temperament: string,
+    consistency: string,
+    stamina: string,
+  ): HexParts {
+    return {
+      passing: parseInt(passing, 10).toString(16).padStart(2, "0"),
+      tackling: parseInt(tackling, 10).toString(16).padStart(2, "0"),
+      pace: parseInt(pace, 10).toString(16).padStart(2, "0"),
+      heading: parseInt(heading, 10).toString(16).padStart(2, "0"),
+      flair: parseInt(flair, 10).toString(16).padStart(2, "0"),
+      creativity: parseInt(creativity, 10).toString(16).padStart(2, "0"),
+      goalscoring: parseInt(goalscoring, 10).toString(16).padStart(2, "0"),
+      agility: parseInt(agility, 10).toString(16).padStart(2, "0"),
+      aggression: parseInt(aggression, 10).toString(16).padStart(2, "0"),
+      influence: parseInt(influence, 10).toString(16).padStart(2, "0"),
+      temperament: parseInt(temperament, 10).toString(16).padStart(2, "0"),
+      consistency: parseInt(consistency, 10).toString(16).padStart(2, "0"),
+      stamina: parseInt(stamina, 10).toString(16).padStart(2, "0"),
+    };
+  }
+}
+
+interface HexParts {
+  passing: string;
+  tackling: string;
+  pace: string;
+  heading: string;
+  flair: string;
+  creativity: string;
+  goalscoring: string;
+  agility: string;
+  aggression: string;
+  influence: string;
+  temperament: string;
+  consistency: string;
+  stamina: string;
 }

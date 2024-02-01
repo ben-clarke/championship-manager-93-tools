@@ -1,3 +1,5 @@
+import { invertObj } from "../../../utils/conversion";
+
 export default class InjuryStatus {
   status: Status;
 
@@ -7,6 +9,11 @@ export default class InjuryStatus {
 
   toString(): string {
     return this.status;
+  }
+
+  static toHex(value: string): string {
+    const mapping = invertObj(MAPPING);
+    return mapping[value.toLowerCase()] || "XXXX";
   }
 }
 

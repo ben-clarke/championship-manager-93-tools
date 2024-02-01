@@ -1,3 +1,6 @@
+import { splitEvery } from "ramda";
+import { invertObj } from "../../utils/conversion";
+
 export default class PersonName {
   name: string;
 
@@ -8,4 +11,17 @@ export default class PersonName {
   toString(): string {
     return this.name;
   }
+
+  static toHex(value: string, nameMap: Record<string, string>): HexParts {
+    const mapping = invertObj(nameMap);
+    const hex = mapping[value.toLowerCase()] || "XXXX";
+
+    const [one, two] = splitEvery(2, hex);
+    return { one, two };
+  }
+}
+
+interface HexParts {
+  one: string;
+  two: string;
 }

@@ -1,3 +1,5 @@
+import { invertObj } from "../../../utils/conversion";
+
 export default class StyleOfPlay {
   value: Style;
 
@@ -7,6 +9,11 @@ export default class StyleOfPlay {
 
   toString(): string {
     return this.value;
+  }
+
+  static toHex(value: string): string {
+    const mapping = invertObj(MAPPING);
+    return mapping[value.toLowerCase()] || "XXXX";
   }
 }
 

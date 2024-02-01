@@ -1,4 +1,4 @@
-export default class CurrentSkill {
+export default class Skill {
   value: number;
 
   constructor(value: string) {
@@ -7,5 +7,9 @@ export default class CurrentSkill {
 
   toString(): string {
     return this.value.toString();
+  }
+
+  static toHex(value: string): string {
+    return parseInt(value, 10).toString(16).padStart(2, "0");
   }
 }

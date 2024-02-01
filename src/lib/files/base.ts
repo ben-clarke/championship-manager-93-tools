@@ -15,28 +15,17 @@ export default abstract class BaseDataFile {
   }
 
   read(): string {
-    const raw = fs
-      .readFileSync(
-        resolve(__dirname, "../../game-edits", this.fileDirectory, this.getFilename()),
-        "hex",
-      )
-      .toString();
-
+    const raw = fs.readFileSync(resolve(this.fileDirectory, this.getFilename()), "hex").toString();
     return raw.split(/[\n\r\s]+/).join();
   }
 
   readHuman(): ReadHuman {
     const raw = fs
-      .readFileSync(
-        resolve(__dirname, "../../game-edits", this.fileDirectory, this.getHumanReadableFilename()),
-      )
+      .readFileSync(resolve(this.fileDirectory, this.getHumanReadableFilename()))
       .toString();
     const csv = parse<string[]>(raw);
     const [headings, ...data] = csv.data;
-    return {
-      headings,
-      data,
-    };
+    return { headings, data };
   }
 
   abstract getFilename(): string;

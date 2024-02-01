@@ -1,6 +1,6 @@
 import { unparse } from "papaparse";
-import { parsePlayers } from "src/files/utils/players";
-import { EDIT_FILE_DIRECTORY } from "../../constants/file";
+import { resolve } from "path";
+import { parsePlayers } from "src/lib/files/utils/players";
 import CMExeParser from "../../files/cm-exe-parser";
 import Foreign from "../../files/foreign";
 import League from "../../files/league";
@@ -10,18 +10,21 @@ import { createHumanReadableFile } from "../convert-to-human-readable";
 
 describe("convertToHex", () => {
   test("convertToHex", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
+    const outputDirectory = resolve(__dirname, "../../../../", "game-edits", "testing");
     const { convertedLeague, convertedForeign, convertedTeam } = convertToHex(
-      "/Users/benclarke/Downloads",
+      inputDirectory,
+      outputDirectory,
     );
-    const data = new CMExeParser();
+    const data = new CMExeParser(inputDirectory);
 
-    const originalForeign = new Foreign(EDIT_FILE_DIRECTORY, data);
+    const originalForeign = new Foreign(inputDirectory, data);
     const parsedForeignHex = parsePlayers(originalForeign.read(), 34);
 
-    const originalLeague = new League(EDIT_FILE_DIRECTORY, data);
+    const originalLeague = new League(inputDirectory, data);
     const originalLeagueHex = originalLeague.parseHex().map((h) => parsePlayers(h, 33));
 
-    const originalTeam = new Team(EDIT_FILE_DIRECTORY, data);
+    const originalTeam = new Team(inputDirectory, data);
     const originalTeamHex = originalTeam.parseHex("94");
 
     const duplicatesFirstNames = getDuplicateNames(data.get("first-name"));
@@ -79,15 +82,11 @@ describe("convertToHex", () => {
       expect(c.join("")).toEqual(originalTeamHex[i]);
     });
 
-    const leagueCreateHumanReadable = new League("testing", data);
+    const leagueCreateHumanReadable = new League(inputDirectory, data);
     const humanReadableCreatedLeagueData = leagueCreateHumanReadable.toHumanReadable();
-    createHumanReadableFile(
-      "/Users/benclarke/Projects/championship-manager-93-tools/game-edits/testing",
-      "LEAGUE.DAT",
-      humanReadableCreatedLeagueData,
-    );
+    createHumanReadableFile(outputDirectory, "LEAGUE.DAT", humanReadableCreatedLeagueData);
 
-    const leagueParseHex = new League("testing", data);
+    const leagueParseHex = new League(inputDirectory, data);
 
     expect(
       unparse(leagueParseHex.toHumanReadable()).replace("Lloyd,Mcgrath", "Lloyd,McGrath"),

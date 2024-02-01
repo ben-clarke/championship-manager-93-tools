@@ -1,5 +1,5 @@
 import { flatten, map } from "ramda";
-import { DomesticPlayer } from "src/objects/player";
+import { DomesticPlayer } from "src/lib/objects/player";
 import Squad from "../objects/squad";
 import BaseDataFile from "./base";
 import CMExeParser from "./cm-exe-parser";

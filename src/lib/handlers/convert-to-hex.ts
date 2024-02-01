@@ -1,43 +1,32 @@
 import * as fs from "fs";
 import { resolve } from "path";
-import League from "src/files/league";
+import League from "src/lib/files/league";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
 import Team from "../files/team";
 import { createBackups } from "./utils.ts/file-backup";
 
 export const convertToHex = (
+  inputDirectory: string,
   outputDirectory: string,
 ): {
   convertedForeign: string[][];
   convertedLeague: string[][][];
   convertedTeam: string[][];
 } => {
-  const data = new CMExeParser();
+  const data = new CMExeParser(inputDirectory);
 
   const foreign = new Foreign(outputDirectory, data);
   const { converted: convertedForeign, hex: foreignHex } = foreign.convertFromHumanReadable();
-  createHexDataFile(
-    "/Users/benclarke/Projects/championship-manager-93-tools/game-edits/testing",
-    "FOREIGN.DAT",
-    foreignHex,
-  );
+  createHexDataFile(outputDirectory, "FOREIGN.DAT", foreignHex);
 
   const league = new League(outputDirectory, data);
   const { converted: convertedLeague, hex: leagueHex } = league.convertFromHumanReadable();
-  createHexDataFile(
-    "/Users/benclarke/Projects/championship-manager-93-tools/game-edits/testing",
-    "LEAGUE.DAT",
-    leagueHex,
-  );
+  createHexDataFile(outputDirectory, "LEAGUE.DAT", leagueHex);
 
   const team = new Team(outputDirectory, data);
   const { converted: convertedTeam, hex: teamHex } = team.convertFromHumanReadable();
-  createHexDataFile(
-    "/Users/benclarke/Projects/championship-manager-93-tools/game-edits/testing",
-    "TEAM.DAT",
-    teamHex,
-  );
+  createHexDataFile(outputDirectory, "TEAM.DAT", teamHex);
 
   return {
     convertedForeign,

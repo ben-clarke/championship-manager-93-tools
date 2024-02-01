@@ -32,5 +32,5 @@ const isPlayerEnd = (
   hex.toLowerCase() === "ff" &&
   // We are into the player history (unfortunately this can be randomised (`ff`) as well)
   player.length >= historyIndex &&
-  // The next hex is a name (always 00 or 01)
-  ["00", "01"].includes(parsed[index + 1]);
+  // The next hex is a name (always 00 or 01), if undefined it is the last player
+  (!parsed[index + 1] || ["00", "01"].includes(parsed[index + 1]));

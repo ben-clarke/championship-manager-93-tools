@@ -11,6 +11,10 @@ export class ForeignPlayer extends Player {
     this.club = new PlayerClub(club, data.get("club"), data.get("nationality"));
   }
 
+  getFirstNameMap(data: CMExeParser): Record<string, string> {
+    return data.get("first-name-foreign");
+  }
+
   getDataItems(parsed: string[]): string[] {
     return parsed;
   }

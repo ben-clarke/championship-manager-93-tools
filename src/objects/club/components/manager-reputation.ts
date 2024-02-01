@@ -1,24 +1,15 @@
 export default class ManagerReputation {
-  reputation: Reputation;
+  value: number;
 
   constructor(value: string) {
-    this.reputation = ManagerReputation.getReputation(value);
-  }
-
-  private static getReputation(value: string): Reputation {
-    const val = parseInt(value, 16);
-
-    if (val === 255) return "random";
-    if (val >= 170) return "superb";
-    if (val >= 150) return "v.good";
-    if (val >= 120) return "good";
-    if (val >= 100) return "fair";
-    return "unknown";
+    this.value = parseInt(value, 16);
   }
 
   toString(): string {
-    return this.reputation;
+    return this.value.toString();
+  }
+
+  static toHex(value: string): string {
+    return parseInt(value, 10).toString(16).padStart(2, "0");
   }
 }
-
-type Reputation = "superb" | "v.good" | "good" | "fair" | "unknown" | "random";

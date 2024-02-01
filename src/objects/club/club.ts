@@ -1,3 +1,4 @@
+import CMExeParser from "../../files/cm-exe-parser";
 import Character from "../components/character";
 import PersonName from "../components/person-name";
 import ClubAttraction from "./components/club-attraction";
@@ -35,7 +36,7 @@ export abstract class Club {
 
   managerReputation: ManagerReputation;
 
-  managerCharacter: Character; // TODO - BC | Move to common
+  managerCharacter: Character;
 
   assistantFirstName: PersonName;
 
@@ -122,7 +123,7 @@ export abstract class Club {
     return {
       ...this.stadium.toHumanReadable(),
       ...this.home.toHumanReadable("Home"),
-      ...this.home.toHumanReadable("Away"),
+      ...this.away.toHumanReadable("Away"),
       "Club status": this.attractiveness.toString(),
       "Unknown 8": this.unknown6,
       Money: this.money.toString(),
@@ -137,5 +138,56 @@ export abstract class Club {
       "Assistant first name": this.assistantFirstName.toString(),
       "Assistant surname": this.assistantSurname.toString(),
     };
+  }
+
+  static toHex(team: string[], headings: string[], data: CMExeParser): string[] {
+    const { capacity, seated } = Stadium.toHex(team[0], team[1]);
+    const { text: homeText, background: homeBackground } = ClubColours.toHex(team[2], team[3]);
+    const { text: awayText, background: awayBackground } = ClubColours.toHex(team[4], team[5]);
+    const status = ClubAttraction.toHex(team[6]);
+    const unknown8 = team[7];
+    const money = ClubMoney.toHex(team[8]);
+    const unknown10 = team[9];
+    const boardConfidence = parseInt(team[10], 10).toString(16).padStart(2, "0");
+    const { one: firstName1, two: firstName2 } = PersonName.toHex(team[11], data.get("first-name"));
+    const { one: surname1, two: surname2 } = PersonName.toHex(team[12], data.get("surname"));
+    const styleOfPlay = StyleOfPlay.toHex(team[13]);
+    const formation = Formation.toHex(team[14]);
+    const managerReputation = ManagerReputation.toHex(team[15]);
+    const managerCharacter = Character.toHex(team[16]);
+    const { one: assistantFirstName1, two: assistantFirstName2 } = PersonName.toHex(
+      team[17],
+      data.get("first-name"),
+    );
+    const { one: assistantSurname1, two: assistantSurname2 } = PersonName.toHex(
+      team[18],
+      data.get("surname"),
+    );
+
+    return [
+      capacity,
+      seated,
+      homeText,
+      homeBackground,
+      awayText,
+      awayBackground,
+      status,
+      unknown8,
+      money,
+      unknown10,
+      boardConfidence,
+      firstName1,
+      firstName2,
+      surname1,
+      surname2,
+      styleOfPlay,
+      formation,
+      managerReputation,
+      managerCharacter,
+      assistantFirstName1,
+      assistantFirstName2,
+      assistantSurname1,
+      assistantSurname2,
+    ];
   }
 }

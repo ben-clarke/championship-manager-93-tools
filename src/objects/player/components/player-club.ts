@@ -1,3 +1,5 @@
+import { invertObj } from "../../../utils/conversion";
+
 export default class PlayerClub {
   value: string;
 
@@ -11,7 +13,29 @@ export default class PlayerClub {
   toString(): string {
     return this.value;
   }
+
+  static toHex(
+    club: string,
+    clubs: Record<string, string>,
+    nationalities: Record<string, string>,
+  ): string {
+    return (
+      invertObj(clubs)[club.toLowerCase()] ||
+      textToHexConversion(nationalities, club, FOREIGN_PLAYER_CODE_MODIFIER)
+    );
+  }
 }
+
+const textToHexConversion = (
+  obj: Record<string, string>,
+  value: string,
+  modifier: number,
+  padding = 2,
+): string => {
+  const key = invertObj(obj)[value.toLowerCase()];
+  if (!key) return "";
+  return (parseInt(key, 16) + modifier).toString(16).padStart(padding, "0");
+};
 
 // For some reason the foreign player clubs (which are actually nationalities) have their codes
 // offset by 140

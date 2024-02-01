@@ -1,3 +1,5 @@
+import { invertObj } from "../../../utils/conversion";
+
 export default class ClubColours {
   text: string;
 
@@ -16,6 +18,19 @@ export default class ClubColours {
     return {
       [`${prefix} text`]: this.text,
       [`${prefix} background`]: this.background,
+    };
+  }
+
+  static toHex(text: string, background: string): { text: string; background: string } {
+    const textHex = invertObj(MAPPING)[text.toLowerCase()];
+    const backgroundHex = invertObj(MAPPING)[background.toLowerCase()];
+
+    if (!textHex) throw new Error(`ClubColours: could not find code for '${text}'`);
+    if (!backgroundHex) throw new Error(`ClubColours: could not find code for '${text}'`);
+
+    return {
+      text: textHex,
+      background: backgroundHex,
     };
   }
 }

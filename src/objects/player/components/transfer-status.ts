@@ -1,3 +1,5 @@
+import { invertObj } from "../../../utils/conversion";
+
 export default class TransferStatus {
   status: Status;
 
@@ -7,6 +9,15 @@ export default class TransferStatus {
 
   toString(): string {
     return this.status;
+  }
+
+  static toHex(value: string): string {
+    const mapping = invertObj(MAPPING);
+
+    const hex = mapping[value.toLowerCase()];
+    if (!hex) throw new Error(`TransferStatus: could not find code for '${value}'`);
+
+    return hex;
   }
 }
 

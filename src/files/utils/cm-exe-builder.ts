@@ -20,7 +20,7 @@ export const buildData = (
   const startIndex = findStartIndex(parsed, requiredDataType);
   if (!startIndex) throw new Error(`No start index found for ${requiredDataType}`);
 
-  const { padding = 2 } = DATA_FIRST_INDEX[requiredDataType];
+  const { padding = 2, breakAt } = DATA_FIRST_INDEX[requiredDataType];
 
   let item: string[] = [];
   let stopProcessing = false;
@@ -46,11 +46,19 @@ export const buildData = (
     }
 
     // We have hit the list separator, meaning that the item has no more characters in it.
+    const value = item.join("");
+
+    // If we should break, then do not add and mark that we should stop processing.
+    if (breakAt && breakAt === value) {
+      stopProcessing = true;
+      return acc;
+    }
+
     // Add all these details to the object and then clear the item for the next one.
     const valueIndex = Object.keys(acc).length;
     acc[valueIndex.toString()] = {
       code: valueIndex.toString(16).padStart(padding, "0"),
-      value: item.join(""),
+      value,
     };
 
     item = [];
@@ -97,10 +105,10 @@ const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   club: { required: "Aston Villa", occurrence: 2 },
   ground: { required: "Villa Park" },
   "non-domestic-club": { required: "Porto", padding: 4 },
-  "first-name": { required: "Ron", padding: 4 },
+  "first-name": { required: "Ron", padding: 4, breakAt: "Josep" },
+  "first-name-foreign": { required: "Ron", padding: 4 },
   surname: { required: "Atkinson", padding: 4 },
   "injury-type": { required: "severe" },
-  morale: { required: "feels he should" },
   wages: { required: "wants higher" },
   "style-of-play": { required: "Long ball" },
   formation: { required: "4-4-2" },
@@ -109,6 +117,7 @@ const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
 
 interface DataTypeData {
   required: string;
+  breakAt?: string;
   padding?: number;
   occurrence?: number;
 }

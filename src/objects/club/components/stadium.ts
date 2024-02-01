@@ -1,6 +1,4 @@
 export default class Stadium {
-  CAPACITY_MULTIPLIER = 1_000;
-
   capacity: number;
 
   seated: number;
@@ -11,7 +9,7 @@ export default class Stadium {
   }
 
   getCapacity(value: string): number {
-    return parseInt(value, 16) * this.CAPACITY_MULTIPLIER;
+    return parseInt(value, 16) * CAPACITY_MULTIPLIER;
   }
 
   toString(): string {
@@ -24,4 +22,13 @@ export default class Stadium {
       "Seated capacity": this.seated.toString(),
     };
   }
+
+  static toHex(capacity: string, seated: string): { capacity: string; seated: string } {
+    return {
+      capacity: (parseInt(capacity, 10) / CAPACITY_MULTIPLIER).toString(16).padStart(2, "0"),
+      seated: (parseInt(seated, 10) / CAPACITY_MULTIPLIER).toString(16).padStart(2, "0"),
+    };
+  }
 }
+
+const CAPACITY_MULTIPLIER = 1_000;

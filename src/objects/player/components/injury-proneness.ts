@@ -8,4 +8,8 @@ export default class InjuryProneness {
   toString(): string {
     return this.value.toString();
   }
+
+  static toHex(value: string): string {
+    return parseInt(value, 10).toString(16).padStart(2, "0");
+  }
 }

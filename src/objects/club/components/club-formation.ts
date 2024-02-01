@@ -1,3 +1,5 @@
+import { invertObj } from "../../../utils/conversion";
+
 export default class Formation {
   value: Form;
 
@@ -7,6 +9,15 @@ export default class Formation {
 
   toString(): string {
     return this.value;
+  }
+
+  static toHex(value: string): string {
+    const mapping = invertObj(MAPPING);
+
+    const hex = mapping[value.toLowerCase()];
+    if (!hex) throw new Error(`Formation: could not find code for '${value}'`);
+
+    return hex;
   }
 }
 

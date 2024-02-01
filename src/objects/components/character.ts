@@ -1,3 +1,5 @@
+import { invertObj } from "../../utils/conversion";
+
 export default class Character {
   value: CharacterValue;
 
@@ -7,6 +9,15 @@ export default class Character {
 
   toString(): string {
     return this.value;
+  }
+
+  static toHex(value: string): string {
+    const mapping = invertObj(MAPPING);
+
+    const hex = mapping[value.toLowerCase()];
+    if (!hex) throw new Error(`Character: could not find code for '${value}'`);
+
+    return hex;
   }
 }
 

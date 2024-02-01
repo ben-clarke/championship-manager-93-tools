@@ -13,6 +13,10 @@ export default class Nationality {
 
   static toHex(value: string, nationalities: Record<string, string>): string {
     const mapping = invertObj(nationalities);
-    return mapping[value.toLowerCase()] || "XXXX";
+
+    const hex = mapping[value.toLowerCase()];
+    if (!hex) throw new Error(`Nationality: could not find code for '${value}'`);
+
+    return hex;
   }
 }

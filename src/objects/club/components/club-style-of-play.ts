@@ -13,7 +13,11 @@ export default class StyleOfPlay {
 
   static toHex(value: string): string {
     const mapping = invertObj(MAPPING);
-    return mapping[value.toLowerCase()] || "XXXX";
+
+    const hex = mapping[value.toLowerCase()];
+    if (!hex) throw new Error(`StyleOfPlay: could not find code for '${value}'`);
+
+    return hex;
   }
 }
 

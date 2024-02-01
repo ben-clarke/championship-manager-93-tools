@@ -31,7 +31,7 @@ export default class League extends BaseDataFile {
     });
   }
 
-  convertFromHumanReadable(): string[][][] {
+  convertFromHumanReadable(): { converted: string[][][]; hex: string } {
     const { headings, data } = this.readHuman();
 
     const initial: Record<string, string[][]> = {};
@@ -44,7 +44,9 @@ export default class League extends BaseDataFile {
       return acc;
     }, initial);
 
-    return map((d) => Squad.toHex(d), Object.values(squads));
+    const converted = map((d) => Squad.toHex(d), Object.values(squads));
+    const hex = converted.join(TEAM_SEPARATOR).split(",").join("") + TEAM_SEPARATOR;
+    return { converted, hex };
   }
 
   toString(clubs: Record<string, string>): void {

@@ -106,7 +106,7 @@ const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   ground: { required: "Villa Park" },
   "non-domestic-club": { required: "Porto", padding: 4 },
   "first-name": { required: "Ron", padding: 4, breakAt: "Josep" },
-  "first-name-foreign": { required: "Josep", padding: 4 },
+  "first-name-foreign": { required: "Ron", padding: 4 },
   surname: { required: "Atkinson", padding: 4 },
   "injury-type": { required: "severe" },
   wages: { required: "wants higher" },

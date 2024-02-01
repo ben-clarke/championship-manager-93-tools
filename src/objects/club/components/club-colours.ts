@@ -22,9 +22,15 @@ export default class ClubColours {
   }
 
   static toHex(text: string, background: string): { text: string; background: string } {
+    const textHex = invertObj(MAPPING)[text.toLowerCase()];
+    const backgroundHex = invertObj(MAPPING)[background.toLowerCase()];
+
+    if (!textHex) throw new Error(`ClubColours: could not find code for '${text}'`);
+    if (!backgroundHex) throw new Error(`ClubColours: could not find code for '${text}'`);
+
     return {
-      text: invertObj(MAPPING)[text.toLowerCase()] || "XXXX",
-      background: invertObj(MAPPING)[background.toLowerCase()] || "XXXX",
+      text: textHex,
+      background: backgroundHex,
     };
   }
 }

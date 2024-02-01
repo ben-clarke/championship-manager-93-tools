@@ -43,7 +43,7 @@ export abstract class Player {
   history: PlayerHistory[];
 
   constructor(player: string[], data: CMExeParser) {
-    const firstNames = data.get("first-name");
+    const firstNames = this.getFirstNameMap(data);
     const surnames = data.get("surname");
     const nationalities = data.get("nationality");
     const clubs = data.get("club");
@@ -134,6 +134,8 @@ export abstract class Player {
     this.club = undefined;
   }
 
+  abstract getFirstNameMap(data: CMExeParser): Record<string, string>;
+
   abstract getDataItems(parsed: string[]): string[];
 
   toString(): string {
@@ -174,11 +176,16 @@ export abstract class Player {
     };
   }
 
-  static toHex(player: string[], headings: string[], data: CMExeParser): string[] {
+  static toHex(
+    player: string[],
+    headings: string[],
+    data: CMExeParser,
+    isForeign: boolean,
+  ): string[] {
     const club = PlayerClub.toHex(player[0], data.get("club"), data.get("nationality"));
     const { one: firstName1, two: firstName2 } = PersonName.toHex(
       player[1],
-      data.get("first-name"),
+      isForeign ? data.get("first-name-foreign") : data.get("first-name"),
     );
 
     const { one: surname1, two: surname2 } = PersonName.toHex(player[2], data.get("surname"));

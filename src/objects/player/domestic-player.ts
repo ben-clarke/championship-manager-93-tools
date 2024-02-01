@@ -8,6 +8,10 @@ export class DomesticPlayer extends Player {
     this.club = new PlayerClub(club, data.get("club"), data.get("nationality"));
   }
 
+  getFirstNameMap(data: CMExeParser): Record<string, string> {
+    return data.get("first-name");
+  }
+
   getDataItems(parsed: string[]): string[] {
     const [firstName1, firstName2, surname1, surname2, transferStatus, ...rest] = parsed;
 
@@ -19,7 +23,7 @@ export class DomesticPlayer extends Player {
   }
 
   static toHex(player: string[], headings: string[], data: CMExeParser): string[] {
-    const hexes = super.toHex(player, headings, data);
+    const hexes = super.toHex(player, headings, data, false);
 
     // Get rid of the club component
     const [firstName1, firstName2, surname1, surname2, transferStatus, , ...rest] = hexes;

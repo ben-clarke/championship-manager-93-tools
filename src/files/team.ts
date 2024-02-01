@@ -39,11 +39,13 @@ export default class Team extends BaseDataFile {
     this.teams = this.parsed.map((t) => new ClubClass(t, firstNames, surnames));
   }
 
-  convertFromHumanReadable(): string[][] {
+  convertFromHumanReadable(): { converted: string[][]; hex: string } {
     const ClubClass = getGameVersion(this.data.get("version")) === "93" ? Club93 : Club94;
 
     const { headings, data } = this.readHuman();
-    return map((d) => ClubClass.toHex(d, headings, this.data), data);
+    const converted = map((d) => ClubClass.toHex(d, headings, this.data), data);
+    const hex = converted.join("").split(",").join("");
+    return { converted, hex };
   }
 
   toHumanReadable(): Record<string, string>[] {

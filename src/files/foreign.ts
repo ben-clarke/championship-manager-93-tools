@@ -29,9 +29,12 @@ export default class Foreign extends BaseDataFile {
     this.players = players.map((p) => new ForeignPlayer(p, this.data));
   }
 
-  convertFromHumanReadable(): string[][] {
+  convertFromHumanReadable(): { converted: string[][]; hex: string } {
     const { headings, data } = this.readHuman();
-    return map((d) => ForeignPlayer.toHex(d, headings, this.data), data);
+
+    const converted = map((d) => ForeignPlayer.toHex(d, headings, this.data, true), data);
+    const hex = converted.join("").split(",").join("");
+    return { converted, hex };
   }
 
   toHumanReadable(): Record<string, string>[] {

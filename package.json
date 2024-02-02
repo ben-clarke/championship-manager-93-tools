@@ -14,19 +14,38 @@
     "coverage": "rm -rf coverage/ && vitest run --coverage --silent",
     "format": "prettier --write ./src",
     "lint": "prettier --check ./src && eslint --max-warnings 0 --color --ext .ts,.tsx,.js --cache --cache-location .cache/eslint .",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
+    "clsx": "2.1.0",
     "date-fns": "2.30.0",
+    "file-saver": "^2.0.5",
     "papaparse": "5.4.1",
-    "ramda": "0.29.1"
+    "ramda": "0.29.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-scripts": "5.0.1",
+    "web-vitals": "2.1.0"
   },
   "devDependencies": {
     "@faker-js/faker": "8.3.1",
+    "@testing-library/jest-dom": "5.14.1",
+    "@testing-library/react": "13.0.0",
+    "@testing-library/user-event": "13.2.1",
     "@types/eslint": "8.56.2",
+    "@types/file-saver": "^2.0.7",
+    "@types/jest": "27.0.1",
     "@types/minimist": "1.2.5",
-    "@types/papaparse": "^5.3.14",
+    "@types/node": "16.7.13",
+    "@types/papaparse": "5.3.14",
     "@types/ramda": "0.29.10",
+    "@types/react": "18.2.48",
+    "@types/react-dom": "18.2.18",
     "@typescript-eslint/eslint-plugin": "6.19.1",
     "@typescript-eslint/parser": "6.19.1",
     "@vitest/coverage-v8": "1.1.1",
@@ -44,11 +63,29 @@
     "minimist": "1.2.8",
     "prettier": "3.2.4",
     "prettier-plugin-tailwindcss": "0.5.11",
+    "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "tsx": "4.7.0",
     "typescript": "5.3.3",
     "uuid": "9.0.1",
     "vite-tsconfig-paths": "4.3.1",
     "vitest": "1.1.1"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

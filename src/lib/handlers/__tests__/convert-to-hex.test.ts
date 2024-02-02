@@ -16,15 +16,16 @@ describe("convertToHex", () => {
       inputDirectory,
       outputDirectory,
     );
-    const data = new CMExeParser(inputDirectory);
 
-    const originalForeign = new Foreign(inputDirectory, data);
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const originalForeign = new Foreign({ fileDirectory: inputDirectory, data });
     const parsedForeignHex = parsePlayers(originalForeign.read(), 34);
 
-    const originalLeague = new League(inputDirectory, data);
+    const originalLeague = new League({ fileDirectory: inputDirectory, data });
     const originalLeagueHex = originalLeague.parseHex().map((h) => parsePlayers(h, 33));
 
-    const originalTeam = new Team(inputDirectory, data);
+    const originalTeam = new Team({ fileDirectory: inputDirectory, data });
     const originalTeamHex = originalTeam.parseHex("94");
 
     const duplicatesFirstNames = getDuplicateNames(data.get("first-name"));
@@ -82,11 +83,11 @@ describe("convertToHex", () => {
       expect(c.join("")).toEqual(originalTeamHex[i]);
     });
 
-    const leagueCreateHumanReadable = new League(inputDirectory, data);
+    const leagueCreateHumanReadable = new League({ fileDirectory: inputDirectory, data });
     const humanReadableCreatedLeagueData = leagueCreateHumanReadable.toHumanReadable();
     createHumanReadableFile(outputDirectory, "LEAGUE.DAT", humanReadableCreatedLeagueData);
 
-    const leagueParseHex = new League(inputDirectory, data);
+    const leagueParseHex = new League({ fileDirectory: inputDirectory, data });
 
     expect(
       unparse(leagueParseHex.toHumanReadable()).replace("Lloyd,Mcgrath", "Lloyd,McGrath"),

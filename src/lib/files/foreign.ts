@@ -1,7 +1,7 @@
 import { map } from "ramda";
 import { ForeignPlayer } from "../objects/player";
-import BaseDataFile from "./base";
-import CMExeParser from "./cm-exe-parser";
+import BaseDataFile, { DataFileInput } from "./base";
+import { TEAM_SEPARATOR } from "./league";
 import { parsePlayers } from "./utils/players";
 
 export default class Foreign extends BaseDataFile {
@@ -9,8 +9,8 @@ export default class Foreign extends BaseDataFile {
 
   players: ForeignPlayer[];
 
-  constructor(fileDirectory: string, data: CMExeParser) {
-    super(fileDirectory, data);
+  constructor(input: DataFileInput) {
+    super(input);
     this.players = [];
   }
 
@@ -19,13 +19,15 @@ export default class Foreign extends BaseDataFile {
   }
 
   parseHex(): string[] {
-    // Nothing special needed to get the data in working order.
-    return [];
+    const hexes = this.read();
+    // Not the `TEAM_SEPARATOR` - this is expected at the end even though it is the only one and the
+    // players are not split into teams.
+    return hexes.split(TEAM_SEPARATOR).filter((t) => t);
   }
 
   convertFromHex(): void {
-    const hexes = this.read();
-    const players = parsePlayers(hexes, this.HISTORY_FIRST_INDEX);
+    const hexes = this.parseHex();
+    const players = parsePlayers(hexes[0], this.HISTORY_FIRST_INDEX);
     this.players = players.map((p) => new ForeignPlayer(p, this.data));
   }
 
@@ -33,7 +35,10 @@ export default class Foreign extends BaseDataFile {
     const { headings, data } = this.readHuman();
 
     const converted = map((d) => ForeignPlayer.toHex(d, headings, this.data, true), data);
-    const hex = converted.join("").split(",").join("");
+
+    // Not the `TEAM_SEPARATOR` - this is expected at the end even though it is the only one and the
+    // players are not split into teams.
+    const hex = converted.join("").split(",").join("") + TEAM_SEPARATOR;
     return { converted, hex };
   }
 

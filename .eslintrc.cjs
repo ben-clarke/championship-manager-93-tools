@@ -2,10 +2,7 @@
  * @type {import('@types/eslint').Linter.BaseConfig}
  */
 module.exports = {
-  extends: [
-    "prettier",
-    "airbnb",
-  ],
+  extends: ["prettier", "airbnb"],
   // we're using vitest which has a very similar API to jest
   // (so the linting plugins work nicely), but it we have to explicitly
   // set the jest version.
@@ -22,13 +19,7 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    "react",
-    "react-hooks",
-    "@typescript-eslint",
-    "jsx-a11y",
-    "no-only-tests",
-  ],
+  plugins: ["react", "react-hooks", "@typescript-eslint", "jsx-a11y", "no-only-tests"],
   ignorePatterns: [
     "server/index.js",
     "build/index.js",
@@ -93,10 +84,7 @@ module.exports = {
         "@typescript-eslint/array-type": ["error", { default: "array" }],
         "@typescript-eslint/ban-ts-comment": 0,
         "comma-dangle": 0, // Handled by prettier
-        "import/no-extraneous-dependencies": [
-          "error",
-          { devDependencies: true },
-        ],
+        "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
       },
     },
     {
@@ -110,5 +98,5 @@ module.exports = {
   ],
   parserOptions: {
     project: `${__dirname}/tsconfig.json`,
-  }
+  },
 };

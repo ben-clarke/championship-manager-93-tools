@@ -79,8 +79,8 @@ const UploadFile = ({
               <span className="font-semibold">{value}</span>
               {isDragActive && UPLOAD_FILE_DRAG}
             </p>
-            <p className="text-xs text-gray-300">{tip}</p>
-            <p className="text-xs text-gray-300 pt-4 font-bold">{tip2}</p>
+            <p className="text-xs text-gray-300 px-2">{tip}</p>
+            <p className="text-xs text-gray-300 pt-4 px-2 font-bold">{tip2}</p>
           </div>
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div {...getRootProps()}>

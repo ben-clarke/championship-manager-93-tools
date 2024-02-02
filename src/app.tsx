@@ -2,6 +2,7 @@ import { saveAs } from "file-saver";
 import { useEffect, useState } from "react";
 import { AlertVariant } from "./components/alert";
 import { Banner } from "./components/banner";
+import { Navbar } from "./components/navbar";
 import UploadFile from "./components/upload-file/upload-file";
 import {
   UPLOAD_EDIT_FILE,
@@ -76,41 +77,46 @@ function App(): JSX.Element {
   }, [foreignContent, leagueContent, teamContent, exeContent]);
 
   return (
-    <div className="text-center bg-dark-gray text-white flex flex-wrap items-center justify-center min-h-screen">
-      <div className="w-3/5">
-        {(message?.data?.length || 0) > 0 && (
-          <Banner
-            className="mb-2"
-            testid="game-message"
-            info={message?.data}
-            variant={message?.variant}
-          />
-        )}
-        <UploadFile
-          value={UPLOAD_GAME_FILE}
-          tip={UPLOAD_GAME_TIP}
-          tip2={UPLOAD_GAME_TIP_2}
-          // value={fileName}
-          setFiles={setFileValues}
-          setMessage={setAlertMessage}
-          id="upload-application-documents"
-          accept="*"
-          multiple
-        />
-      </div>
-      <div className="w-3/5">
-        <UploadFile
-          value={UPLOAD_EDIT_FILE}
-          tip={UPLOAD_EDIT_TIP}
-          tip2={UPLOAD_EDIT_TIP_2}
-          // value={fileName}
-          setFiles={setFileValues}
-          setMessage={setAlertMessage}
-          id="upload-application-documents"
-          accept="*"
-          multiple
-        />
-      </div>
+    <div className="flex min-h-screen flex-col bg-dark-gray">
+      <Navbar />
+      <main>
+        <div className="text-center bg-dark-gray text-white flex flex-wrap items-center justify-center">
+          <div className="lg:w-3/5 w-4/5 mt-8">
+            {(message?.data?.length || 0) > 0 && (
+              <Banner
+                className="mb-2"
+                testid="game-message"
+                info={message?.data}
+                variant={message?.variant}
+              />
+            )}
+            <UploadFile
+              value={UPLOAD_GAME_FILE}
+              tip={UPLOAD_GAME_TIP}
+              tip2={UPLOAD_GAME_TIP_2}
+              // value={fileName}
+              setFiles={setFileValues}
+              setMessage={setAlertMessage}
+              id="upload-application-documents"
+              accept="*"
+              multiple
+            />
+          </div>
+          <div className="lg:w-3/5 w-4/5 mt-8">
+            <UploadFile
+              value={UPLOAD_EDIT_FILE}
+              tip={UPLOAD_EDIT_TIP}
+              tip2={UPLOAD_EDIT_TIP_2}
+              // value={fileName}
+              setFiles={setFileValues}
+              setMessage={setAlertMessage}
+              id="upload-application-documents"
+              accept="*"
+              multiple
+            />
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

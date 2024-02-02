@@ -12,6 +12,7 @@ export const parsePlayers = (hexes: string, historyIndex: number): string[][] =>
     if (isBeginning(index) || !isPlayerEnd(parsed, hex, player, index, historyIndex)) return acc;
 
     acc.push(player);
+
     player = [];
     return acc;
   }, initial);

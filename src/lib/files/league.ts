@@ -1,16 +1,15 @@
 import { flatten, map } from "ramda";
 import { DomesticPlayer } from "src/lib/objects/player";
 import Squad from "../objects/squad";
-import BaseDataFile from "./base";
-import CMExeParser from "./cm-exe-parser";
+import BaseDataFile, { DataFileInput } from "./base";
 
 export default class League extends BaseDataFile {
   HISTORY_FIRST_INDEX = 33; // Change for foreign
 
   squads: Squad[];
 
-  constructor(fileDirectory: string, data: CMExeParser) {
-    super(fileDirectory, data);
+  constructor(input: DataFileInput) {
+    super(input);
     this.squads = [];
   }
 

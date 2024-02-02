@@ -2,16 +2,15 @@ import { map, splitEvery } from "ramda";
 import { getGameVersion } from "../constants/file";
 import Club, { Club93, Club94 } from "../objects/club";
 import { Version } from "../types/version";
-import BaseDataFile from "./base";
-import CMExeParser from "./cm-exe-parser";
+import BaseDataFile, { DataFileInput } from "./base";
 
 export default class Team extends BaseDataFile {
   parsed: string[][];
 
   teams: Club[];
 
-  constructor(fileDirectory: string, data: CMExeParser) {
-    super(fileDirectory, data);
+  constructor(input: DataFileInput) {
+    super(input);
     this.parsed = [];
     this.teams = [];
   }

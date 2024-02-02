@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import { resolve } from "path";
-import League from "src/lib/files/league";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
+import League from "../files/league";
 import Team from "../files/team";
 import { createBackups } from "./utils.ts/file-backup";
 
@@ -14,17 +14,17 @@ export const convertToHex = (
   convertedLeague: string[][][];
   convertedTeam: string[][];
 } => {
-  const data = new CMExeParser(inputDirectory);
+  const data = new CMExeParser({ fileDirectory: inputDirectory });
 
-  const foreign = new Foreign(outputDirectory, data);
+  const foreign = new Foreign({ fileDirectory: outputDirectory, data });
   const { converted: convertedForeign, hex: foreignHex } = foreign.convertFromHumanReadable();
   createHexDataFile(outputDirectory, "FOREIGN.DAT", foreignHex);
 
-  const league = new League(outputDirectory, data);
+  const league = new League({ fileDirectory: outputDirectory, data });
   const { converted: convertedLeague, hex: leagueHex } = league.convertFromHumanReadable();
   createHexDataFile(outputDirectory, "LEAGUE.DAT", leagueHex);
 
-  const team = new Team(outputDirectory, data);
+  const team = new Team({ fileDirectory: outputDirectory, data });
   const { converted: convertedTeam, hex: teamHex } = team.convertFromHumanReadable();
   createHexDataFile(outputDirectory, "TEAM.DAT", teamHex);
 

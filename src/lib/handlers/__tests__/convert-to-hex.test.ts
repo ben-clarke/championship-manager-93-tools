@@ -1,10 +1,10 @@
 import { unparse } from "papaparse";
 import { resolve } from "path";
-import { parsePlayers } from "src/lib/files/utils/players";
 import CMExeParser from "../../files/cm-exe-parser";
 import Foreign from "../../files/foreign";
 import League from "../../files/league";
 import Team from "../../files/team";
+import { parsePlayers } from "../../files/utils/players";
 import { convertToHex } from "../convert-to-hex";
 import { createHumanReadableFile } from "../convert-to-human-readable";
 

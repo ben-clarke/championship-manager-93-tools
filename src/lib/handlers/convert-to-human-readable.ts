@@ -11,12 +11,12 @@ export const convertToHumanReadable = (inputDirectory: string): void => {
   const data = new CMExeParser({ fileDirectory: inputDirectory });
 
   const foreign = new Foreign({ fileDirectory: inputDirectory, data });
-  // const team = new Team({ fileDirectory: inputDirectory, data });
-  // const league = new League({ fileDirectory: inputDirectory, data });
+  const team = new Team({ fileDirectory: inputDirectory, data });
+  const league = new League({ fileDirectory: inputDirectory, data });
 
   createHumanReadableFile(inputDirectory, "FOREIGN.DAT", foreign.toHumanReadable());
-  // createHumanReadableFile(inputDirectory, "TEAM.DAT", team.toHumanReadable());
-  // createHumanReadableFile(inputDirectory, "LEAGUE.DAT", league.toHumanReadable());
+  createHumanReadableFile(inputDirectory, "TEAM.DAT", team.toHumanReadable());
+  createHumanReadableFile(inputDirectory, "LEAGUE.DAT", league.toHumanReadable());
 };
 
 export const convertToHumanReadableBlob = (

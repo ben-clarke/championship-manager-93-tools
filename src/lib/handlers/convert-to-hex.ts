@@ -35,9 +35,42 @@ export const convertToHex = (
   };
 };
 
-export const createHexDataFile = (directory: string, filename: string, data: string): void => {
+export const convertToDataBlob = (
+  foreignData: string,
+  leagueData: string,
+  teamData: string,
+  exe: string,
+): ConvertToData => {
+  const data = new CMExeParser({ rawData: exe });
+
+  const foreign = new Foreign({ rawData: foreignData, data });
+  const team = new Team({ rawData: teamData, data });
+  const league = new League({ rawData: leagueData, data });
+
+  const { hex: foreignHex } = foreign.convertFromHumanReadable();
+  const { hex: teamHex } = team.convertFromHumanReadable();
+  const { hex: leagueHex } = league.convertFromHumanReadable();
+
+  return {
+    data: {
+      foreign: foreignHex,
+      team: teamHex,
+      league: leagueHex,
+    },
+  };
+};
+
+const createHexDataFile = (directory: string, filename: string, data: string): void => {
   const filepath = resolve(directory, filename);
   if (fs.existsSync(filepath)) createBackups(directory, filepath, filename);
 
   fs.writeFileSync(filepath, data, "hex");
 };
+
+interface ConvertToData {
+  data: {
+    foreign: string;
+    league: string;
+    team: string;
+  };
+}

@@ -28,9 +28,12 @@ export default abstract class BaseDataFile {
   }
 
   readHuman(): ReadHuman {
-    const raw = fs
-      .readFileSync(resolve(this.fileDirectory as string, this.getHumanReadableFilename()))
-      .toString();
+    const raw = this.rawData
+      ? this.rawData
+      : fs
+          .readFileSync(resolve(this.fileDirectory as string, this.getHumanReadableFilename()))
+          .toString();
+
     const csv = parse<string[]>(raw);
     const [headings, ...data] = csv.data;
     return { headings, data };

@@ -1,5 +1,5 @@
 import { flatten, map } from "ramda";
-import { DomesticPlayer } from "src/lib/objects/player";
+import { DomesticPlayer } from "../objects/player";
 import Squad from "../objects/squad";
 import BaseDataFile, { DataFileInput } from "./base";
 

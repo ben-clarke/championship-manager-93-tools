@@ -3,19 +3,19 @@
   "name": "Championship Manager game editing",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "favicon.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "logo192.png",
+      "src": "logo-26.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "26x26"
     },
     {
-      "src": "logo512.png",
+      "src": "log-52.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "52x52"
     }
   ],
   "start_url": ".",

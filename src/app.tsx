@@ -1,60 +1,45 @@
-import { saveAs } from "file-saver";
 import { useEffect, useState } from "react";
 import { AlertVariant } from "./components/alert";
 import { Banner } from "./components/banner";
 import { Navbar } from "./components/navbar";
-import UploadFile from "./components/upload-file/upload-file";
-import {
-  UPLOAD_EDIT_FILE,
-  UPLOAD_EDIT_TIP,
-  UPLOAD_EDIT_TIP_2,
-  UPLOAD_GAME_FILE,
-  UPLOAD_GAME_TIP,
-  UPLOAD_GAME_TIP_2,
-} from "./constants/strings";
-import { convertToHumanReadableBlob } from "./lib/handlers/convert-to-human-readable";
+import CsvUpload from "./components/uploaders/csv-upload";
+import DataUpload from "./components/uploaders/data-upload";
+import { UPLOAD_DATA_PARSED, UPLOAD_EDIT_PARSED } from "./constants/strings";
+import { createDataFiles, createHumanReadableFiles } from "./utils/file-conversion";
 
 // eslint-disable-next-line global-require
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 function App(): JSX.Element {
-  const [message, setMessage] = useState<Message>({ data: [], variant: "info" });
+  const [dataMessage, setDataMessage] = useState<Message>({ data: [], variant: "info" });
+  const [csvMessage, setCsvMessage] = useState<Message>({ data: [], variant: "info" });
+
   const [foreignContent, setForeignContent] = useState("");
   const [leagueContent, setLeagueContent] = useState("");
   const [teamContent, setTeamContent] = useState("");
+
+  const [foreignCsvContent, setForeignCsvContent] = useState("");
+  const [leagueCsvContent, setLeagueCsvContent] = useState("");
+  const [teamCsvContent, setTeamCsvContent] = useState("");
+
   const [exeContent, setExeContent] = useState("");
 
   const setFileValues = (name: string, value: string, fileType: string): void => {
     if (fileType === "FOREIGN.DAT") setForeignContent(value);
     if (fileType === "LEAGUE.DAT") setLeagueContent(value);
     if (fileType === "TEAM.DAT") setTeamContent(value);
+    if (fileType === "FOREIGN.DAT.CSV") setForeignCsvContent(value);
+    if (fileType === "LEAGUE.DAT.CSV") setLeagueCsvContent(value);
+    if (fileType === "TEAM.DAT.CSV") setTeamCsvContent(value);
     if (fileType === "CMEXE.EXE") setExeContent(value);
   };
 
-  const setAlertMessage = (data: string[], variant: AlertVariant): void => {
-    setMessage({ data, variant });
+  const setDataAlertMessage = (data: string[], variant: AlertVariant): void => {
+    setDataMessage({ data, variant });
   };
 
-  const createHumanReadableFiles = (
-    foreign: string,
-    league: string,
-    team: string,
-    exe: string,
-  ): void => {
-    const {
-      data: { foreign: foreignCsv, league: leagueCsv, team: teamCsv },
-    } = convertToHumanReadableBlob(foreign, league, team, exe);
-
-    const items = [
-      { filename: "FOREIGN.DAT.csv", data: foreignCsv },
-      { filename: "LEAGUE.DAT.csv", data: leagueCsv },
-      { filename: "TEAM.DAT.csv", data: teamCsv },
-    ];
-
-    items.forEach(({ filename, data }) => {
-      const file = new Blob([data], { type: "application/csv" });
-      saveAs(file, filename);
-    });
+  const setCsvAlertMessage = (data: string[], variant: AlertVariant): void => {
+    setCsvMessage({ data, variant });
   };
 
   useEffect(() => {
@@ -69,12 +54,37 @@ function App(): JSX.Element {
       setLeagueContent("");
       setTeamContent("");
       setExeContent("");
-      setMessage({
-        data: ["Game edit CSV files have been saved to you downloads folder"],
+      setDataMessage({
+        data: [UPLOAD_DATA_PARSED],
         variant: "success",
       });
     }
-  }, [foreignContent, leagueContent, teamContent, exeContent]);
+
+    if (
+      foreignCsvContent.length > 0 &&
+      leagueCsvContent.length > 0 &&
+      teamCsvContent.length > 0 &&
+      exeContent.length > 0
+    ) {
+      createDataFiles(foreignCsvContent, leagueCsvContent, teamCsvContent, exeContent);
+      setForeignCsvContent("");
+      setLeagueCsvContent("");
+      setTeamCsvContent("");
+      setExeContent("");
+      setCsvMessage({
+        data: [UPLOAD_EDIT_PARSED],
+        variant: "success",
+      });
+    }
+  }, [
+    foreignContent,
+    leagueContent,
+    teamContent,
+    foreignCsvContent,
+    leagueCsvContent,
+    teamCsvContent,
+    exeContent,
+  ]);
 
   return (
     <div className="flex min-h-screen flex-col bg-dark-gray">
@@ -82,37 +92,33 @@ function App(): JSX.Element {
       <main>
         <div className="text-center bg-dark-gray text-white flex flex-wrap items-center justify-center">
           <div className="lg:w-3/5 w-4/5 mt-8">
-            {(message?.data?.length || 0) > 0 && (
+            {(dataMessage?.data?.length || 0) > 0 && (
               <Banner
                 className="mb-2"
                 testid="game-message"
-                info={message?.data}
-                variant={message?.variant}
+                info={dataMessage?.data}
+                variant={dataMessage?.variant}
               />
             )}
-            <UploadFile
-              value={UPLOAD_GAME_FILE}
-              tip={UPLOAD_GAME_TIP}
-              tip2={UPLOAD_GAME_TIP_2}
+            <DataUpload
               // value={fileName}
               setFiles={setFileValues}
-              setMessage={setAlertMessage}
-              id="upload-application-documents"
-              accept="*"
-              multiple
+              setMessage={setDataAlertMessage}
             />
           </div>
           <div className="lg:w-3/5 w-4/5 mt-8">
-            <UploadFile
-              value={UPLOAD_EDIT_FILE}
-              tip={UPLOAD_EDIT_TIP}
-              tip2={UPLOAD_EDIT_TIP_2}
+            {(csvMessage?.data?.length || 0) > 0 && (
+              <Banner
+                className="mb-2"
+                testid="edit-game-message"
+                info={csvMessage?.data}
+                variant={csvMessage?.variant}
+              />
+            )}
+            <CsvUpload
               // value={fileName}
               setFiles={setFileValues}
-              setMessage={setAlertMessage}
-              id="upload-application-documents"
-              accept="*"
-              multiple
+              setMessage={setCsvAlertMessage}
             />
           </div>
         </div>

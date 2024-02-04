@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
+import { NAV_CSV, NAV_DAT, NAV_HEADING } from "src/constants/strings";
+
 const NavBar = (): JSX.Element => (
   <nav className="bg-dark-gray text-white border-gray-300 border-b-2">
     <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
       <div className="flex items-center space-x-3 rtl:space-x-reverse">
         <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-          Championship Manager 93 editing
+          {NAV_HEADING}
         </span>
       </div>
       <button
@@ -33,19 +36,19 @@ const NavBar = (): JSX.Element => (
       <div className="hidden w-full md:block md:w-auto" id="navbar-default">
         <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
           <li>
-            <a
-              href="/"
+            <Link
+              to="/convert-to-csv"
               className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0 "
             >
-              Home
-            </a>
+              {NAV_CSV}
+            </Link>
           </li>
           <li>
             <a
-              href="/"
+              href="/convert-to-data"
               className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0 "
             >
-              Instructions
+              {NAV_DAT}
             </a>
           </li>
         </ul>

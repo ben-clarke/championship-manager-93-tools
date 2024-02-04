@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { FileRejection } from "react-dropzone";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM, EXE_CM } from "src/constants/files";
 import {
   UPLOAD_GAME_FILE,
   UPLOAD_GAME_TIP,
@@ -71,7 +72,7 @@ const fileValidator = (file: File): { code: string; message: string } | null => 
   return null;
 };
 
-const REQUIRED_FILES = ["FOREIGN.DAT", "LEAGUE.DAT", "TEAM.DAT", "CMEXE.EXE"];
+const REQUIRED_FILES = [DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM, EXE_CM];
 
 const getMissingErrorMessage = (missingFiles: string[]): string =>
   `You have not uploaded the required files: ${missingFiles.join(", ")}`;

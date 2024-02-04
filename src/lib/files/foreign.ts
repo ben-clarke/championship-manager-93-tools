@@ -1,4 +1,5 @@
 import { map } from "ramda";
+import { DAT_FOREIGN } from "src/constants/files";
 import { ForeignPlayer } from "../objects/player";
 import BaseDataFile, { DataFileInput } from "./base";
 import { TEAM_SEPARATOR } from "./league";
@@ -15,7 +16,7 @@ export default class Foreign extends BaseDataFile {
   }
 
   getFilename(): string {
-    return "FOREIGN.DAT";
+    return DAT_FOREIGN;
   }
 
   parseHex(): string[] {

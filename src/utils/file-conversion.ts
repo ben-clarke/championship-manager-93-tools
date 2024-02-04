@@ -1,4 +1,5 @@
 import { saveAs } from "file-saver";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
 import { convertToDataBlob } from "src/lib/handlers/convert-to-hex";
 import { convertToHumanReadableBlob } from "src/lib/handlers/convert-to-human-readable";
 
@@ -35,9 +36,9 @@ export const createDataFiles = (
   } = convertToDataBlob(foreign, league, team, exe);
 
   const items = [
-    { filename: "FOREIGN.DAT", data: foreignData },
-    { filename: "LEAGUE.DAT", data: leagueData },
-    { filename: "TEAM.DAT", data: teamData },
+    { filename: DAT_FOREIGN, data: foreignData },
+    { filename: DAT_LEAGUE, data: leagueData },
+    { filename: DAT_TEAM, data: teamData },
   ];
 
   items.forEach(({ filename, data }) => {

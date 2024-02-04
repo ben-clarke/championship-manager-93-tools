@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { FileRejection } from "react-dropzone";
+import { CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM } from "src/constants/files";
 import {
   UPLOAD_EDIT_FILE,
   UPLOAD_EDIT_TIP,
@@ -79,7 +80,7 @@ const fileValidator = (file: File): { code: string; message: string } | null => 
   return null;
 };
 
-const REQUIRED_FILES = ["FOREIGN.DAT.CSV", "LEAGUE.DAT.CSV", "TEAM.DAT.CSV", "CMEXE.EXE"];
+const REQUIRED_FILES = [CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM];
 
 const getMissingErrorMessage = (missingFiles: string[]): string =>
   `You have not uploaded the required files: ${missingFiles.join(", ")}`;

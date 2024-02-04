@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import { unparse } from "papaparse";
 import { resolve } from "path";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
 import League from "../files/league";
@@ -11,12 +12,12 @@ export const convertToHumanReadable = (inputDirectory: string): void => {
   const data = new CMExeParser({ fileDirectory: inputDirectory });
 
   const foreign = new Foreign({ fileDirectory: inputDirectory, data });
-  const team = new Team({ fileDirectory: inputDirectory, data });
   const league = new League({ fileDirectory: inputDirectory, data });
+  const team = new Team({ fileDirectory: inputDirectory, data });
 
-  createHumanReadableFile(inputDirectory, "FOREIGN.DAT", foreign.toHumanReadable());
-  createHumanReadableFile(inputDirectory, "TEAM.DAT", team.toHumanReadable());
-  createHumanReadableFile(inputDirectory, "LEAGUE.DAT", league.toHumanReadable());
+  createHumanReadableFile(inputDirectory, DAT_FOREIGN, foreign.toHumanReadable());
+  createHumanReadableFile(inputDirectory, DAT_LEAGUE, league.toHumanReadable());
+  createHumanReadableFile(inputDirectory, DAT_TEAM, team.toHumanReadable());
 };
 
 export const convertToHumanReadableBlob = (

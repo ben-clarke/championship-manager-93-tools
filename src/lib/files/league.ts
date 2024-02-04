@@ -1,4 +1,5 @@
 import { flatten, map } from "ramda";
+import { DAT_LEAGUE } from "src/constants/files";
 import { DomesticPlayer } from "../objects/player";
 import Squad from "../objects/squad";
 import BaseDataFile, { DataFileInput } from "./base";
@@ -14,7 +15,7 @@ export default class League extends BaseDataFile {
   }
 
   getFilename(): string {
-    return "LEAGUE.DAT";
+    return DAT_LEAGUE;
   }
 
   parseHex(): string[] {

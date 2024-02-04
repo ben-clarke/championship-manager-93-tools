@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { resolve } from "path";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
 import League from "../files/league";
@@ -18,15 +19,15 @@ export const convertToHex = (
 
   const foreign = new Foreign({ fileDirectory: outputDirectory, data });
   const { converted: convertedForeign, hex: foreignHex } = foreign.convertFromHumanReadable();
-  createHexDataFile(outputDirectory, "FOREIGN.DAT", foreignHex);
+  createHexDataFile(outputDirectory, DAT_FOREIGN, foreignHex);
 
   const league = new League({ fileDirectory: outputDirectory, data });
   const { converted: convertedLeague, hex: leagueHex } = league.convertFromHumanReadable();
-  createHexDataFile(outputDirectory, "LEAGUE.DAT", leagueHex);
+  createHexDataFile(outputDirectory, DAT_LEAGUE, leagueHex);
 
   const team = new Team({ fileDirectory: outputDirectory, data });
   const { converted: convertedTeam, hex: teamHex } = team.convertFromHumanReadable();
-  createHexDataFile(outputDirectory, "TEAM.DAT", teamHex);
+  createHexDataFile(outputDirectory, DAT_TEAM, teamHex);
 
   return {
     convertedForeign,

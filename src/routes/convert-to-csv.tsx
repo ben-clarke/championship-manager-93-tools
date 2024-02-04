@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM, EXE_CM } from "src/constants/files";
 import { AlertVariant } from "../components/alert";
 import { Banner } from "../components/banner";
 import DataUpload from "../components/uploaders/data-upload";
@@ -16,7 +17,7 @@ import {
 import { createHumanReadableFiles } from "../utils/file-conversion";
 
 const ConvertToCsv = (): JSX.Element => {
-  const [dataMessage, setDataMessage] = useState<Message>({ data: [], variant: "info" });
+  const [message, setMessage] = useState<Message>({ data: [], variant: "info" });
 
   const [foreignContent, setForeignContent] = useState("");
   const [leagueContent, setLeagueContent] = useState("");
@@ -25,14 +26,14 @@ const ConvertToCsv = (): JSX.Element => {
   const [exeContent, setExeContent] = useState("");
 
   const setFileValues = (name: string, value: string, fileType: string): void => {
-    if (fileType === "FOREIGN.DAT") setForeignContent(value);
-    if (fileType === "LEAGUE.DAT") setLeagueContent(value);
-    if (fileType === "TEAM.DAT") setTeamContent(value);
-    if (fileType === "CMEXE.EXE") setExeContent(value);
+    if (fileType === DAT_FOREIGN) setForeignContent(value);
+    if (fileType === DAT_LEAGUE) setLeagueContent(value);
+    if (fileType === DAT_TEAM) setTeamContent(value);
+    if (fileType === EXE_CM) setExeContent(value);
   };
 
   const setDataAlertMessage = (data: string[], variant: AlertVariant): void => {
-    setDataMessage({ data, variant });
+    setMessage({ data, variant });
   };
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const ConvertToCsv = (): JSX.Element => {
       setLeagueContent("");
       setTeamContent("");
       setExeContent("");
-      setDataMessage({
+      setMessage({
         data: [UPLOAD_DATA_PARSED],
         variant: "success",
       });
@@ -81,12 +82,12 @@ const ConvertToCsv = (): JSX.Element => {
           <p className="mb-2">{DAT_INSTRUCTIONS_WARN}</p>
         </div>
         <div className="w-1/2 mt-8 px-8">
-          {(dataMessage?.data?.length || 0) > 0 && (
+          {(message?.data?.length || 0) > 0 && (
             <Banner
               className="mb-2"
               testid="game-message"
-              info={dataMessage?.data}
-              variant={dataMessage?.variant}
+              info={message?.data}
+              variant={message?.variant}
             />
           )}
           <DataUpload

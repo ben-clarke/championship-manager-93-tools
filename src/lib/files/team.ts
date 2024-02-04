@@ -1,4 +1,5 @@
 import { map, splitEvery } from "ramda";
+import { DAT_TEAM } from "src/constants/files";
 import { getGameVersion } from "../constants/file";
 import Club, { Club93, Club94 } from "../objects/club";
 import { Version } from "../types/version";
@@ -16,7 +17,7 @@ export default class Team extends BaseDataFile {
   }
 
   getFilename(): string {
-    return "TEAM.DAT";
+    return DAT_TEAM;
   }
 
   parseHex(version: Version): string[] {

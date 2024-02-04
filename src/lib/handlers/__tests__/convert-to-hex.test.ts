@@ -1,5 +1,6 @@
 import { unparse } from "papaparse";
 import { resolve } from "path";
+import { DAT_LEAGUE } from "src/constants/files";
 import CMExeParser from "../../files/cm-exe-parser";
 import Foreign from "../../files/foreign";
 import League from "../../files/league";
@@ -85,7 +86,7 @@ describe("convertToHex", () => {
 
     const leagueCreateHumanReadable = new League({ fileDirectory: inputDirectory, data });
     const humanReadableCreatedLeagueData = leagueCreateHumanReadable.toHumanReadable();
-    createHumanReadableFile(outputDirectory, "LEAGUE.DAT", humanReadableCreatedLeagueData);
+    createHumanReadableFile(outputDirectory, DAT_LEAGUE, humanReadableCreatedLeagueData);
 
     const leagueParseHex = new League({ fileDirectory: inputDirectory, data });
 

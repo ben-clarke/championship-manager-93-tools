@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM } from "src/constants/files";
 import { AlertVariant } from "../components/alert";
 import { Banner } from "../components/banner";
 import CsvUpload from "../components/uploaders/csv-upload";
@@ -22,7 +23,7 @@ import {
 import { createDataFiles } from "../utils/file-conversion";
 
 const ConvertToData = (): JSX.Element => {
-  const [csvMessage, setCsvMessage] = useState<Message>({ data: [], variant: "info" });
+  const [message, setMessage] = useState<Message>({ data: [], variant: "info" });
 
   const [foreignCsvContent, setForeignCsvContent] = useState("");
   const [leagueCsvContent, setLeagueCsvContent] = useState("");
@@ -31,14 +32,14 @@ const ConvertToData = (): JSX.Element => {
   const [exeContent, setExeContent] = useState("");
 
   const setFileValues = (name: string, value: string, fileType: string): void => {
-    if (fileType === "FOREIGN.DAT.CSV") setForeignCsvContent(value);
-    if (fileType === "LEAGUE.DAT.CSV") setLeagueCsvContent(value);
-    if (fileType === "TEAM.DAT.CSV") setTeamCsvContent(value);
-    if (fileType === "CMEXE.EXE") setExeContent(value);
+    if (fileType === CSV_FOREIGN) setForeignCsvContent(value);
+    if (fileType === CSV_LEAGUE) setLeagueCsvContent(value);
+    if (fileType === CSV_TEAM) setTeamCsvContent(value);
+    if (fileType === EXE_CM) setExeContent(value);
   };
 
   const setCsvAlertMessage = (data: string[], variant: AlertVariant): void => {
-    setCsvMessage({ data, variant });
+    setMessage({ data, variant });
   };
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const ConvertToData = (): JSX.Element => {
       setLeagueCsvContent("");
       setTeamCsvContent("");
       setExeContent("");
-      setCsvMessage({
+      setMessage({
         data: [UPLOAD_EDIT_PARSED],
         variant: "success",
       });
@@ -64,12 +65,12 @@ const ConvertToData = (): JSX.Element => {
     <div className="text-center bg-dark-gray text-white flex flex-wrap items-center justify-center">
       <div className="flex flex-wrap items-center justify-center w-full">
         <div className="w-1/2 mt-8 px-8">
-          {(csvMessage?.data?.length || 0) > 0 && (
+          {(message?.data?.length || 0) > 0 && (
             <Banner
               className="mb-2"
               testid="edit-game-message"
-              info={csvMessage?.data}
-              variant={csvMessage?.variant}
+              info={message?.data}
+              variant={message?.variant}
             />
           )}
           <CsvUpload

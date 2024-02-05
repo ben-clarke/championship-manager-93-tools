@@ -30,10 +30,13 @@ export const createDataFiles = (
   league: string,
   team: string,
   exe: string,
-): void => {
+): string[] => {
   const {
     data: { foreign: foreignData, league: leagueData, team: teamData },
+    errors,
   } = convertToDataBlob(foreign, league, team, exe);
+
+  if (errors.length > 0) return errors;
 
   const items = [
     { filename: DAT_FOREIGN, data: foreignData },
@@ -44,12 +47,14 @@ export const createDataFiles = (
   items.forEach(({ filename, data }) => {
     convertAndStoreData(filename, data);
   });
+
+  return [];
 };
 
 const convertAndStoreData = (filename: string, data: string): void => {
   const byteArray = new Uint8Array(data.length / 2);
-  for (let x = 0; x < byteArray.length; x += 1) {
-    byteArray[x] = parseInt(data.substring(x * 2, 2), 16);
+  for (let i = 0; i < byteArray.length; i += 1) {
+    byteArray[i] = parseInt(data.substr(i * 2, 2), 16);
   }
 
   const blob = new Blob([byteArray], { type: "application/octet-stream" });

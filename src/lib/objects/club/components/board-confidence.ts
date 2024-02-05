@@ -1,6 +1,6 @@
 import { HumanReadable } from "src/lib/types/validation";
 
-export default class ManagerReputation {
+export default class BoardConfidence {
   value: number;
 
   constructor(value: string) {
@@ -14,14 +14,14 @@ export default class ManagerReputation {
   static toHex(value: string): HumanReadable {
     const decimal = parseInt(value, 10);
     if (Number.isNaN(decimal)) {
-      return { value: "", errors: [`Manager reputation must be a decimal number`] };
+      return { value: "", errors: [`Board confidence must be a decimal number`] };
     }
 
-    if (decimal !== RANDOM && (LOWER_RANGE > decimal || decimal > UPPER_RANGE)) {
+    if (LOWER_RANGE > decimal || decimal > UPPER_RANGE) {
       return {
         value: "",
         errors: [
-          `Manager reputation must be between ${LOWER_RANGE} and ${UPPER_RANGE}, got: ${decimal}`,
+          `Board confidence must be between ${LOWER_RANGE} and ${UPPER_RANGE}, got: ${decimal}`,
         ],
       };
     }
@@ -31,6 +31,4 @@ export default class ManagerReputation {
 }
 
 const LOWER_RANGE = 1;
-const UPPER_RANGE = 200;
-
-const RANDOM = 255;
+const UPPER_RANGE = 100;

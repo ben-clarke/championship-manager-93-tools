@@ -42,8 +42,24 @@ export interface HumanReadableAttributes {
   errors: string[];
 }
 
+export interface HumanReadableStadium {
+  capacity: string;
+  seated: string;
+  errors: string[];
+}
+
+export interface HumanReadableColours {
+  text: string;
+  background: string;
+  errors: string[];
+}
+
 // Entities
 export interface HumanReadablePlayer {
+  values: string[];
+  errors: string[];
+}
+export interface HumanReadableClub {
   values: string[];
   errors: string[];
 }
@@ -57,6 +73,12 @@ export interface HumanReadableForeign {
 
 export interface HumanReadableLeague {
   converted: string[][][];
+  hex: string;
+  errors: string[];
+}
+
+export interface HumanReadableTeam {
+  converted: string[][];
   hex: string;
   errors: string[];
 }

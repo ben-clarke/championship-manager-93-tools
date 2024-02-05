@@ -33,6 +33,7 @@ export default class League extends BaseDataFile {
   }
 
   convertFromHumanReadable(): HumanReadableLeague {
+    // TODO - BC | Team names match
     const { data } = this.readHuman();
 
     const errors: string[] = [];

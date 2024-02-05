@@ -1,3 +1,4 @@
+import { HumanReadable } from "src/lib/types/validation";
 import { invertObj } from "../../../utils/conversion";
 
 export default class ClubAttraction {
@@ -11,12 +12,17 @@ export default class ClubAttraction {
     return this.value.toString();
   }
 
-  static toHex(value: string): string {
+  static toHex(value: string): HumanReadable {
     const mapping = invertObj(MAPPING);
     const hex = mapping[value.toLowerCase()];
-    if (!hex) throw new Error(`ClubAttraction: could not find code for '${value}'`);
-
-    return hex;
+    return {
+      value: hex,
+      errors: !hex
+        ? [
+            `No character found for: ${value}, valid values are ${Object.values(MAPPING).join(", ")}`,
+          ]
+        : [],
+    };
   }
 }
 

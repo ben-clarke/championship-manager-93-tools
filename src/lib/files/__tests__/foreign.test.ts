@@ -11,7 +11,7 @@ describe("foreign", () => {
     const foreign = new Foreign({ rawData: unparse(FOREIGN_DATA), data });
     const { hex, errors } = foreign.convertFromHumanReadable();
     expect(hex).toEqual(
-      "01550504008e000000010000000116020278ffffffffffffffffb4ffffffffffff5b8e04005c8e1900FF01560505008e00000001000100001aff0273ffffffffffffffffffffffffffffff5c8e0400FF0bb8",
+      "01550504008e000000010000000116020278ffffffffffffffffb4ffffffffffff5b8e04005c8e1900ff01560505008e00000001000100001aff0273ffffffffffffffffffffffffffffff5c8e0400ff0bb8",
     );
     expect(errors).toEqual([]);
   });

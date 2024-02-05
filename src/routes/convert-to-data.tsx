@@ -49,15 +49,19 @@ const ConvertToData = (): JSX.Element => {
       teamCsvContent.length > 0 &&
       exeContent.length > 0
     ) {
-      createDataFiles(foreignCsvContent, leagueCsvContent, teamCsvContent, exeContent);
+      const errors = createDataFiles(
+        foreignCsvContent,
+        leagueCsvContent,
+        teamCsvContent,
+        exeContent,
+      );
       setForeignCsvContent("");
       setLeagueCsvContent("");
       setTeamCsvContent("");
       setExeContent("");
-      setMessage({
-        data: [UPLOAD_EDIT_PARSED],
-        variant: "success",
-      });
+
+      if (errors.length) setMessage({ data: errors, variant: "error" });
+      else setMessage({ data: [UPLOAD_EDIT_PARSED], variant: "success" });
     }
   }, [foreignCsvContent, leagueCsvContent, teamCsvContent, exeContent]);
 

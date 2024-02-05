@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { resolve } from "path";
+import { flatten } from "ramda";
 import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
@@ -45,12 +46,26 @@ export const convertToDataBlob = (
   const data = new CMExeParser({ rawData: exe });
 
   const foreign = new Foreign({ rawData: foreignData, data });
-  const team = new Team({ rawData: teamData, data });
   const league = new League({ rawData: leagueData, data });
+  const team = new Team({ rawData: teamData, data });
 
-  const { hex: foreignHex } = foreign.convertFromHumanReadable();
-  const { hex: teamHex } = team.convertFromHumanReadable();
-  const { hex: leagueHex } = league.convertFromHumanReadable();
+  const { hex: foreignHex, errors: foreignErrors } = foreign.convertFromHumanReadable();
+  const { hex: leagueHex, errors: leagueErrors } = league.convertFromHumanReadable();
+  const { hex: teamHex, errors: teamErrors } = team.convertFromHumanReadable();
+
+  const errors = [
+    { errs: foreignErrors, type: "Foreign" },
+    { errs: leagueErrors, type: "League" },
+    { errs: teamErrors, type: "Team" },
+  ].map(({ errs, type }) => errs.map((err) => `${type}: ${err}`));
+
+  const flattened = flatten(errors);
+
+  const remaining = flattened.length - ERRORS_TO_SHOW;
+  const errorsToShow =
+    flattened.length <= ERRORS_TO_SHOW
+      ? flattened
+      : [...flattened.splice(0, ERRORS_TO_SHOW), `plus ${remaining} more`];
 
   return {
     data: {
@@ -58,6 +73,7 @@ export const convertToDataBlob = (
       team: teamHex,
       league: leagueHex,
     },
+    errors: errorsToShow,
   };
 };
 
@@ -74,4 +90,7 @@ interface ConvertToData {
     league: string;
     team: string;
   };
+  errors: string[];
 }
+
+const ERRORS_TO_SHOW = 10;

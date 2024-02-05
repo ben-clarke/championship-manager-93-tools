@@ -34,5 +34,3 @@ export class DomesticPlayer extends Player {
     };
   }
 }
-
-// TODO - BC | Ordering of clubs/player when changed club

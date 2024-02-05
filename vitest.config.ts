@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     globals: true,
-    setupFiles: ["./setup-test-env.ts"],
+    setupFiles: ["./src/setup-test-env.ts"],
     include: ["**/__tests__/**/*.test.?(c|m)[jt]s?(x)"],
     coverage: {
       all: true,

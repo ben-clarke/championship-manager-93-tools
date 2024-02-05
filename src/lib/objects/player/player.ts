@@ -312,7 +312,7 @@ export abstract class Player {
         consistency,
         stamina,
         ...histories,
-        "FF",
+        "ff",
       ],
       errors,
     };

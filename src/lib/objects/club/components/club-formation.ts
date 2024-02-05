@@ -1,3 +1,4 @@
+import { HumanReadable } from "src/lib/types/validation";
 import { invertObj } from "../../../utils/conversion";
 
 export default class Formation {
@@ -11,36 +12,40 @@ export default class Formation {
     return this.value;
   }
 
-  static toHex(value: string): string {
+  static toHex(value: string): HumanReadable {
     const mapping = invertObj(MAPPING);
-
     const hex = mapping[value.toLowerCase()];
-    if (!hex) throw new Error(`Formation: could not find code for '${value}'`);
-
-    return hex;
+    return {
+      value: hex,
+      errors: !hex
+        ? [
+            `No formation found for: ${value}, valid values are ${Object.values(MAPPING).join(", ")}`,
+          ]
+        : [],
+    };
   }
 }
 
 type Form =
-  | "4-4-2"
-  | "4-2-4"
+  | "four-four-two"
+  | "four-two-four"
   | "Sweeper"
-  | "5-3-2"
-  | "4-3-3"
-  | "5-2-3"
-  | "4-5-1"
+  | "five-three-two"
+  | "four-three-three"
+  | "five-two-three"
+  | "four-five-one"
   | "anchor man"
   | "support man"
   | "random";
 
 const MAPPING: Record<string, Form> = {
-  "00": "4-4-2",
-  "01": "4-2-4",
+  "00": "four-four-two",
+  "01": "four-two-four",
   "02": "Sweeper",
-  "03": "5-3-2",
-  "04": "4-3-3",
-  "05": "5-2-3",
-  "06": "4-5-1",
+  "03": "five-three-two",
+  "04": "four-three-three",
+  "05": "five-two-three",
+  "06": "four-five-one",
   "07": "anchor man",
   "08": "support man",
   ff: "random",

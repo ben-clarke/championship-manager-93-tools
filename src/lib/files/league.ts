@@ -1,7 +1,8 @@
-import { flatten, map } from "ramda";
-import { DAT_LEAGUE } from "src/constants/files";
+import { flatten } from "ramda";
+import { DAT_LEAGUE } from "../../constants/files";
 import { DomesticPlayer } from "../objects/player";
 import Squad from "../objects/squad";
+import { HumanReadableLeague } from "../types/validation";
 import BaseDataFile, { DataFileInput } from "./base";
 
 export default class League extends BaseDataFile {
@@ -31,22 +32,53 @@ export default class League extends BaseDataFile {
     });
   }
 
-  convertFromHumanReadable(): { converted: string[][][]; hex: string } {
-    const { headings, data } = this.readHuman();
+  convertFromHumanReadable(): HumanReadableLeague {
+    const { data } = this.readHuman();
+
+    const errors: string[] = [];
 
     const initial: Record<string, string[][]> = {};
-    const squads = data.reduce((acc, d) => {
+    const squads = data.reduce((acc, d, i) => {
       const club = d[0];
-      const player = DomesticPlayer.toHex(d, headings, this.data);
+      const { values, errors: playerErrors } = DomesticPlayer.toHex(d, this.data);
+
+      const indexedErrors = playerErrors.map((e) => `Player ${i + 1}: ${e}`);
+      errors.push(...indexedErrors);
 
       if (!Object.keys(acc).includes(club)) acc[club] = [];
-      acc[club].push(player);
+      acc[club].push(values);
       return acc;
     }, initial);
 
-    const converted = map((d) => Squad.toHex(d), Object.values(squads));
+    Object.entries(squads).forEach(([club, players]) => {
+      const squadSize = players.length;
+      if (LOWER_RANGE > squadSize || squadSize > UPPER_RANGE) {
+        errors.push(
+          `Squad size must be between ${LOWER_RANGE} and ${UPPER_RANGE}, got: ${squadSize} for ${club}`,
+        );
+      }
+    });
+
+    if (errors.length > 0) return { converted: [], hex: "", errors };
+
+    const sorted = Object.keys(this.data.get("club"))
+      .sort(sortHexNumbers)
+      .reduce((acc, key) => {
+        acc.push(this.data.get("club")[key]);
+        return acc;
+      }, [] as string[]);
+
+    const converted = sorted.reduce(
+      (acc, club) => {
+        const squad = Squad.toHex(squads[club]);
+        acc.push(squad);
+        return acc;
+      },
+      [] as string[][][],
+    );
+
     const hex = converted.join(TEAM_SEPARATOR).split(",").join("") + TEAM_SEPARATOR;
-    return { converted, hex };
+    return { converted, hex, errors: [] };
   }
 
   toString(clubs: Record<string, string>): void {
@@ -68,3 +100,8 @@ export default class League extends BaseDataFile {
 }
 
 export const TEAM_SEPARATOR = "0bb8";
+
+const LOWER_RANGE = 16;
+const UPPER_RANGE = 26;
+
+const sortHexNumbers = (a: string, b: string): number => parseInt(a, 16) - parseInt(b, 16);

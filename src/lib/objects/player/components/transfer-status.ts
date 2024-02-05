@@ -1,3 +1,4 @@
+import { HumanReadable } from "src/lib/types/validation";
 import { invertObj } from "../../../utils/conversion";
 
 export default class TransferStatus {
@@ -11,13 +12,17 @@ export default class TransferStatus {
     return this.status;
   }
 
-  static toHex(value: string): string {
+  static toHex(value: string): HumanReadable {
     const mapping = invertObj(MAPPING);
-
     const hex = mapping[value.toLowerCase()];
-    if (!hex) throw new Error(`TransferStatus: could not find code for '${value}'`);
-
-    return hex;
+    return {
+      value: hex,
+      errors: !hex
+        ? [
+            `No transfer status found for: ${value}, valid values are ${Object.values(MAPPING).join(", ")}`,
+          ]
+        : [],
+    };
   }
 }
 

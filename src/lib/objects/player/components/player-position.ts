@@ -1,3 +1,6 @@
+import { any } from "ramda";
+import { HumanReadablePosition } from "../../../types/validation";
+
 export default class PlayerPosition {
   isGk: boolean;
 
@@ -46,24 +49,56 @@ export default class PlayerPosition {
     };
   }
 
-  static toHex(position: string, side: string): HexParts {
-    return {
-      gk: PlayerPosition.getHex(position, GOAL),
-      def: PlayerPosition.getHex(position, DEF),
-      mid: PlayerPosition.getHex(position, MID),
-      att: PlayerPosition.getHex(position, ATT),
+  static toHex(position: string, side: string): HumanReadablePosition {
+    const gk = PlayerPosition.getHex(position, GOAL);
+    const def = PlayerPosition.getHex(position, DEF);
+    const mid = PlayerPosition.getHex(position, MID);
+    const att = PlayerPosition.getHex(position, ATT);
+    const left = PlayerPosition.getHex(side, LEFT);
+    const right = PlayerPosition.getHex(side, RIGHT);
+    const centre = PlayerPosition.getHex(side, CENTRE);
 
-      left: PlayerPosition.getHex(side, LEFT),
-      right: PlayerPosition.getHex(side, RIGHT),
-      centre: PlayerPosition.getHex(side, CENTRE),
+    const isGk = gk === YES;
+    const isOutfield = any((v) => v === YES, [def, mid, att]);
+    // const hasSide = any((v) => v === YES, [left, right, centre]);
+
+    const errors: string[] = [];
+    // if (isGk && isOutfield) {
+    //   errors.push("A goalkeeper cannot play in any other positions");
+    // }
+
+    // if (isGk && hasSide) {
+    //   errors.push("A goalkeeper cannot have an assigned side");
+    // }
+
+    // if (isOutfield && !hasSide) {
+    //   errors.push("An outfield player must be assigned at least one side");
+    // }
+
+    if (!isGk && !isOutfield) {
+      errors.push("At least one position must be assigned. GK, D, M or A");
+    }
+
+    return {
+      gk,
+      def,
+      mid,
+      att,
+      left,
+      right,
+      centre,
+      errors,
     };
   }
 
   static getHex(value: string, required: string): string {
-    if (value.toLowerCase().includes(required.toLowerCase())) return "01";
-    return "00";
+    if (value.toLowerCase().includes(required.toLowerCase())) return YES;
+    return NO;
   }
 }
+
+const NO = "00";
+const YES = "01";
 
 const GOAL = "GK";
 const DEF = "D";
@@ -73,13 +108,3 @@ const ATT = "A";
 const LEFT = "L";
 const RIGHT = "R";
 const CENTRE = "C";
-
-interface HexParts {
-  gk: string;
-  def: string;
-  mid: string;
-  att: string;
-  left: string;
-  right: string;
-  centre: string;
-}

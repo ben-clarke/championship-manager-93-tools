@@ -1,4 +1,5 @@
 import { flatten } from "ramda";
+import { HumanReadableHistory } from "src/lib/types/validation";
 import { invertObj } from "../../../utils/conversion";
 
 export default class PlayerHistory {
@@ -42,20 +43,53 @@ export default class PlayerHistory {
     clubs: Record<string, string>,
     nonDomesticClubs: Record<string, string>,
     nationalities: Record<string, string>,
-  ): string[] {
+  ): HumanReadableHistory {
     const part = value.split(",").filter((p) => p);
-    const histories = part.map((p) => {
+    const histories = part.map((p, i) => {
       const [year, club, games, goals] = p.split(HISTORY_PART_SEPARATOR);
       const parsedClub = getClubHexadecimal(club, clubs, nonDomesticClubs, nationalities);
-      return [
-        (parseInt(year, 10) - YEAR_MODIFIER).toString(16).padStart(2, "0"),
-        parsedClub,
-        parseInt(games, 10).toString(16).padStart(2, "0"),
-        parseInt(goals, 10).toString(16).padStart(2, "0"),
-      ];
+
+      if (!year || !club || !games || !goals) {
+        return {
+          history: [],
+          errors: [`Missing a history year, club, games or goals for history number ${i + 1}`],
+        };
+      }
+
+      const decYear = parseInt(year, 10);
+      const decGames = parseInt(games, 10);
+      const decGoals = parseInt(goals, 10);
+
+      const errors = [
+        { val: decYear, lower: LOWER_YEAR_RANGE, upper: UPPER_YEAR_RANGE },
+        { val: decGames, lower: LOWER_STATS_RANGE, upper: UPPER_STATS_RANGE },
+        { val: decGoals, lower: LOWER_STATS_RANGE, upper: UPPER_STATS_RANGE },
+      ]
+        .map(({ val, lower, upper }) => {
+          if (Number.isNaN(val))
+            return `Value must be a decimal number for history number ${i + 1}`;
+          if (lower > val || val > upper) {
+            return `Value must be between ${lower} and ${upper} for history number ${i + 1}`;
+          }
+          return "";
+        })
+        .filter((a) => a);
+
+      return {
+        history: [
+          (decYear - YEAR_MODIFIER).toString(16).padStart(2, "0"),
+          parsedClub,
+          decGames.toString(16).padStart(2, "0"),
+          decGoals.toString(16).padStart(2, "0"),
+        ],
+        errors,
+      };
     });
 
-    return flatten(histories);
+    return {
+      values: flatten(histories.map((h) => h.history)),
+      errors: flatten(histories.map((h) => h.errors)),
+    };
   }
 }
 
@@ -96,3 +130,9 @@ const FOREIGN_PLAYER_CODE_MODIFIER = 140;
 const NON_LEAGUE_PLAYER_CODE_MODIFIER = 320;
 
 const HISTORY_PART_SEPARATOR = "|";
+
+const LOWER_YEAR_RANGE = 1900;
+const UPPER_YEAR_RANGE = 2100;
+
+const LOWER_STATS_RANGE = 0;
+const UPPER_STATS_RANGE = 255;

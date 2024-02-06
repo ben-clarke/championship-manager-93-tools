@@ -1,8 +1,11 @@
 export default class SequenceFound extends Error {
   start: number;
 
-  constructor(message: string, index: number) {
+  end: number;
+
+  constructor(message: string, start: number, end: number) {
     super(message);
-    this.start = index;
+    this.start = start;
+    this.end = end;
   }
 }

@@ -107,7 +107,7 @@ export default class League extends BaseDataFile {
 
 export const TEAM_SEPARATOR = "0bb8";
 
-const LOWER_RANGE = 16;
+const LOWER_RANGE = 13;
 const UPPER_RANGE = 26;
 
 const NUM_SQUADS = 80;

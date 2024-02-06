@@ -4,8 +4,6 @@ import ErrorBanner from "../error-banner";
 import SuccessBanner from "../success-banner";
 import WarningBanner from "../warning-banner";
 
-vi.mock("@remix-run/react", () => Mocks.createRemixReactMock({ path: "/" }));
-
 describe("ErrorBanner", () => {
   it("should show children", () => {
     render(<ErrorBanner info={[""]}>Children</ErrorBanner>);

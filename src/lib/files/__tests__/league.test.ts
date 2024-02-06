@@ -55,7 +55,7 @@ describe("league", () => {
     const league = new League({ rawData: unparse(leagueData), data });
     const { hex, errors } = league.convertFromHumanReadable();
     expect(hex).toEqual("");
-    expect(errors).toEqual(["Squad size must be between 16 and 26, got: 27 for Man Utd"]);
+    expect(errors).toEqual(["Squad size must be between 13 and 26, got: 27 for Man Utd"]);
   });
 
   test("squads cannot be too small", () => {
@@ -73,11 +73,14 @@ describe("league", () => {
     leagueData[7][0] = "Man City";
     leagueData[8][0] = "Tottenham";
     leagueData[9][0] = "Oxford";
+    leagueData[10][0] = "Ipswich";
+    leagueData[11][0] = "Coventry";
+    leagueData[12][0] = "Q.P.R.";
 
     const league = new League({ rawData: unparse(leagueData), data });
     const { hex, errors } = league.convertFromHumanReadable();
     expect(hex).toEqual("");
-    expect(errors).toEqual(["Squad size must be between 16 and 26, got: 15 for Aston Villa"]);
+    expect(errors).toEqual(["Squad size must be between 13 and 26, got: 12 for Aston Villa"]);
   });
 
   test("must be 80 squads", () => {
@@ -95,7 +98,7 @@ describe("league", () => {
     expect(hex).toEqual("");
     expect(errors).toEqual([
       "Invalid number of squads provided, must be 80, got: 79",
-      "Squad size must be between 16 and 26, got: 48 for Man Utd",
+      "Squad size must be between 13 and 26, got: 48 for Man Utd",
     ]);
   });
 

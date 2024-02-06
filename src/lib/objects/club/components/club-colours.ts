@@ -30,7 +30,7 @@ export default class ClubColours {
       { hex: textHex, value: text },
       { hex: backgroundHex, value: background },
     ]
-      .map(({ hex, value }) => (!hex ? `No character found for: ${value}` : ""))
+      .map(({ hex, value }) => (!hex ? `No colour found for: ${value}` : ""))
       .filter((e) => e);
 
     return {

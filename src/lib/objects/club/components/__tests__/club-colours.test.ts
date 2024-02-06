@@ -12,7 +12,7 @@ describe("club colours", () => {
   test("to hex sad", () => {
     const hex = ClubColours.toHex("magenta", "aquamarine");
     expect(hex).toEqual({
-      errors: ["No character found for: magenta", "No character found for: aquamarine"],
+      errors: ["No colour found for: magenta", "No colour found for: aquamarine"],
     });
   });
 });

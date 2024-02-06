@@ -33,7 +33,6 @@ export default class League extends BaseDataFile {
   }
 
   convertFromHumanReadable(): HumanReadableLeague {
-    // TODO - BC | Team names match
     const { data } = this.readHuman();
 
     const errors: string[] = [];
@@ -50,6 +49,12 @@ export default class League extends BaseDataFile {
       acc[club].push(values);
       return acc;
     }, initial);
+
+    if (Object.keys(squads).length !== NUM_SQUADS) {
+      errors.push(
+        `Invalid number of squads provided, must be 80, got: ${Object.keys(squads).length}`,
+      );
+    }
 
     Object.entries(squads).forEach(([club, players]) => {
       const squadSize = players.length;
@@ -104,5 +109,7 @@ export const TEAM_SEPARATOR = "0bb8";
 
 const LOWER_RANGE = 16;
 const UPPER_RANGE = 26;
+
+const NUM_SQUADS = 80;
 
 const sortHexNumbers = (a: string, b: string): number => parseInt(a, 16) - parseInt(b, 16);

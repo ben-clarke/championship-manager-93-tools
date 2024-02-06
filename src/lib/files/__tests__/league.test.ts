@@ -80,6 +80,65 @@ describe("league", () => {
     expect(errors).toEqual(["Squad size must be between 16 and 26, got: 15 for Aston Villa"]);
   });
 
+  test("must be 80 squads", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const leagueData = JSON.parse(JSON.stringify(LEAGUE_DATA));
+
+    for (let i = 1; i < 24; i += 1) {
+      leagueData[i][0] = "Man Utd";
+    }
+
+    const league = new League({ rawData: unparse(leagueData), data });
+    const { hex, errors } = league.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual([
+      "Invalid number of squads provided, must be 80, got: 79",
+      "Squad size must be between 16 and 26, got: 48 for Man Utd",
+    ]);
+  });
+
+  test("sqaud names must be known", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const leagueData = JSON.parse(JSON.stringify(LEAGUE_DATA));
+
+    for (let i = 1; i < 24; i += 1) {
+      leagueData[i][0] = "Melchester Rovers";
+    }
+
+    const league = new League({ rawData: unparse(leagueData), data });
+    const { hex, errors } = league.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual([
+      "Player 1: No player club found for: Melchester Rovers",
+      "Player 2: No player club found for: Melchester Rovers",
+      "Player 3: No player club found for: Melchester Rovers",
+      "Player 4: No player club found for: Melchester Rovers",
+      "Player 5: No player club found for: Melchester Rovers",
+      "Player 6: No player club found for: Melchester Rovers",
+      "Player 7: No player club found for: Melchester Rovers",
+      "Player 8: No player club found for: Melchester Rovers",
+      "Player 9: No player club found for: Melchester Rovers",
+      "Player 10: No player club found for: Melchester Rovers",
+      "Player 11: No player club found for: Melchester Rovers",
+      "Player 12: No player club found for: Melchester Rovers",
+      "Player 13: No player club found for: Melchester Rovers",
+      "Player 14: No player club found for: Melchester Rovers",
+      "Player 15: No player club found for: Melchester Rovers",
+      "Player 16: No player club found for: Melchester Rovers",
+      "Player 17: No player club found for: Melchester Rovers",
+      "Player 18: No player club found for: Melchester Rovers",
+      "Player 19: No player club found for: Melchester Rovers",
+      "Player 20: No player club found for: Melchester Rovers",
+      "Player 21: No player club found for: Melchester Rovers",
+      "Player 22: No player club found for: Melchester Rovers",
+      "Player 23: No player club found for: Melchester Rovers",
+    ]);
+  });
+
   test("sad", () => {
     const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
     const data = new CMExeParser({ fileDirectory: inputDirectory });

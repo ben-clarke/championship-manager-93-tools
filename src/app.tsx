@@ -25,7 +25,3 @@ function App(): JSX.Element {
 }
 
 export default App;
-
-// TODO - BC | Refresh thing and spinner and length of time now...
-
-// TODO - BC | Team is fine - league and foreign are not...

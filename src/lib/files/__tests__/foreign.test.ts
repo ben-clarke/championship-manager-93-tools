@@ -38,8 +38,6 @@ describe("foreign", () => {
   });
 });
 
-// TODO - BC | Blue 2
-
 const FOREIGN_DATA = [
   [
     "Club",

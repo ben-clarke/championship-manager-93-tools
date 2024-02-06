@@ -11,7 +11,6 @@ export const UPLOAD_EDIT_TIP_2 =
 
 export const UPLOAD_FILE_DRAG = " or drag and drop";
 
-export const UPLOAD_SUCCESS = "Successfully uploaded the data files";
 export const UPLOAD_DATA_PARSED = "Game edit CSV files have been saved to your downloads folder";
 
 export const UPLOAD_EDIT_PARSED = "Game data files have been saved to your downloads folder";

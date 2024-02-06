@@ -1,12 +1,7 @@
 import { useCallback } from "react";
 import { FileRejection } from "react-dropzone";
 import { CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM } from "src/constants/files";
-import {
-  UPLOAD_EDIT_FILE,
-  UPLOAD_EDIT_TIP,
-  UPLOAD_EDIT_TIP_2,
-  UPLOAD_SUCCESS,
-} from "src/constants/strings";
+import { UPLOAD_EDIT_FILE, UPLOAD_EDIT_TIP, UPLOAD_EDIT_TIP_2 } from "src/constants/strings";
 import { AlertVariant } from "../alert";
 import UploadFile from "../upload-file/upload-file";
 
@@ -37,8 +32,6 @@ const CsvUpload = ({ setFiles, setMessage }: DataUploadProps): JSX.Element => {
       if (file.name.toUpperCase().endsWith(".CSV")) reader.readAsText(file);
       else reader.readAsDataURL(file);
     });
-
-    setMessage([UPLOAD_SUCCESS], "success");
   }, []);
 
   return (

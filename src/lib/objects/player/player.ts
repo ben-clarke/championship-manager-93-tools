@@ -1,5 +1,6 @@
 import { splitEvery } from "ramda";
 import CMExeParser from "../../files/cm-exe-parser";
+import { HumanReadablePlayer } from "../../types/validation";
 import Character from "../components/character";
 import PersonName from "../components/person-name";
 import Age from "./components/age";
@@ -176,29 +177,50 @@ export abstract class Player {
     };
   }
 
-  static toHex(
-    player: string[],
-    headings: string[],
-    data: CMExeParser,
-    isForeign: boolean,
-  ): string[] {
-    const club = PlayerClub.toHex(player[0], data.get("club"), data.get("nationality"));
-    const { one: firstName1, two: firstName2 } = PersonName.toHex(
+  static toHex(player: string[], data: CMExeParser, isForeign: boolean): HumanReadablePlayer {
+    const { value: club, errors: clubErrors } = PlayerClub.toHex(
+      player[0],
+      data.get("club"),
+      data.get("nationality"),
+    );
+    const {
+      value1: firstName1,
+      value2: firstName2,
+      errors: firstNameErrors,
+    } = PersonName.toHex(
       player[1],
       isForeign ? data.get("first-name-foreign") : data.get("first-name"),
     );
 
-    const { one: surname1, two: surname2 } = PersonName.toHex(player[2], data.get("surname"));
-    const transferStatus = TransferStatus.toHex(player[3]);
-    const injuryStatus = InjuryStatus.toHex(player[4]);
-    const { gk, def, mid, att, right, left, centre } = PlayerPosition.toHex(player[5], player[6]);
-    const age = Age.toHex(player[7]);
+    const {
+      value1: surname1,
+      value2: surname2,
+      errors: surnameErrors,
+    } = PersonName.toHex(player[2], data.get("surname"));
+    const { value: transferStatus, errors: transferStatusErrors } = TransferStatus.toHex(player[3]);
+    const { value: injuryStatus, errors: injuryStatusErrors } = InjuryStatus.toHex(player[4]);
+    const {
+      gk,
+      def,
+      mid,
+      att,
+      right,
+      left,
+      centre,
+      errors: positionErrors,
+    } = PlayerPosition.toHex(player[5], player[6]);
+    const { value: age, errors: ageErrors } = Age.toHex(player[7]);
 
-    const character = Character.toHex(player[8]);
-    const nationality = Nationality.toHex(player[9], data.get("nationality"));
-    const currentSkill = Skill.toHex(player[10]);
-    const potentialSkill = Skill.toHex(player[11]);
-    const injuryProneness = InjuryProneness.toHex(player[12]);
+    const { value: character, errors: characterErrors } = Character.toHex(player[8]);
+    const { value: nationality, errors: nationalityErrors } = Nationality.toHex(
+      player[9],
+      data.get("nationality"),
+    );
+    const { value: currentSkill, errors: currentSkillErrors } = Skill.toHex(player[10]);
+    const { value: potentialSkill, errors: potentialSkillErrors } = Skill.toHex(player[11]);
+    const { value: injuryProneness, errors: injuryPronenessErrors } = InjuryProneness.toHex(
+      player[12],
+    );
     const {
       passing,
       tackling,
@@ -213,6 +235,7 @@ export abstract class Player {
       temperament,
       consistency,
       stamina,
+      errors: attributesErrors,
     } = PlayerAttributes.toHex(
       player[13],
       player[14],
@@ -229,49 +252,69 @@ export abstract class Player {
       player[25],
     );
 
-    const histories = PlayerHistory.toHex(
+    const { values: histories, errors: historiesErrors } = PlayerHistory.toHex(
       player[26],
       data.get("club"),
       data.get("non-domestic-club"),
       data.get("nationality"),
     );
 
-    return [
-      firstName1,
-      firstName2,
-      surname1,
-      surname2,
-      transferStatus,
-      club,
-      injuryStatus,
-      gk,
-      def,
-      mid,
-      att,
-      right,
-      left,
-      centre,
-      age,
-      character,
-      nationality,
-      currentSkill,
-      passing,
-      tackling,
-      pace,
-      heading,
-      flair,
-      creativity,
-      goalscoring,
-      injuryProneness,
-      potentialSkill,
-      agility,
-      aggression,
-      influence,
-      temperament,
-      consistency,
-      stamina,
-      ...histories,
-      `ff`,
+    const errors = [
+      ...clubErrors,
+      ...firstNameErrors,
+      ...surnameErrors,
+      ...transferStatusErrors,
+      ...injuryStatusErrors,
+      ...positionErrors,
+      ...ageErrors,
+      ...characterErrors,
+      ...nationalityErrors,
+      ...currentSkillErrors,
+      ...potentialSkillErrors,
+      ...injuryPronenessErrors,
+      ...attributesErrors,
+      ...historiesErrors,
     ];
+
+    return {
+      values: [
+        firstName1,
+        firstName2,
+        surname1,
+        surname2,
+        transferStatus,
+        club,
+        injuryStatus,
+        gk,
+        def,
+        mid,
+        att,
+        right,
+        left,
+        centre,
+        age,
+        character,
+        nationality,
+        currentSkill,
+        passing,
+        tackling,
+        pace,
+        heading,
+        flair,
+        creativity,
+        goalscoring,
+        injuryProneness,
+        potentialSkill,
+        agility,
+        aggression,
+        influence,
+        temperament,
+        consistency,
+        stamina,
+        ...histories,
+        "ff",
+      ],
+      errors,
+    };
   }
 }

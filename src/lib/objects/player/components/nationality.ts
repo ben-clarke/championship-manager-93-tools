@@ -1,3 +1,4 @@
+import { HumanReadable } from "src/lib/types/validation";
 import { invertObj } from "../../../utils/conversion";
 
 export default class Nationality {
@@ -11,12 +12,12 @@ export default class Nationality {
     return this.value;
   }
 
-  static toHex(value: string, nationalities: Record<string, string>): string {
+  static toHex(value: string, nationalities: Record<string, string>): HumanReadable {
     const mapping = invertObj(nationalities);
-
     const hex = mapping[value.toLowerCase()];
-    if (!hex) throw new Error(`Nationality: could not find code for '${value}'`);
-
-    return hex;
+    return {
+      value: hex,
+      errors: !hex ? [`No nationality found for: ${value}`] : [],
+    };
   }
 }

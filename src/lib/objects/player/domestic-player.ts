@@ -1,4 +1,5 @@
 import CMExeParser from "../../files/cm-exe-parser";
+import { HumanReadablePlayer } from "../../types/validation";
 import PlayerClub from "./components/player-club";
 import { Player } from "./player";
 
@@ -22,11 +23,14 @@ export class DomesticPlayer extends Player {
     return [firstName1, firstName2, surname1, surname2, transferStatus, club, ...rest];
   }
 
-  static toHex(player: string[], headings: string[], data: CMExeParser): string[] {
-    const hexes = super.toHex(player, headings, data, false);
+  static toHex(player: string[], data: CMExeParser): HumanReadablePlayer {
+    const { values, errors } = super.toHex(player, data, false);
 
     // Get rid of the club component
-    const [firstName1, firstName2, surname1, surname2, transferStatus, , ...rest] = hexes;
-    return [firstName1, firstName2, surname1, surname2, transferStatus, ...rest];
+    const [firstName1, firstName2, surname1, surname2, transferStatus, , ...rest] = values;
+    return {
+      values: [firstName1, firstName2, surname1, surname2, transferStatus, ...rest],
+      errors,
+    };
   }
 }

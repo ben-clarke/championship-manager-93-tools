@@ -1,4 +1,5 @@
 import { splitEvery } from "ramda";
+import { HumanReadablePersonName } from "../../types/validation";
 import { invertObj } from "../../utils/conversion";
 
 export default class PersonName {
@@ -13,19 +14,15 @@ export default class PersonName {
     return this.value;
   }
 
-  static toHex(value: string, nameMap: Record<string, string>): HexParts {
+  static toHex(value: string, nameMap: Record<string, string>): HumanReadablePersonName {
     const mapping = invertObj(nameMap);
     const hex = mapping[value.toLowerCase()];
-    if (!hex) throw new Error(`PersonName: could not find code for '${value}'`);
+
+    if (!hex) return { value1: "", value2: "", errors: [`No person name found for: ${value}`] };
 
     const [one, two] = splitEvery(2, hex);
-    return { one, two };
+    return { value1: one, value2: two, errors: [] };
   }
-}
-
-interface HexParts {
-  one: string;
-  two: string;
 }
 
 export const FOREIGN_NAME_MODIFIER = 341;

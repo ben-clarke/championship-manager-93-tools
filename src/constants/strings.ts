@@ -37,6 +37,8 @@ export const DAT_INSTRUCTIONS_DOWNLOADS =
 
 export const DAT_INSTRUCTIONS_WARN =
   "Make any changes you require, but be careful of using anything, such as names, that are not in the CMEXE.EXE as this will result in a failure when converting your CSV files back again. CMEXE.EXE editing is currently not supported";
+export const DAT_HELP =
+  "You will need to select multiple files to upload - use the Ctrl button to click on multiple files (or command button on Mac)";
 
 export const CSV_HEADER = "Convert CSV edits back into DAT files";
 
@@ -62,3 +64,5 @@ export const CSV_NOTE_1 =
   " if you already have .DAT files in your downloads folder your browser will automatically rename them to something like ";
 export const CSV_NOTE_EXAMPLE = "TEAMS (1).DAT";
 export const CSV_NOTE_2 = ", you will need to rename them after moving to your CM93 folder.";
+export const CSV_HELP =
+  "You will need to select multiple files to upload - use the Ctrl button to click on multiple files (or command button on Mac). It may be easier to copy and CMEXE.EXE file into the same directory as your CSV files first.";

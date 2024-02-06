@@ -1,3 +1,5 @@
+import { HumanReadableAttributes } from "src/lib/types/validation";
+
 export default class PlayerAttributes {
   passing: number;
 
@@ -92,50 +94,78 @@ export default class PlayerAttributes {
   }
 
   static toHex(
-    passing: string,
-    tackling: string,
-    pace: string,
-    heading: string,
-    flair: string,
-    creativity: string,
-    goalscoring: string,
-    agility: string,
-    aggression: string,
-    influence: string,
-    temperament: string,
-    consistency: string,
-    stamina: string,
-  ): HexParts {
+    pass: string,
+    tack: string,
+    pc: string,
+    head: string,
+    fla: string,
+    create: string,
+    goals: string,
+    ag: string,
+    agg: string,
+    inf: string,
+    temp: string,
+    consist: string,
+    stam: string,
+  ): HumanReadableAttributes {
+    const passing = parseInt(pass, 10);
+    const tackling = parseInt(tack, 10);
+    const pace = parseInt(pc, 10);
+    const heading = parseInt(head, 10);
+    const flair = parseInt(fla, 10);
+    const creativity = parseInt(create, 10);
+    const goalscoring = parseInt(goals, 10);
+    const agility = parseInt(ag, 10);
+    const aggression = parseInt(agg, 10);
+    const influence = parseInt(inf, 10);
+    const temperament = parseInt(temp, 10);
+    const consistency = parseInt(consist, 10);
+    const stamina = parseInt(stam, 10);
+
+    const errors = [
+      passing,
+      tackling,
+      pace,
+      heading,
+      flair,
+      creativity,
+      goalscoring,
+      agility,
+      aggression,
+      influence,
+      temperament,
+      consistency,
+      stamina,
+    ]
+      .map((a) => {
+        if (Number.isNaN(a)) return "Attribute must be a decimal number";
+        if (a !== RANDOM && (LOWER_RANGE > a || a > UPPER_RANGE)) {
+          return `Attribute must be between ${LOWER_RANGE} and ${UPPER_RANGE}, got: ${a}`;
+        }
+        return "";
+      })
+      .filter((a) => a);
+
     return {
-      passing: parseInt(passing, 10).toString(16).padStart(2, "0"),
-      tackling: parseInt(tackling, 10).toString(16).padStart(2, "0"),
-      pace: parseInt(pace, 10).toString(16).padStart(2, "0"),
-      heading: parseInt(heading, 10).toString(16).padStart(2, "0"),
-      flair: parseInt(flair, 10).toString(16).padStart(2, "0"),
-      creativity: parseInt(creativity, 10).toString(16).padStart(2, "0"),
-      goalscoring: parseInt(goalscoring, 10).toString(16).padStart(2, "0"),
-      agility: parseInt(agility, 10).toString(16).padStart(2, "0"),
-      aggression: parseInt(aggression, 10).toString(16).padStart(2, "0"),
-      influence: parseInt(influence, 10).toString(16).padStart(2, "0"),
-      temperament: parseInt(temperament, 10).toString(16).padStart(2, "0"),
-      consistency: parseInt(consistency, 10).toString(16).padStart(2, "0"),
-      stamina: parseInt(stamina, 10).toString(16).padStart(2, "0"),
+      passing: passing.toString(16).padStart(2, "0"),
+      tackling: tackling.toString(16).padStart(2, "0"),
+      pace: pace.toString(16).padStart(2, "0"),
+      heading: heading.toString(16).padStart(2, "0"),
+      flair: flair.toString(16).padStart(2, "0"),
+      creativity: creativity.toString(16).padStart(2, "0"),
+      goalscoring: goalscoring.toString(16).padStart(2, "0"),
+      agility: agility.toString(16).padStart(2, "0"),
+      aggression: aggression.toString(16).padStart(2, "0"),
+      influence: influence.toString(16).padStart(2, "0"),
+      temperament: temperament.toString(16).padStart(2, "0"),
+      consistency: consistency.toString(16).padStart(2, "0"),
+      stamina: stamina.toString(16).padStart(2, "0"),
+      errors: errors.filter((x, i) => i === errors.indexOf(x)),
     };
   }
 }
 
-interface HexParts {
-  passing: string;
-  tackling: string;
-  pace: string;
-  heading: string;
-  flair: string;
-  creativity: string;
-  goalscoring: string;
-  agility: string;
-  aggression: string;
-  influence: string;
-  temperament: string;
-  consistency: string;
-  stamina: string;
-}
+const LOWER_RANGE = 0;
+const UPPER_RANGE = 20;
+
+const RANDOM = 255;

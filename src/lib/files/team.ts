@@ -2,6 +2,7 @@ import { map, splitEvery } from "ramda";
 import { DAT_TEAM } from "src/constants/files";
 import { getGameVersion } from "../constants/file";
 import Club, { Club93, Club94 } from "../objects/club";
+import { HumanReadableTeam } from "../types/validation";
 import { Version } from "../types/version";
 import BaseDataFile, { DataFileInput } from "./base";
 
@@ -39,13 +40,28 @@ export default class Team extends BaseDataFile {
     this.teams = this.parsed.map((t) => new ClubClass(t, firstNames, surnames));
   }
 
-  convertFromHumanReadable(): { converted: string[][]; hex: string } {
+  convertFromHumanReadable(): HumanReadableTeam {
     const ClubClass = getGameVersion(this.data.get("version")) === "93" ? Club93 : Club94;
 
-    const { headings, data } = this.readHuman();
-    const converted = map((d) => ClubClass.toHex(d, headings, this.data), data);
+    const { data } = this.readHuman();
+
+    const hexed = map((d) => {
+      const { values, errors } = ClubClass.toHex(d, this.data);
+      return { converted: values, errors };
+    }, data);
+
+    const converted = map((h) => h.converted, hexed);
+
+    const errors = hexed.reduce((acc, h, i) => {
+      const indexedErrors = h.errors.map((e) => `Player ${i + 1}: ${e}`);
+      acc.push(...indexedErrors);
+      return acc;
+    }, [] as string[]);
+
+    if (errors.length > 0) return { converted: [], hex: "", errors };
+
     const hex = converted.join("").split(",").join("");
-    return { converted, hex };
+    return { converted, hex, errors };
   }
 
   toHumanReadable(): Record<string, string>[] {

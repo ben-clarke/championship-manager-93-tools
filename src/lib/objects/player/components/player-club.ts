@@ -1,3 +1,4 @@
+import { HumanReadable } from "../../../types/validation";
 import { invertObj } from "../../../utils/conversion";
 
 export default class PlayerClub {
@@ -18,11 +19,15 @@ export default class PlayerClub {
     club: string,
     clubs: Record<string, string>,
     nationalities: Record<string, string>,
-  ): string {
-    return (
+  ): HumanReadable {
+    const hex =
       invertObj(clubs)[club.toLowerCase()] ||
-      textToHexConversion(nationalities, club, FOREIGN_PLAYER_CODE_MODIFIER)
-    );
+      textToHexConversion(nationalities, club, FOREIGN_PLAYER_CODE_MODIFIER);
+
+    return {
+      value: hex,
+      errors: !hex ? [`No player club found for: ${club}`] : [],
+    };
   }
 }
 

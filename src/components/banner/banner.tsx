@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { propOr, uniq } from "ramda";
+import { uniq } from "ramda";
 import { Alert } from "../alert";
 import type { ParentBannerProps } from "./types";
 
@@ -8,17 +8,13 @@ export const Banner = ({
   className,
   testid,
   variant,
-  icon,
   children,
 }: ParentBannerProps): JSX.Element | null => {
   if (info.length === 0 && !children) return null;
   return (
-    <div
-      className={clsx(className, !(className || "").includes("mb-") && "mb-6")}
-      data-testid={testid}
-    >
-      <Alert variant={variant} icon={icon || propOr("", variant, variantToIcon)}>
-        <div className="relative">
+    <div className={clsx(className)} data-testid={testid}>
+      <Alert variant={variant}>
+        <div className="text-center items-center justify-center">
           {uniq(info).map((message, i) => (
             <p data-testid={`${testid}-${i}`} key={message}>
               {message}

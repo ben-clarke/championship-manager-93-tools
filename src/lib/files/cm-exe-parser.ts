@@ -18,6 +18,8 @@ export default class CMExeParser {
 
     this.data = splitEvery(2, raw);
 
+    // fs.writeFileSync("/tmp/cm", this.data.map((d) => hexToUtf8(d)).join(""));
+
     this.retrieved = {
       nationality: {},
       character: {},

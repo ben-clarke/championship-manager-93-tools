@@ -11,7 +11,7 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "module": "esnext",
-    "types": ["vitest/globals", "cypress-axe"],
+    "types": ["vitest/globals"],
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "target": "es2021",

@@ -1,6 +1,5 @@
-import SequenceFound from "../../domain/found-error";
 import { DataType } from "../../types/executable";
-import { hexToUtf8 } from "../../utils/conversion";
+import { hexToUtf8, utf8ToHex } from "../../utils/conversion";
 
 export const printExecutableCodes = (parsed: string[], requiredDataType: DataType): void => {
   const matches = buildData(parsed, requiredDataType);
@@ -68,35 +67,57 @@ export const buildData = (
   return matches;
 };
 
-const findStartIndex = (parsed: string[], requiredDataType: DataType): number | null => {
+export const replaceData = (parsed: string[], required: string, replacement: string): string[] => {
+  const data = [...parsed];
+
+  let newReplacement = "";
+  if (replacement.length === required.length) newReplacement = replacement;
+  if (replacement.length > required.length) {
+    newReplacement = replacement.split("").splice(0, required.length).join("");
+  }
+  if (replacement.length < required.length) {
+    newReplacement = replacement.padEnd(required.length, " ");
+  }
+
+  const indexes = findIndexes(parsed, required);
+  (indexes || []).forEach(({ start, end }) => {
+    const shift = end - start + 1;
+    data.splice(start, shift, ...newReplacement.split("").map((r) => utf8ToHex(r)));
+  });
+
+  return data;
+};
+
+export const findIndexes = (parsed: string[], required: string): FoundIndex[] | null => {
+  const found: FoundIndex[] = [];
+
   let sequence: string[] = [];
 
+  parsed.forEach((hex, index) => {
+    const requiredIndex = sequence.length;
+
+    const char = hexToUtf8(hex);
+    if (char === required[requiredIndex]) sequence.push(char);
+    else if (char === required[0]) sequence = [char];
+    else sequence = [];
+
+    if (sequence.join("") === required) {
+      const start = index - required.length + 1;
+      const end = index;
+      found.push({ start, end });
+      sequence = [];
+    }
+  });
+  return found;
+};
+
+export const findStartIndex = (parsed: string[], requiredDataType: DataType): number | null => {
   const { required, occurrence = 1 } = DATA_FIRST_INDEX[requiredDataType];
 
-  // There are some instance in the binary where the required string we are looking for it referenced
-  // multiple times. If that is the case we can keep going until we hit the occurrence we are
-  // interested in.
-  let foundCount = 0;
+  const indexes = findIndexes(parsed, required);
+  if (!indexes || indexes.length === 0) return null;
 
-  try {
-    parsed.forEach((hex, index) => {
-      const requiredIndex = sequence.length;
-
-      const char = hexToUtf8(hex);
-      if (char === required[requiredIndex]) sequence.push(char);
-      else if (char === required[0]) sequence = [char];
-      else sequence = [];
-
-      if (sequence.join("") === required) {
-        foundCount += 1;
-        if (foundCount === occurrence)
-          throw new SequenceFound("found", index - required.length + 1);
-      }
-    });
-    return null;
-  } catch (e) {
-    return (e as SequenceFound).start;
-  }
+  return indexes[occurrence - 1].start;
 };
 
 const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
@@ -125,6 +146,11 @@ interface DataTypeData {
 export interface MatchedData {
   code: string;
   value: string;
+}
+
+export interface FoundIndex {
+  start: number;
+  end: number;
 }
 
 const LIST_SEPARATOR = "00";

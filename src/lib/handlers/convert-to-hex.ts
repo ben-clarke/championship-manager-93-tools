@@ -77,6 +77,23 @@ export const convertToDataBlob = (
   };
 };
 
+export const convertToExeBlob = (exe: string, exeCsv: string): ConvertToExe => {
+  const data = new CMExeParser({ rawData: exe, rawCsv: exeCsv });
+
+  const { hex, errors } = data.convertFromHumanReadable();
+
+  const remaining = errors.length - ERRORS_TO_SHOW;
+  const errorsToShow =
+    errors.length <= ERRORS_TO_SHOW
+      ? errors
+      : [...errors.splice(0, ERRORS_TO_SHOW), `plus ${remaining} more`];
+
+  return {
+    data: hex,
+    errors: errorsToShow,
+  };
+};
+
 const createHexDataFile = (directory: string, filename: string, data: string): void => {
   const filepath = resolve(directory, filename);
   if (fs.existsSync(filepath)) createBackups(directory, filepath, filename);
@@ -90,6 +107,11 @@ interface ConvertToData {
     league: string;
     team: string;
   };
+  errors: string[];
+}
+
+interface ConvertToExe {
+  data: string;
   errors: string[];
 }
 

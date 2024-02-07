@@ -67,11 +67,12 @@ export const buildData = (
   return matches;
 };
 
-export const replaceData = (parsed: string[], required: string, replacement: string): string[] => {
-  const data = [...parsed];
+export const replaceData = (data: string[], required: string, replacement: string): string[] => {
+  if (required === replacement) return data;
 
-  let newReplacement = "";
-  if (replacement.length === required.length) newReplacement = replacement;
+  // TODO - BC | Only replace exact matches
+
+  let newReplacement = replacement;
   if (replacement.length > required.length) {
     newReplacement = replacement.split("").splice(0, required.length).join("");
   }
@@ -79,7 +80,7 @@ export const replaceData = (parsed: string[], required: string, replacement: str
     newReplacement = replacement.padEnd(required.length, " ");
   }
 
-  const indexes = findIndexes(parsed, required);
+  const indexes = findIndexes(data, required);
   (indexes || []).forEach(({ start, end }) => {
     const shift = end - start + 1;
     data.splice(start, shift, ...newReplacement.split("").map((r) => utf8ToHex(r)));

@@ -1,6 +1,6 @@
 import { saveAs } from "file-saver";
 import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
-import { convertToDataBlob } from "src/lib/handlers/convert-to-hex";
+import { convertToDataBlob, convertToExeBlob } from "src/lib/handlers/convert-to-hex";
 import { convertToHumanReadableBlob } from "src/lib/handlers/convert-to-human-readable";
 
 export const createHumanReadableFiles = (
@@ -10,13 +10,14 @@ export const createHumanReadableFiles = (
   exe: string,
 ): void => {
   const {
-    data: { foreign: foreignCsv, league: leagueCsv, team: teamCsv },
+    data: { foreign: foreignCsv, league: leagueCsv, team: teamCsv, exe: exeCsv },
   } = convertToHumanReadableBlob(foreign, league, team, exe);
 
   const items = [
     { filename: "FOREIGN.DAT.csv", data: foreignCsv },
     { filename: "LEAGUE.DAT.csv", data: leagueCsv },
     { filename: "TEAM.DAT.csv", data: teamCsv },
+    { filename: "CMEXE.EXE.csv", data: exeCsv },
   ];
 
   items.forEach(({ filename, data }) => {
@@ -48,6 +49,14 @@ export const createDataFiles = (
     convertAndStoreData(filename, data);
   });
 
+  return [];
+};
+
+export const createExeFile = (exe: string, exeCsv: string): string[] => {
+  const { data, errors } = convertToExeBlob(exe, exeCsv);
+  if (errors.length > 0) return errors;
+
+  convertAndStoreData("CMEXE.EXE.NEW", data);
   return [];
 };
 

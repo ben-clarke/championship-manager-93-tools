@@ -75,17 +75,17 @@ In CM94 the colours have are a 2 digit hexadecimal, like most data.
 | 2           | 02           | Red         |
 | 3           | 03           | Green       |
 | 4           | 04           | Blue        |
-| 5           | 05           | Blue 2 (pale yellow??)      |
+| 5           | 05           | Bright blue |
 | 6           | 06           | Yellow      |
 | 7           | 07           | Pink        |
-| 8           | 08           | Grey        |
+| 8           | 08           | Light grey  |
 | 9           | 09           | Orange      |
-| a           | 0a           | Dark Blue   |
+| a           | 0a           | Dark blue   |
 | b           | 0b           | Purple      |
-| c           | 0c           | Light Blue  |
+| c           | 0c           | Light blue  |
 | d           | 0d           | Turquoise   |
-| e           | 0e           | Pale grey   |
-| f           | 0f           | Light Green |
+| e           | 0e           | Grey        |
+| f           | 0f           | Dark green  |
 
 ## Attractiveness
 

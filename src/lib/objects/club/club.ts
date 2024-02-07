@@ -1,3 +1,4 @@
+import { getGameVersion } from "../../constants/file";
 import CMExeParser from "../../files/cm-exe-parser";
 import { HumanReadableClub } from "../../types/validation";
 import Character from "../components/character";
@@ -205,14 +206,15 @@ export abstract class Club {
       ...assistantSurnameError,
     ];
 
+    const homeColours = Club.hexColour(homeText, homeBackground, data.get("version"));
+    const awayColours = Club.hexColour(awayText, awayBackground, data.get("version"));
+
     return {
       values: [
         capacity,
         seated,
-        homeText,
-        homeBackground,
-        awayText,
-        awayBackground,
+        ...homeColours,
+        ...awayColours,
         status,
         unknown8,
         money,
@@ -233,5 +235,11 @@ export abstract class Club {
       ],
       errors,
     };
+  }
+
+  static hexColour(text: string, background: string, versions: Record<string, string>): string[] {
+    const version = getGameVersion(versions);
+    if (version === "93") return [`${text[1]}${background[1]}`];
+    return [text, background];
   }
 }

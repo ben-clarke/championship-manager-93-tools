@@ -82,3 +82,9 @@ export interface HumanReadableTeam {
   hex: string;
   errors: string[];
 }
+
+export interface HumanReadableExe {
+  converted: string[];
+  hex: string;
+  errors: string[];
+}

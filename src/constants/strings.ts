@@ -14,6 +14,7 @@ export const UPLOAD_FILE_DRAG = " or drag and drop";
 export const UPLOAD_DATA_PARSED = "Game edit CSV files have been saved to your downloads folder";
 
 export const UPLOAD_EDIT_PARSED = "Game data files have been saved to your downloads folder";
+export const UPLOAD_EDIT_EXE_PARSED = "Game EXE file has been saved to your downloads folder";
 
 export const NAV_HEADING = "Championship Manager '93 editing";
 export const NAV_CSV = "Create CSV";

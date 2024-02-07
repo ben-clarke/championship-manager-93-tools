@@ -4,6 +4,7 @@ import { DomesticPlayer } from "../objects/player";
 import Squad from "../objects/squad";
 import { HumanReadableLeague } from "../types/validation";
 import BaseDataFile, { DataFileInput } from "./base";
+import { getSortedList } from "./utils/sorted";
 
 export default class League extends BaseDataFile {
   HISTORY_FIRST_INDEX = 33; // Change for foreign
@@ -67,13 +68,7 @@ export default class League extends BaseDataFile {
 
     if (errors.length > 0) return { converted: [], hex: "", errors };
 
-    const sorted = Object.keys(this.data.get("club"))
-      .sort(sortHexNumbers)
-      .reduce((acc, key) => {
-        acc.push(this.data.get("club")[key]);
-        return acc;
-      }, [] as string[]);
-
+    const sorted = getSortedList(this.data.get("club"));
     const converted = sorted.reduce(
       (acc, club) => {
         const squad = Squad.toHex(squads[club]);
@@ -111,5 +106,3 @@ const LOWER_RANGE = 13;
 const UPPER_RANGE = 26;
 
 const NUM_SQUADS = 80;
-
-const sortHexNumbers = (a: string, b: string): number => parseInt(a, 16) - parseInt(b, 16);

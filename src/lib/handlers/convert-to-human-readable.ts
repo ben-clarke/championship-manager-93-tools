@@ -34,6 +34,7 @@ export const convertToHumanReadableBlob = (
 
   return {
     data: {
+      exe: unparse(data.toHumanReadable()),
       foreign: unparse(foreign.toHumanReadable()),
       team: unparse(team.toHumanReadable()),
       league: unparse(league.toHumanReadable()),
@@ -55,6 +56,7 @@ export const createHumanReadableFile = (
 
 interface ConvertToHumanReadable {
   data: {
+    exe: string;
     foreign: string;
     league: string;
     team: string;

@@ -26,8 +26,9 @@ export const DAT_INSTRUCTIONS_INTRO =
   "Upload your data files here. They will then be converted into a human readable spread sheet.";
 
 export const DAT_SPREADSHEET_1 = "This will generate ";
-export const DAT_SPREADSHEET_2 = "three";
-export const DAT_SPREADSHEET_3 = " CSV spreadsheet files corresponding to the uploaded .DAT files.";
+export const DAT_SPREADSHEET_2 = "four";
+export const DAT_SPREADSHEET_3 =
+  " CSV spreadsheet files, three corresponding to the uploaded .DAT files and the final one detailing the available clubs, grounds, nationalities and names. This one cannot currently be re-uploaded.";
 
 export const DAT_INSTRUCTIONS_PROGRAMS =
   "You can then use any standard spreadsheet program such as Excel, Numbers, OpenOffice Calc or even a simple text editor, however be aware that some of the programs will attempt to convert the CSV into a format they prefer - so don't allow that option.";

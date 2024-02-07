@@ -16,7 +16,7 @@ describe("cm exe parser", () => {
     expect(data).toEqual(DATA);
   });
 
-  test.only("from human readable", () => {
+  test("from human readable", () => {
     const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
 
     const newData = [...DATA];

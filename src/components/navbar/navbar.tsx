@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { NAV_CSV, NAV_DAT, NAV_HEADING } from "src/constants/strings";
+import { GitHub } from "../icons";
 
 const NavBar = (): JSX.Element => (
   <nav className="bg-dark-gray text-white border-gray-300 border-b-2">
-    <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
       <div className="flex items-center space-x-3 rtl:space-x-reverse">
         <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
           {NAV_HEADING}
@@ -49,6 +50,19 @@ const NavBar = (): JSX.Element => (
               className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0 "
             >
               {NAV_DAT}
+            </a>
+          </li>
+          <li>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+            <a
+              href="https://github.com/ben-clarke/championship-manager-93-tools"
+              className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0 "
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="w-6 h-6">
+                <GitHub />
+              </div>
             </a>
           </li>
         </ul>

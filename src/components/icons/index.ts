@@ -23,6 +23,7 @@ export { default as Download } from "./download";
 export { default as Edit } from "./edit";
 export { default as Error } from "./error";
 export { default as Filter } from "./filter";
+export { default as GitHub } from "./github";
 export { default as Info } from "./info";
 export { default as Lock } from "./lock";
 export { default as LockOpen } from "./lock-open";

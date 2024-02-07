@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { resolve } from "path";
-import { hexToUtf8 } from "src/lib/utils/conversion";
+import { hexToUtf8 } from "../../../utils/conversion";
 import CMExeParser from "../../cm-exe-parser";
 import { FoundIndex, findIndexes, findStartIndex, replaceData } from "../cm-exe-builder";
 

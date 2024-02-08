@@ -37,6 +37,39 @@ export const convertToHex = (
   };
 };
 
+const getClass = (
+  fileType: FileType,
+  data: CMExeParser,
+  rawData: string,
+): Foreign | Team | League => {
+  if (fileType === "FOREIGN.DAT") return new Foreign({ rawData, data });
+  if (fileType === "LEAGUE.DAT") return new League({ rawData, data });
+  return new Team({ rawData, data });
+};
+
+export const convertToSingleDataBlob = (
+  content: string,
+  fileType: FileType,
+  exe: string,
+): ConvertToSingleData => {
+  const data = new CMExeParser({ rawData: exe });
+
+  const item = getClass(fileType, data, content);
+
+  const { hex, errors } = item.convertFromHumanReadable();
+
+  const remaining = errors.length - ERRORS_TO_SHOW;
+  const errorsToShow =
+    errors.length <= ERRORS_TO_SHOW
+      ? errors
+      : [...errors.splice(0, ERRORS_TO_SHOW), `plus ${remaining} more`];
+
+  return {
+    hex,
+    errors: errorsToShow,
+  };
+};
+
 export const convertToDataBlob = (
   foreignData: string,
   leagueData: string,
@@ -110,9 +143,16 @@ interface ConvertToData {
   errors: string[];
 }
 
+interface ConvertToSingleData {
+  hex: string;
+  errors: string[];
+}
+
 interface ConvertToExe {
   data: string;
   errors: string[];
 }
+
+export type FileType = "FOREIGN.DAT" | "LEAGUE.DAT" | "TEAM.DAT";
 
 const ERRORS_TO_SHOW = 10;

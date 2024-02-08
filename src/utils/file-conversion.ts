@@ -1,6 +1,11 @@
 import { saveAs } from "file-saver";
 import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
-import { convertToDataBlob, convertToExeBlob } from "src/lib/handlers/convert-to-hex";
+import {
+  FileType,
+  convertToDataBlob,
+  convertToExeBlob,
+  convertToSingleDataBlob,
+} from "src/lib/handlers/convert-to-hex";
 import { convertToHumanReadableBlob } from "src/lib/handlers/convert-to-human-readable";
 
 export const createHumanReadableFiles = (
@@ -48,6 +53,16 @@ export const createDataFiles = (
   items.forEach(({ filename, data }) => {
     convertAndStoreData(filename, data);
   });
+
+  return [];
+};
+
+export const createDataTypeFiles = (content: string, fileType: FileType, exe: string): string[] => {
+  const { hex, errors } = convertToSingleDataBlob(content, fileType, exe);
+
+  if (errors.length > 0) return errors;
+
+  convertAndStoreData(fileType, hex);
 
   return [];
 };

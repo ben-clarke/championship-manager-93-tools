@@ -1,14 +1,21 @@
 import { useCallback } from "react";
 import { FileRejection } from "react-dropzone";
-import { CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM } from "src/constants/files";
-import { UPLOAD_EDIT_FILE, UPLOAD_EDIT_TIP, UPLOAD_EDIT_TIP_2 } from "src/constants/strings";
 import { AlertVariant } from "../alert";
 import UploadFile from "../upload-file/upload-file";
 
-const CsvUpload = ({ setFiles, setMessage }: DataUploadProps): JSX.Element => {
+const CsvUpload = ({
+  setFiles,
+  setMessage,
+  requiredFiles,
+  id,
+  value,
+  tip,
+  tip2,
+  height,
+}: DataUploadProps): JSX.Element => {
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     const acceptedFileItems = acceptedFiles.map(({ name }) => name.toUpperCase());
-    const missingFiles = REQUIRED_FILES.filter(
+    const missingFiles = requiredFiles.filter(
       (filename) => !acceptedFileItems.includes(filename.toUpperCase()),
     );
 
@@ -34,18 +41,30 @@ const CsvUpload = ({ setFiles, setMessage }: DataUploadProps): JSX.Element => {
     });
   }, []);
 
+  const fileValidator = (file: File): { code: string; message: string } | null => {
+    if (!requiredFiles.includes(file.name.toUpperCase())) {
+      return {
+        code: "invalid-file-name",
+        message: `Invalid file uploaded: ${file.name}`,
+      };
+    }
+
+    return null;
+  };
+
   return (
     <UploadFile
-      value={UPLOAD_EDIT_FILE}
-      tip={UPLOAD_EDIT_TIP}
-      tip2={UPLOAD_EDIT_TIP_2}
+      value={value}
+      tip={tip}
+      tip2={tip2}
       // value={fileName}
       onDrop={onDrop}
       validator={fileValidator}
-      id="csv-upload"
+      id={id}
       accept="*"
       multiple
       name="csv-file"
+      height={height}
     />
   );
 };
@@ -53,6 +72,12 @@ const CsvUpload = ({ setFiles, setMessage }: DataUploadProps): JSX.Element => {
 export interface DataUploadProps {
   setFiles: (fileName: string, fileContent: string, fileType: string) => void;
   setMessage: (data: string[], variant: AlertVariant) => void;
+  requiredFiles: string[];
+  id: string;
+  value: string;
+  tip: string;
+  tip2?: string;
+  height?: string;
 }
 
 const getData = (file: File, result: string): string => {
@@ -61,19 +86,6 @@ const getData = (file: File, result: string): string => {
   const [, data] = (result as string).split(",");
   return data;
 };
-
-const fileValidator = (file: File): { code: string; message: string } | null => {
-  if (!REQUIRED_FILES.includes(file.name.toUpperCase())) {
-    return {
-      code: "invalid-file-name",
-      message: `Invalid file uploaded: ${file.name}`,
-    };
-  }
-
-  return null;
-};
-
-const REQUIRED_FILES = [CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM];
 
 const getMissingErrorMessage = (missingFiles: string[]): string =>
   `You have not uploaded the required files: ${missingFiles.join(", ")}`;

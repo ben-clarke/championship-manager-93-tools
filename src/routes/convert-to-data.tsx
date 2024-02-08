@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ConvertToDataType from "src/components/convert-to-datatype";
 import CsvExeUpload from "src/components/uploaders/csv-exe-upload";
 import CsvInstructions from "src/components/uploaders/csv/csv-instructions";
 import { AlertVariant } from "../components/alert";
@@ -6,7 +7,19 @@ import SubmittingOverlay from "../components/submitting-overlay";
 import CsvUpload from "../components/uploaders/csv-upload";
 import UploadComplete from "../components/uploaders/upload-complete";
 import { CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM } from "../constants/files";
-import { UPLOAD_EDIT_EXE_PARSED, UPLOAD_EDIT_PARSED } from "../constants/strings";
+import {
+  UPLOAD_EDIT_EXE_PARSED,
+  UPLOAD_EDIT_FILE,
+  UPLOAD_EDIT_FILE_FOREIGN,
+  UPLOAD_EDIT_FILE_LEAGUE,
+  UPLOAD_EDIT_FILE_TEAM,
+  UPLOAD_EDIT_PARSED,
+  UPLOAD_EDIT_TIP,
+  UPLOAD_EDIT_TIP_2,
+  UPLOAD_EDIT_TIP_FOREIGN,
+  UPLOAD_EDIT_TIP_LEAGUE,
+  UPLOAD_EDIT_TIP_TEAM,
+} from "../constants/strings";
 import { Message } from "../types/web";
 import { createDataFiles, createExeFile } from "../utils/file-conversion";
 
@@ -88,10 +101,48 @@ const ConvertToData = (): JSX.Element => {
           <div className="w-1/2 mt-8 px-8">
             <div className="mb-4">
               {message && message.data.length === 0 ? (
-                <CsvUpload setFiles={setFileValues} setMessage={setCsvAlertMessage} />
+                <CsvUpload
+                  setFiles={setFileValues}
+                  setMessage={setCsvAlertMessage}
+                  requiredFiles={REQUIRED_FILES}
+                  id="csv-upload"
+                  value={UPLOAD_EDIT_FILE}
+                  tip={UPLOAD_EDIT_TIP}
+                  tip2={UPLOAD_EDIT_TIP_2}
+                />
               ) : (
                 <UploadComplete message={message} />
               )}
+            </div>
+            <div className="border-2 border-gray-300 border-dashed rounded-lg b-wh">
+              <p className="my-2">Upload single files</p>
+              <div className="mb-4">
+                <ConvertToDataType
+                  requiredFileType="FOREIGN.DAT"
+                  requiredFiles={[CSV_FOREIGN, EXE_CM]}
+                  id="csv-upload-foreign"
+                  value={UPLOAD_EDIT_FILE_FOREIGN}
+                  tip={UPLOAD_EDIT_TIP_FOREIGN}
+                />
+              </div>
+              <div className="mb-4">
+                <ConvertToDataType
+                  requiredFileType="LEAGUE.DAT"
+                  requiredFiles={[CSV_LEAGUE, EXE_CM]}
+                  id="csv-upload-league"
+                  value={UPLOAD_EDIT_FILE_LEAGUE}
+                  tip={UPLOAD_EDIT_TIP_LEAGUE}
+                />
+              </div>
+              <div className="mb-4">
+                <ConvertToDataType
+                  requiredFileType="TEAM.DAT"
+                  requiredFiles={[CSV_TEAM, EXE_CM]}
+                  id="csv-upload-team"
+                  value={UPLOAD_EDIT_FILE_TEAM}
+                  tip={UPLOAD_EDIT_TIP_TEAM}
+                />
+              </div>
             </div>
             {toggle && (
               <div>
@@ -111,5 +162,7 @@ const ConvertToData = (): JSX.Element => {
     </>
   );
 };
+
+const REQUIRED_FILES = [CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM];
 
 export default ConvertToData;

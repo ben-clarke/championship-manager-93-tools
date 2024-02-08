@@ -9,6 +9,13 @@ export const UPLOAD_EDIT_TIP =
 export const UPLOAD_EDIT_TIP_2 =
   "This will convert your edited files back into binary files to be used in the game.";
 
+export const UPLOAD_EDIT_FILE_FOREIGN = "Create your FOREIGN.DAT file";
+export const UPLOAD_EDIT_FILE_LEAGUE = "Create your LEAGUE.DAT file";
+export const UPLOAD_EDIT_FILE_TEAM = "Create your TEAM.DAT file";
+export const UPLOAD_EDIT_TIP_FOREIGN = "You must select CMEXE.EXE and FOREIGN.DAT.csv files.";
+export const UPLOAD_EDIT_TIP_LEAGUE = "You must select CMEXE.EXE and LEAGUE.DAT.csv files.";
+export const UPLOAD_EDIT_TIP_TEAM = "You must select CMEXE.EXE and TEAM.DAT.csv files.";
+
 export const UPLOAD_FILE_DRAG = " or drag and drop";
 
 export const UPLOAD_DATA_PARSED = "Game edit CSV files have been saved to your downloads folder";
@@ -49,9 +56,10 @@ export const CSV_INSTRUCTIONS_1 =
 export const CSV_INSTRUCTIONS_DISCLAIMER =
   "It is strongly recommended you make a backup of the .DAT files you are replacing, just in case the worst happens and you hit an obscure bug in the conversion tools.";
 
-export const CSV_INSTRUCTIONS_WARN_1 = "You must upload ";
+export const CSV_INSTRUCTIONS_WARN_1 = "You can upload ";
 export const CSV_INSTRUCTIONS_WARN_2 = "ALL the files";
-export const CSV_INSTRUCTIONS_WARN_3 = " irregardless of whether you made any changes to it.";
+export const CSV_INSTRUCTIONS_WARN_3 =
+  " or you can just select the CMEXE.EXE file and a single CSV file, this may be necessary if uploading all the files timeouts.";
 
 export const CSV_INSTRUCTIONS_GENERATE_1 = "This will generate ";
 export const CSV_INSTRUCTIONS_GENERATE_2 = "three";

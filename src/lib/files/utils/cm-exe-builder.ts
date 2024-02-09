@@ -1,7 +1,7 @@
 import { DataType } from "../../types/executable";
 import { hexToUtf8, utf8ToHex } from "../../utils/conversion";
 
-let CONVERTED: string[] | null = null;
+let CONVERTED: string[] = [];
 
 export const printExecutableCodes = (parsed: string[], requiredDataType: DataType): void => {
   const matches = buildData(parsed, requiredDataType);
@@ -96,10 +96,11 @@ export const findIndexes = (parsed: string[], required: string): FoundIndex[] | 
 
   let sequence: string[] = [];
 
-  const hasBeenConverted = !!CONVERTED;
+  const hasBeenConverted = CONVERTED.length > 0;
   const converted: string[] = [];
 
-  (CONVERTED || parsed).forEach((hex, index) => {
+  for (let i = 0; i < parsed.length; i += 1) {
+    const hex = hasBeenConverted ? CONVERTED[i] : parsed[i];
     const requiredIndex = sequence.length;
 
     const char = hasBeenConverted ? hex : hexToUtf8(hex);
@@ -110,12 +111,12 @@ export const findIndexes = (parsed: string[], required: string): FoundIndex[] | 
     else sequence = [];
 
     if (sequence.join("") === required) {
-      const start = index - required.length + 1;
-      const end = index;
+      const start = i - required.length + 1;
+      const end = i;
       found.push({ start, end });
       sequence = [];
     }
-  });
+  }
 
   CONVERTED = converted;
 

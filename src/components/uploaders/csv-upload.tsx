@@ -12,6 +12,7 @@ const CsvUpload = ({
   tip,
   tip2,
   height,
+  showIcon = true,
 }: DataUploadProps): JSX.Element => {
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     const acceptedFileItems = acceptedFiles.map(({ name }) => name.toUpperCase());
@@ -65,6 +66,7 @@ const CsvUpload = ({
       multiple
       name="csv-file"
       height={height}
+      showIcon={showIcon}
     />
   );
 };
@@ -78,6 +80,7 @@ export interface DataUploadProps {
   tip: string;
   tip2?: string;
   height?: string;
+  showIcon?: boolean;
 }
 
 const getData = (file: File, result: string): string => {

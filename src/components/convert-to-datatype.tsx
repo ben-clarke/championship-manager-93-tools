@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { EXE_CM } from "src/constants/files";
 import { FileType } from "src/lib/handlers/convert-to-hex";
 import { UPLOAD_EDIT_PARSED } from "../constants/strings";
 import { Message } from "../types/web";
@@ -19,13 +20,11 @@ const ConvertToDataType = ({
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   const [csvContent, setCsvContent] = useState("");
-
-  const [exeCsvContent, setExeCsvContent] = useState("");
   const [exeContent, setExeContent] = useState("");
 
   const setFileValues = (name: string, val: string, fileType: string): void => {
-    if (fileType === `${requiredFileType}.csv`) setCsvContent(val);
-    if (fileType === "CMEXE.EXE.CSV") setExeCsvContent(val);
+    if (fileType === `${requiredFileType}.CSV`) setCsvContent(val);
+    if (fileType === EXE_CM) setExeContent(val);
     setShowOverlay(true);
   };
 
@@ -43,7 +42,7 @@ const ConvertToDataType = ({
       if (errors.length) setMessage({ data: errors, variant: "error" });
       else setMessage({ data: [UPLOAD_EDIT_PARSED], variant: "success" });
     }
-  }, [csvContent, exeCsvContent]);
+  }, [csvContent, exeContent]);
 
   useEffect(() => {
     // This is so that react triggers a re-render.
@@ -62,6 +61,7 @@ const ConvertToDataType = ({
           value={value}
           tip={tip}
           height="h-32"
+          showIcon={false}
         />
       ) : (
         <UploadComplete message={message} />

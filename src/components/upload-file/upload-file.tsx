@@ -15,6 +15,7 @@ const UploadFile = ({
   id,
   name,
   height = "h-64",
+  showIcon = true,
 }: UploadFileProps): JSX.Element => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -33,7 +34,7 @@ const UploadFile = ({
           )}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            <Cloud />
+            {showIcon && <Cloud />}
             <p className="mb-2 text-sm text-white">
               <span className="font-semibold">{value}</span>
               {isDragActive && UPLOAD_FILE_DRAG}
@@ -73,6 +74,7 @@ export interface UploadFileProps {
   id: string;
   name: string;
   height?: string;
+  showIcon?: boolean;
 }
 
 export default UploadFile;

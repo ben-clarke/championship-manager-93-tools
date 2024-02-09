@@ -1,6 +1,8 @@
-const Cloud = (): JSX.Element => (
+import clsx from "clsx";
+
+const Cloud = ({ className = "" }: { className?: string }): JSX.Element => (
   <svg
-    className="w-8 h-8 mb-4 text-gray-300"
+    className={clsx("w-8 h-8 mb-4 text-gray-300", className)}
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"

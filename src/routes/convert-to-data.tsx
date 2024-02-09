@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ConvertToDataType from "src/components/convert-to-datatype";
+import Cloud from "src/components/upload-file/cloud";
 import CsvExeUpload from "src/components/uploaders/csv-exe-upload";
 import CsvInstructions from "src/components/uploaders/csv/csv-instructions";
 import { AlertVariant } from "../components/alert";
@@ -114,9 +115,12 @@ const ConvertToData = (): JSX.Element => {
                 <UploadComplete message={message} />
               )}
             </div>
-            <div className="border-2 border-gray-300 border-dashed rounded-lg b-wh">
-              <p className="my-2">Upload single files</p>
-              <div className="mb-4">
+            <div className="border-2 border-gray-300 border-dashed rounded-lg mx-4 mb-8">
+              <div className="flex flex-col items-center justify-center my-4">
+                <Cloud className="!mb-0" />
+                <p className="mt-[-2]">Upload single files</p>
+              </div>
+              <div className="mb-2">
                 <ConvertToDataType
                   requiredFileType="FOREIGN.DAT"
                   requiredFiles={[CSV_FOREIGN, EXE_CM]}
@@ -125,7 +129,7 @@ const ConvertToData = (): JSX.Element => {
                   tip={UPLOAD_EDIT_TIP_FOREIGN}
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-2">
                 <ConvertToDataType
                   requiredFileType="LEAGUE.DAT"
                   requiredFiles={[CSV_LEAGUE, EXE_CM]}

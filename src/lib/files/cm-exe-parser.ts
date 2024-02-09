@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { parse } from "papaparse";
 import { resolve } from "path";
-import { splitEvery, sum } from "ramda";
+import { reduce, splitEvery, sum } from "ramda";
 import { DataType } from "../types/executable";
 import { HumanReadableExe } from "../types/validation";
 import { buildData, replaceData } from "./utils/cm-exe-builder";
@@ -137,7 +137,7 @@ export default class CMExeParser {
 
 export const getData = (parsed: string[], requiredDataType: DataType): Record<string, string> => {
   const data = buildData(parsed, requiredDataType);
-  return Object.values(data).reduce((acc, { code, value }) => ({ ...acc, [code]: value }), {});
+  return reduce((acc, { code, value }) => ({ ...acc, [code]: value }), {}, Object.values(data));
 };
 
 type Input =

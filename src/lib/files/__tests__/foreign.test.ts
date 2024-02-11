@@ -36,6 +36,16 @@ describe("foreign", () => {
       "Player 2: No injury status found for: unknown, valid values are fit, injured",
     ]);
   });
+
+  test("happy from hex - italia", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm-italia");
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const foreign = new Foreign({ fileDirectory: inputDirectory, data });
+    foreign.convertFromHex();
+    expect(foreign.players[175].club?.value).toEqual("Serie C1B");
+    expect(foreign.players[273].club?.value).toEqual("Serie C1A");
+  });
 });
 
 const FOREIGN_DATA = [

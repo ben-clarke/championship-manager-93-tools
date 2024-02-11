@@ -162,4 +162,13 @@ describe("league", () => {
       "Player 2: No injury status found for: unknown, valid values are fit, injured",
     ]);
   });
+
+  test("happy from hex - italia", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm-italia");
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const league = new League({ fileDirectory: inputDirectory, data });
+    league.convertFromHex();
+    expect(league.squads[0].players[1].history[0].club).toEqual("Non league");
+  });
 });

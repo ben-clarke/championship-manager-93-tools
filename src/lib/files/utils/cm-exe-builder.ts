@@ -1,10 +1,19 @@
 import { DataType } from "../../types/executable";
+import { Version } from "../../types/version";
 import { hexToUtf8, utf8ToHex } from "../../utils/conversion";
 
 let CONVERTED: string[] = [];
 
-export const printExecutableCodes = (parsed: string[], requiredDataType: DataType): void => {
-  const matches = buildData(parsed, requiredDataType);
+export const resetConverted = (): void => {
+  CONVERTED = [];
+};
+
+export const printExecutableCodes = (
+  parsed: string[],
+  requiredDataType: DataType,
+  version: Version,
+): void => {
+  const matches = buildData(parsed, requiredDataType, version);
 
   // Print the stat
   const readme = Object.values(matches).map(({ code, value }) => `| ${code} | ${value} |`);
@@ -17,8 +26,9 @@ export const printExecutableCodes = (parsed: string[], requiredDataType: DataTyp
 export const buildData = (
   parsed: string[],
   requiredDataType: DataType,
+  version: Version,
 ): Record<string, MatchedData> => {
-  const startIndex = findStartIndex(parsed, requiredDataType);
+  const startIndex = findStartIndex(parsed, requiredDataType, version);
   if (!startIndex) throw new Error(`No start index found for ${requiredDataType}`);
 
   const { padding = 2, breakAt } = DATA_FIRST_INDEX[requiredDataType];
@@ -123,8 +133,13 @@ export const findIndexes = (parsed: string[], required: string): FoundIndex[] | 
   return found;
 };
 
-export const findStartIndex = (parsed: string[], requiredDataType: DataType): number | null => {
-  const { required, occurrence = 1 } = DATA_FIRST_INDEX[requiredDataType];
+export const findStartIndex = (
+  parsed: string[],
+  requiredDataType: DataType,
+  version: Version,
+): number | null => {
+  const dataFirstIndex = version === "Italia" ? ITA_DATA_FIRST_INDEX : DATA_FIRST_INDEX;
+  const { required, occurrence = 1 } = dataFirstIndex[requiredDataType];
 
   const indexes = findIndexes(parsed, required);
   if (!indexes || indexes.length === 0) return null;
@@ -134,18 +149,29 @@ export const findStartIndex = (parsed: string[], requiredDataType: DataType): nu
 
 const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   nationality: { required: "England" },
-  character: { required: "Withdrawn" },
   club: { required: "Aston Villa", occurrence: 2 },
   ground: { required: "Villa Park" },
-  "non-domestic-club": { required: "Porto", padding: 4 },
   "first-name": { required: "Ron", padding: 4, breakAt: "Josep" },
   "first-name-foreign": { required: "Ron", padding: 4 },
   surname: { required: "Atkinson", padding: 4 },
+  "non-domestic-club": { required: "Porto", padding: 4 },
+  version: { required: "Championship Manager" },
+  character: { required: "Withdrawn" },
   "injury-type": { required: "severe" },
   wages: { required: "wants higher" },
   "style-of-play": { required: "Long ball" },
   formation: { required: "four-four-two" },
-  version: { required: "Championship Manager" },
+};
+
+const ITA_DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
+  ...DATA_FIRST_INDEX,
+  nationality: { required: "Italy" },
+  club: { required: "Atalanta" },
+  ground: { required: "Stadio Communale" },
+  "first-name": { required: "Francesco", padding: 4, breakAt: "Victor" },
+  "first-name-foreign": { required: "Francesco", padding: 4 }, // Actually Victor...?
+  surname: { required: "Guidolin", padding: 4 },
+  "non-domestic-club": { required: "Porto", padding: 4 },
 };
 
 interface DataTypeData {

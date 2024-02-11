@@ -1,3 +1,4 @@
+import { getGameVersion } from "src/lib/constants/file";
 import CMExeParser from "../../files/cm-exe-parser";
 import PlayerClub from "./components/player-club";
 import { Player } from "./player";
@@ -8,7 +9,12 @@ export class ForeignPlayer extends Player {
 
     const [, , , , , club] = this.getDataItems(player);
 
-    this.club = new PlayerClub(club, data.get("club"), data.get("nationality"));
+    this.club = new PlayerClub(
+      club,
+      data.get("club"),
+      data.get("nationality"),
+      getGameVersion(data.get("version")),
+    );
   }
 
   getFirstNameMap(data: CMExeParser): Record<string, string> {

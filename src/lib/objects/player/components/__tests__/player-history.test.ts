@@ -3,7 +3,7 @@ import PlayerHistory from "../player-history";
 describe("player history", () => {
   test("no history", () => {
     expect(
-      PlayerHistory.toHex("", { "00": "Man Utd" }, { "0000": "Porto" }, { "02": "Spain" }),
+      PlayerHistory.toHex("", { "00": "Man Utd" }, { "0000": "Porto" }, { "02": "Spain" }, "94"),
     ).toEqual({ errors: [], values: [] });
   });
 
@@ -14,6 +14,7 @@ describe("player history", () => {
         { "00": "Man Utd" },
         { "0000": "Porto" },
         { "02": "Spain" },
+        "94",
       ),
     ).toEqual({ errors: [], values: ["5b", "00", "02", "00"] });
   });
@@ -25,6 +26,7 @@ describe("player history", () => {
         { "00": "Man Utd" },
         { "0000": "Porto" },
         { "02": "Spain" },
+        "94",
       ),
     ).toEqual({ errors: [], values: ["5b", "00", "02", "00", "5c", "8e", "14", "0a"] });
   });
@@ -36,6 +38,7 @@ describe("player history", () => {
         { "00": "Man Utd" },
         { "0000": "Porto" },
         { "02": "Spain" },
+        "94",
       ),
     ).toEqual({
       errors: ["Missing a history year, club, games or goals for history number 1"],
@@ -50,6 +53,7 @@ describe("player history", () => {
         { "00": "Man Utd" },
         { "0000": "Porto" },
         { "02": "Spain" },
+        "94",
       ),
     ).toEqual({
       errors: ["Missing a history year, club, games or goals for history number 2"],
@@ -64,6 +68,7 @@ describe("player history", () => {
         { "00": "Man Utd" },
         { "0000": "Porto" },
         { "02": "Spain" },
+        "94",
       ),
     ).toEqual({
       errors: [
@@ -73,5 +78,29 @@ describe("player history", () => {
       ],
       values: ["-9", "00", "100", "100"],
     });
+  });
+
+  test("history with non league, not italia", () => {
+    expect(
+      PlayerHistory.toHex(
+        "1991|Non league|2|0",
+        { "00": "Man Utd" },
+        { "0000": "Porto" },
+        { "02": "Spain" },
+        "94",
+      ),
+    ).toEqual({ errors: [], values: ["5b", "", "02", "00"] });
+  });
+
+  test("history with non league, is italia", () => {
+    expect(
+      PlayerHistory.toHex(
+        "1991|Non league|2|0",
+        { "00": "Man Utd" },
+        { "0000": "Porto" },
+        { "02": "Spain" },
+        "Italia",
+      ),
+    ).toEqual({ errors: [], values: ["5b", "d7", "02", "00"] });
   });
 });

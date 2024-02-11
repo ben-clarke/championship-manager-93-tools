@@ -1,5 +1,6 @@
 import { flatten } from "ramda";
-import { HumanReadableHistory } from "src/lib/types/validation";
+import { HumanReadableHistory } from "../../../types/validation";
+import { Version } from "../../../types/version";
 import { invertObj } from "../../../utils/conversion";
 
 export default class PlayerHistory {
@@ -19,6 +20,7 @@ export default class PlayerHistory {
     clubs: Record<string, string>,
     nonDomesticClubs: Record<string, string>,
     nationalities: Record<string, string>,
+    version: Version,
   ) {
     this.year = parseInt(year, 16) + YEAR_MODIFIER;
     this.club =
@@ -29,6 +31,10 @@ export default class PlayerHistory {
       nationalities[
         (parseInt(club, 16) - FOREIGN_PLAYER_CODE_MODIFIER).toString(16).padStart(2, "0")
       ];
+
+    if (!this.club && version === "Italia") {
+      this.club = ITALIA_MAPPING[club];
+    }
 
     this.games = parseInt(games, 16);
     this.goals = parseInt(goals, 16);
@@ -43,11 +49,12 @@ export default class PlayerHistory {
     clubs: Record<string, string>,
     nonDomesticClubs: Record<string, string>,
     nationalities: Record<string, string>,
+    version: Version,
   ): HumanReadableHistory {
     const part = value.split(",").filter((p) => p);
     const histories = part.map((p, i) => {
       const [year, club, games, goals] = p.split(HISTORY_PART_SEPARATOR);
-      const parsedClub = getClubHexadecimal(club, clubs, nonDomesticClubs, nationalities);
+      const parsedClub = getClubHexadecimal(club, clubs, nonDomesticClubs, nationalities, version);
 
       if (!year || !club || !games || !goals) {
         return {
@@ -98,12 +105,14 @@ const getClubHexadecimal = (
   clubs: Record<string, string>,
   nonDomesticClubs: Record<string, string>,
   nationalities: Record<string, string>,
+  version: Version,
 ): string => {
   try {
     return (
       invertObj(clubs)[value.toLowerCase()] ||
       textToHexConversion(nonDomesticClubs, value, -NON_LEAGUE_PLAYER_CODE_MODIFIER, 2) ||
-      textToHexConversion(nationalities, value, FOREIGN_PLAYER_CODE_MODIFIER)
+      textToHexConversion(nationalities, value, FOREIGN_PLAYER_CODE_MODIFIER) ||
+      textToHexItaliaMapping(value, version)
     );
   } catch (e) {
     return "XX";
@@ -121,6 +130,13 @@ const textToHexConversion = (
   return (parseInt(key, 16) + modifier).toString(16).padStart(padding, "0");
 };
 
+const textToHexItaliaMapping = (value: string, version: Version): string => {
+  if (version !== "Italia") return "";
+
+  const mapping = invertObj(ITALIA_MAPPING);
+  return mapping[value.toLowerCase()];
+};
+
 const YEAR_MODIFIER = 1900;
 
 // For some reason the foreign player clubs (which are actually nationalities) have their codes
@@ -136,3 +152,7 @@ const UPPER_YEAR_RANGE = 2100;
 
 const LOWER_STATS_RANGE = 0;
 const UPPER_STATS_RANGE = 255;
+
+const ITALIA_MAPPING: Record<string, string> = {
+  d7: "Non league",
+};

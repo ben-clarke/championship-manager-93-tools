@@ -1,4 +1,5 @@
 import { splitEvery } from "ramda";
+import { getGameVersion } from "../../constants/file";
 import CMExeParser from "../../files/cm-exe-parser";
 import { HumanReadablePlayer } from "../../types/validation";
 import Character from "../components/character";
@@ -49,6 +50,7 @@ export abstract class Player {
     const nationalities = data.get("nationality");
     const clubs = data.get("club");
     const nonDomesticClubs = data.get("non-domestic-club");
+    const version = getGameVersion(data.get("version"));
 
     const [
       firstName1,
@@ -128,7 +130,16 @@ export abstract class Player {
       .filter(([year]) => year !== "ff")
       .map(
         ([year, club, games, goals]) =>
-          new PlayerHistory(year, club, games, goals, clubs, nonDomesticClubs, nationalities),
+          new PlayerHistory(
+            year,
+            club,
+            games,
+            goals,
+            clubs,
+            nonDomesticClubs,
+            nationalities,
+            version,
+          ),
       );
 
     // Not used by default - only foreign players
@@ -182,6 +193,7 @@ export abstract class Player {
       player[0],
       data.get("club"),
       data.get("nationality"),
+      getGameVersion(data.get("version")),
     );
     const {
       value1: firstName1,
@@ -257,6 +269,7 @@ export abstract class Player {
       data.get("club"),
       data.get("non-domestic-club"),
       data.get("nationality"),
+      getGameVersion(data.get("version")),
     );
 
     const errors = [

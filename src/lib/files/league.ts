@@ -1,8 +1,10 @@
 import { flatten } from "ramda";
 import { DAT_LEAGUE } from "../../constants/files";
+import { getGameVersion } from "../constants/file";
 import { DomesticPlayer } from "../objects/player";
 import Squad from "../objects/squad";
 import { HumanReadableLeague } from "../types/validation";
+import { Version } from "../types/version";
 import BaseDataFile, { DataFileInput } from "./base";
 import { getSortedList } from "./utils/sorted";
 
@@ -51,9 +53,10 @@ export default class League extends BaseDataFile {
       return acc;
     }, initial);
 
-    if (Object.keys(squads).length !== NUM_SQUADS) {
+    const numSquads = getNumSquads(getGameVersion(this.data.get("version")));
+    if (Object.keys(squads).length !== numSquads) {
       errors.push(
-        `Invalid number of squads provided, must be 80, got: ${Object.keys(squads).length}`,
+        `Invalid number of squads provided, must be ${numSquads}, got: ${Object.keys(squads).length}`,
       );
     }
 
@@ -106,3 +109,9 @@ const LOWER_RANGE = 13;
 const UPPER_RANGE = 26;
 
 const NUM_SQUADS = 80;
+const NUM_SQUADS_ITALIA = 38;
+
+const getNumSquads = (version: Version): number => {
+  if (version === "Italia") return NUM_SQUADS_ITALIA;
+  return NUM_SQUADS;
+};

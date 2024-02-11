@@ -128,4 +128,5 @@ export default class Team extends BaseDataFile {
 const COLUMNS: Record<Version, number> = {
   93: Club93.getNumColumns(),
   94: Club94.getNumColumns(),
+  Italia: Club94.getNumColumns(),
 };

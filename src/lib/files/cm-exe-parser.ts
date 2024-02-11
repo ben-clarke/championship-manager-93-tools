@@ -2,8 +2,10 @@ import * as fs from "fs";
 import { parse } from "papaparse";
 import { resolve } from "path";
 import { reduce, splitEvery, sum } from "ramda";
+import { getGameVersion } from "../constants/file";
 import { DataType } from "../types/executable";
 import { HumanReadableExe } from "../types/validation";
+import { Version } from "../types/version";
 import { buildData, replaceData } from "./utils/cm-exe-builder";
 import { getSortedList } from "./utils/sorted";
 
@@ -16,6 +18,8 @@ export default class CMExeParser {
 
   retrieved: Record<DataType, Record<string, string>>;
 
+  version: Version;
+
   constructor({ fileDirectory, rawData, rawCsv }: Input) {
     const raw = rawData
       ? Buffer.from(rawData, "base64").toString("hex")
@@ -24,6 +28,9 @@ export default class CMExeParser {
     this.rawCsv = rawCsv;
 
     this.data = splitEvery(2, raw);
+
+    const version = getData(this.data, "version", "94");
+    this.version = getGameVersion(version);
 
     // fs.writeFileSync("/tmp/cm", this.data.map((d) => hexToUtf8(d)).join(""));
 
@@ -48,7 +55,7 @@ export default class CMExeParser {
     const storedData = this.retrieved[dataType];
     if (Object.keys(storedData).length > 0) return storedData;
 
-    this.retrieved[dataType] = getData(this.data, dataType);
+    this.retrieved[dataType] = getData(this.data, dataType, this.version);
     return this.retrieved[dataType];
   }
 
@@ -135,8 +142,12 @@ export default class CMExeParser {
   }
 }
 
-export const getData = (parsed: string[], requiredDataType: DataType): Record<string, string> => {
-  const data = buildData(parsed, requiredDataType);
+export const getData = (
+  parsed: string[],
+  requiredDataType: DataType,
+  version: Version,
+): Record<string, string> => {
+  const data = buildData(parsed, requiredDataType, version);
   return reduce((acc, { code, value }) => ({ ...acc, [code]: value }), {}, Object.values(data));
 };
 

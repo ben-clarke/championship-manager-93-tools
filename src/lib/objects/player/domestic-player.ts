@@ -1,3 +1,4 @@
+import { getGameVersion } from "src/lib/constants/file";
 import CMExeParser from "../../files/cm-exe-parser";
 import { HumanReadablePlayer } from "../../types/validation";
 import PlayerClub from "./components/player-club";
@@ -6,7 +7,12 @@ import { Player } from "./player";
 export class DomesticPlayer extends Player {
   constructor(player: string[], data: CMExeParser, club: string) {
     super(player, data);
-    this.club = new PlayerClub(club, data.get("club"), data.get("nationality"));
+    this.club = new PlayerClub(
+      club,
+      data.get("club"),
+      data.get("nationality"),
+      getGameVersion(data.get("version")),
+    );
   }
 
   getFirstNameMap(data: CMExeParser): Record<string, string> {

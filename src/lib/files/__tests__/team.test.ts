@@ -2,8 +2,17 @@ import { unparse } from "papaparse";
 import { resolve } from "path";
 import CMExeParser from "../cm-exe-parser";
 import Team from "../team";
+import { resetConverted } from "../utils/cm-exe-builder";
 
 describe("team", () => {
+  beforeEach(() => {
+    resetConverted();
+  });
+
+  afterEach(() => {
+    resetConverted();
+  });
+
   test("happy", () => {
     const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
     const data = new CMExeParser({ fileDirectory: inputDirectory });
@@ -40,9 +49,17 @@ describe("team", () => {
 
     expect(hex).toEqual("");
     expect(errors).toEqual([
-      "Player 1: No character found for: woah, valid values are high, super, medium, low, none",
+      "Player 1: No club status found for: woah, valid values are high, super, elite, world class, medium, low, none",
       "Player 2: Board confidence must be between 1 and 100, got: 200",
     ]);
+  });
+
+  test("cm-apw-2", () => {
+    const fileDirectory = resolve(__dirname, "../../../../", "game-edits", "cm94-apw-2");
+    const data = new CMExeParser({ fileDirectory });
+
+    const team = new Team({ fileDirectory, data });
+    team.toHumanReadable();
   });
 });
 

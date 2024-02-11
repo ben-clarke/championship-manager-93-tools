@@ -14,7 +14,9 @@ describe("club attraction", () => {
   test("to hex sad", () => {
     const hex = ClubAttraction.toHex("doopa");
     expect(hex).toEqual({
-      errors: ["No character found for: doopa, valid values are high, super, medium, low, none"],
+      errors: [
+        "No club status found for: doopa, valid values are No club status found for: woah, valid values are high, super, elite, world class, medium, low, none",
+      ],
     });
   });
 });

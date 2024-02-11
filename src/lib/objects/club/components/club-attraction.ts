@@ -19,16 +19,18 @@ export default class ClubAttraction {
       value: hex,
       errors: !hex
         ? [
-            `No character found for: ${value}, valid values are ${Object.values(MAPPING).join(", ")}`,
+            `No club status found for: ${value}, valid values are ${Object.values(MAPPING).join(", ")}`,
           ]
         : [],
     };
   }
 }
 
-export type Status = "super" | "high" | "medium" | "low" | "none";
+export type Status = "world class" | "elite" | "super" | "high" | "medium" | "low" | "none";
 
 const MAPPING: Record<string, Status> = {
+  13: "world class",
+  12: "elite",
   11: "super",
   10: "high",
   "0f": "medium",

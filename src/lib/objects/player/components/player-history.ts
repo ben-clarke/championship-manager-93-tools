@@ -51,6 +51,8 @@ export default class PlayerHistory {
     nationalities: Record<string, string>,
     version: Version,
   ): HumanReadableHistory {
+    if (!value) return { values: [], errors: [] };
+
     const part = value.split(",").filter((p) => p);
     const histories = part.map((p, i) => {
       const [year, club, games, goals] = p.split(HISTORY_PART_SEPARATOR);

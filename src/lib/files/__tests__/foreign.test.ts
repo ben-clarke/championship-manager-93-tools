@@ -2,8 +2,17 @@ import { unparse } from "papaparse";
 import { resolve } from "path";
 import CMExeParser from "../cm-exe-parser";
 import Foreign from "../foreign";
+import { resetConverted } from "../utils/cm-exe-builder";
 
 describe("foreign", () => {
+  beforeEach(() => {
+    resetConverted();
+  });
+
+  afterEach(() => {
+    resetConverted();
+  });
+
   test("happy", () => {
     const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
     const data = new CMExeParser({ fileDirectory: inputDirectory });

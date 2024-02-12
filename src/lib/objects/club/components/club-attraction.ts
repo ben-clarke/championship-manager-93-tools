@@ -1,4 +1,5 @@
 import { HumanReadable } from "src/lib/types/validation";
+import { getSortedList } from "../../../files/utils/sorted";
 import { invertObj } from "../../../utils/conversion";
 
 export default class ClubAttraction {
@@ -19,7 +20,7 @@ export default class ClubAttraction {
       value: hex,
       errors: !hex
         ? [
-            `No club status found for: ${value}, valid values are ${Object.values(MAPPING).join(", ")}`,
+            `No club status found for: ${value}, valid values are ${getSortedList(MAPPING).reverse().join(", ")}`,
           ]
         : [],
     };

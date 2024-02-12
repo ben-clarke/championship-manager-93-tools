@@ -2,9 +2,18 @@ import { unparse } from "papaparse";
 import { resolve } from "path";
 import CMExeParser from "../cm-exe-parser";
 import League from "../league";
+import { resetConverted } from "../utils/cm-exe-builder";
 import { LEAGUE_DATA } from "./data/league-data";
 
 describe("league", () => {
+  beforeEach(() => {
+    resetConverted();
+  });
+
+  afterEach(() => {
+    resetConverted();
+  });
+
   test("happy", () => {
     const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
     const data = new CMExeParser({ fileDirectory: inputDirectory });
@@ -17,6 +26,25 @@ describe("league", () => {
       [
         "00480000000000000001000001190600a00806130e0f0c1207ff0c0e07080a0d5607010057070800580711085907220a5a03260a5c000e015d001c0bff",
         "0049008a0000000100000100011a0500a5070d110e04050206ff0a080b090a0f550900005609010056440c00570902005815120059152c005a152e025b151d025b152e035c151d025c000d005d002a01ff",
+      ].join(""),
+    );
+    expect(errors).toEqual([]);
+  });
+
+  test("with no history", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const leagueData = JSON.parse(JSON.stringify(LEAGUE_DATA)).map((d: string[]) =>
+      d.splice(0, d.length - 1),
+    );
+
+    const league = new League({ rawData: unparse(leagueData), data });
+    const { hex, errors } = league.convertFromHumanReadable();
+    expect(hex.split("").splice(0, 132).join("")).toEqual(
+      [
+        "00480000000000000001000001190600a00806130e0f0c1207ff0c0e07080a0dff",
+        "0049008a0000000100000100011a0500a5070d110e04050206ff0a080b090a0fff",
       ].join(""),
     );
     expect(errors).toEqual([]);

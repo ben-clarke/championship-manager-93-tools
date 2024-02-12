@@ -49,7 +49,7 @@ describe("team", () => {
 
     expect(hex).toEqual("");
     expect(errors).toEqual([
-      "Player 1: No club status found for: woah, valid values are high, super, elite, world class, medium, low, none",
+      "Player 1: No club status found for: woah, valid values are world class, elite, super, high, medium, low, none",
       "Player 2: Board confidence must be between 1 and 100, got: 200",
     ]);
   });

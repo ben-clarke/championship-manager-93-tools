@@ -7,6 +7,19 @@ describe("player history", () => {
     ).toEqual({ errors: [], values: [] });
   });
 
+  test("undefined history", () => {
+    expect(
+      PlayerHistory.toHex(
+        // @ts-ignore
+        undefined,
+        { "00": "Man Utd" },
+        { "0000": "Porto" },
+        { "02": "Spain" },
+        "94",
+      ),
+    ).toEqual({ errors: [], values: [] });
+  });
+
   test("single history", () => {
     expect(
       PlayerHistory.toHex(

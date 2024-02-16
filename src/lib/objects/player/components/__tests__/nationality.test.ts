@@ -10,6 +10,12 @@ describe("nationality", () => {
     const hex = Nationality.toHex("ENGland", { "00": "England" });
     expect(hex).toEqual({ value: "00", errors: [] });
   });
+
+  test("to hex random", () => {
+    const hex = Nationality.toHex("random", { "00": "England" });
+    expect(hex).toEqual({ value: "ff", errors: [] });
+  });
+
   test("to hex sad", () => {
     const hex = Nationality.toHex("Scotland", { "00": "England" });
     expect(hex).toEqual({

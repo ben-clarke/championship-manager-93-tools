@@ -5,9 +5,11 @@ import {
   FoundIndex,
   findIndexes,
   findStartIndex,
+  replaceAllData,
   replaceData,
   resetConverted,
 } from "../cm-exe-builder";
+import { getSortedList } from "../sorted";
 
 describe("cm exe builder", () => {
   const INPUT_DIRECTORY = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
@@ -63,10 +65,51 @@ describe("cm exe builder", () => {
     });
   });
 
+  describe("replaceAllData", () => {
+    test("replace club data", () => {
+      const clubs = PARSER.get("club");
+
+      // console.log(
+      //   [...PARSER.data].reduce((acc, d, i) => {
+      //     if (d !== "0c" || PARSER.data[i + 1] !== "08") return acc;
+
+      //     // if (PARSER.data[i + 2] !== "14") return acc;
+
+      //     const blah = [
+      //       d,
+      //       PARSER.data[i + 1],
+      //       PARSER.data[i + 2],
+      //       PARSER.data[i + 3],
+      //       PARSER.data[i + 4],
+      //     ];
+      //     acc.push(blah.join(" "));
+      //     return acc;
+      //   }, []),
+      // );
+
+      const sortedClubs = getSortedList(clubs);
+      const [av, mu, no, sw, ...rest] = sortedClubs;
+      const newClubs = [av, mu, sw, no, ...rest];
+
+      // 0, 12, 20, 28
+      // Aston Villa Man Utd Norwich  Sheff Wed
+      // Aston Villa  Man United  Norwich  Sheff Wed
+
+      replaceAllData([...PARSER.data], newClubs, "club", "94");
+
+      // fs.writeFileSync("/Users/benclarke/CMEXE.EXE", newData.join(""), "hex");
+
+      // const blah = new CMExeParser({ fileDirectory: "/Users/benclarke/" });
+    });
+  });
+
   describe("replaceData", () => {
     test("replace with same length", () => {
       const newData = replaceData([...PARSER.data], "Aston Villa", "Aston Pills");
+
+      resetConverted();
       const indexes = findIndexes(newData, "Aston Pills") as FoundIndex[];
+
       expect(indexes).toEqual([
         { start: 396384, end: 396394 },
         { start: 413984, end: 413994 },
@@ -99,6 +142,8 @@ describe("cm exe builder", () => {
 
     test("replace with shorter length", () => {
       const newData = replaceData([...PARSER.data], "Aston Villa", "Aston City");
+
+      resetConverted();
       const indexes = findIndexes(newData, "Aston City ") as FoundIndex[];
       expect(indexes).toEqual([
         { start: 396384, end: 396394 },
@@ -134,11 +179,29 @@ describe("cm exe builder", () => {
     test.each([
       ["cm93", "Championship Manager '93"],
       ["cm93-94", "Championship Manager '93/4"],
+      ["cm94-apw", "Championship Manager '94"],
+      ["cm94-apw-2", "Championship Manager '94"],
       ["cm-italia", "Championship Manager Italia"],
+      ["cm-italia-95", "Championship Manager Italia"],
     ])("version %s %s", (input, expected) => {
       const fileDirectory = resolve(__dirname, "../../../../../", "game-edits", input);
       const data = new CMExeParser({ fileDirectory });
-      expect(data.get("version")).toEqual({ "00": expected });
+      expect(data.get("version")["00"]).toEqual(expected);
+    });
+  });
+
+  describe("year", () => {
+    test.each([
+      ["cm93", "1993 Players|Generated Players|"],
+      ["cm93-94", "1993/4 Players|Generated Players|"],
+      ["cm94-apw", "1994 Players|Generated Players|"],
+      ["cm94-apw-2", "1994 Players|Generated Players|"],
+      ["cm-italia", "1993/94 Players|Fictional Players|"],
+      ["cm-italia-95", "1994/95 Players|Fictional Players|"],
+    ])("year %s %s", (input, expected) => {
+      const fileDirectory = resolve(__dirname, "../../../../../", "game-edits", input);
+      const data = new CMExeParser({ fileDirectory });
+      expect(data.get("year")["00"]).toEqual(expected);
     });
   });
 });

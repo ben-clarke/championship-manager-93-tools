@@ -32,9 +32,10 @@ export default class PlayerHistory {
         (parseInt(club, 16) - FOREIGN_PLAYER_CODE_MODIFIER).toString(16).padStart(2, "0")
       ];
 
-    if (!this.club && version === "Italia") {
+    if (!this.club && ["Italia", "Italia95"].includes(version)) {
       this.club = ITALIA_MAPPING[club];
     }
+    if (!this.club && club === "ff") this.club = parseInt(club, 16).toString();
 
     this.games = parseInt(games, 16);
     this.goals = parseInt(goals, 16);
@@ -114,7 +115,8 @@ const getClubHexadecimal = (
       invertObj(clubs)[value.toLowerCase()] ||
       textToHexConversion(nonDomesticClubs, value, -NON_LEAGUE_PLAYER_CODE_MODIFIER, 2) ||
       textToHexConversion(nationalities, value, FOREIGN_PLAYER_CODE_MODIFIER) ||
-      textToHexItaliaMapping(value, version)
+      textToHexItaliaMapping(value, version) ||
+      randomTextConversion(value)
     );
   } catch (e) {
     return "XX";
@@ -133,10 +135,16 @@ const textToHexConversion = (
 };
 
 const textToHexItaliaMapping = (value: string, version: Version): string => {
-  if (version !== "Italia") return "";
+  if (!["Italia", "Italia95"].includes(version)) return "";
 
   const mapping = invertObj(ITALIA_MAPPING);
   return mapping[value.toLowerCase()];
+};
+
+const randomTextConversion = (value: string): string => {
+  // Some clubs in the Italia versions are set to random.
+  if (value === "255") return parseInt(value, 10).toString(16);
+  return "";
 };
 
 const YEAR_MODIFIER = 1900;

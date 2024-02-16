@@ -30,7 +30,8 @@ export default class CMExeParser {
     this.data = splitEvery(2, raw);
 
     const version = getData(this.data, "version", "94");
-    this.version = getGameVersion(version);
+    const year = getData(this.data, "year", "94");
+    this.version = getGameVersion(version, year);
 
     // fs.writeFileSync("/tmp/cm", this.data.map((d) => hexToUtf8(d)).join(""));
 
@@ -48,6 +49,7 @@ export default class CMExeParser {
       "style-of-play": {},
       formation: {},
       version: {},
+      year: {},
     };
   }
 

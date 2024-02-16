@@ -26,8 +26,8 @@ describe("foreign", () => {
   });
 
   test("sad", () => {
-    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
-    const data = new CMExeParser({ fileDirectory: inputDirectory });
+    const fileDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
+    const data = new CMExeParser({ fileDirectory });
 
     const foreignData = [...FOREIGN_DATA];
 
@@ -47,13 +47,28 @@ describe("foreign", () => {
   });
 
   test("happy from hex - italia", () => {
-    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm-italia");
-    const data = new CMExeParser({ fileDirectory: inputDirectory });
+    const fileDirectory = resolve(__dirname, "../../../../", "game-edits", "cm-italia");
+    const data = new CMExeParser({ fileDirectory });
 
-    const foreign = new Foreign({ fileDirectory: inputDirectory, data });
+    const foreign = new Foreign({ fileDirectory, data });
     foreign.convertFromHex();
     expect(foreign.players[175].club?.value).toEqual("Serie C1B");
     expect(foreign.players[273].club?.value).toEqual("Serie C1A");
+  });
+
+  test("happy from hex - italia 95", () => {
+    const fileDirectory = resolve(__dirname, "../../../../", "game-edits", "cm-italia-95");
+    const data = new CMExeParser({ fileDirectory });
+
+    const foreign = new Foreign({ fileDirectory, data });
+    foreign.convertFromHex();
+
+    // Random nationality
+    expect(foreign.players[39].nationality?.value).toEqual("random");
+
+    // Italian lower leagues
+    expect(foreign.players[178].club?.value).toEqual("Serie C1B");
+    expect(foreign.players[279].club?.value).toEqual("Serie C1A");
   });
 });
 

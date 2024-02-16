@@ -1,3 +1,4 @@
+import { Version } from "../../../../types/version";
 import PlayerClub from "../player-club";
 
 describe("player club", () => {
@@ -26,8 +27,13 @@ describe("player club", () => {
     expect(hex).toEqual({ value: "", errors: ["No player club found for: Serie C1B"] });
   });
 
-  test("to hex is italia serie c1b", () => {
-    const hex = PlayerClub.toHex("Serie C1B", { "00": "Aston Villa" }, { "02": "Spain" }, "Italia");
+  test.each([["Italia", "Italia95"]])("to hex is italia serie c1b", (version) => {
+    const hex = PlayerClub.toHex(
+      "Serie C1B",
+      { "00": "Aston Villa" },
+      { "02": "Spain" },
+      version as Version,
+    );
     expect(hex).toEqual({ value: "d5", errors: [] });
   });
 });

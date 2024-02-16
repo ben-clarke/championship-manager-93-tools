@@ -11,4 +11,5 @@ export type DataType =
   | "wages"
   | "style-of-play"
   | "formation"
-  | "version";
+  | "version"
+  | "year";

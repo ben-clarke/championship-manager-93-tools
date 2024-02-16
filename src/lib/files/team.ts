@@ -32,7 +32,7 @@ export default class Team extends BaseDataFile {
     const surnames = this.data.get("surname");
     const versions = this.data.get("version");
 
-    const ClubClass = getGameVersion(versions) === "93" ? Club93 : Club94;
+    const ClubClass = getGameVersion(versions, this.data.get("year")) === "93" ? Club93 : Club94;
 
     const parsed = this.parseHex(ClubClass.getVersion());
     this.parsed = parsed.map((t) => splitEvery(2, t));
@@ -41,7 +41,8 @@ export default class Team extends BaseDataFile {
   }
 
   convertFromHumanReadable(): HumanReadableTeam {
-    const ClubClass = getGameVersion(this.data.get("version")) === "93" ? Club93 : Club94;
+    const ClubClass =
+      getGameVersion(this.data.get("version"), this.data.get("year")) === "93" ? Club93 : Club94;
 
     const { data } = this.readHuman();
 
@@ -129,4 +130,5 @@ const COLUMNS: Record<Version, number> = {
   93: Club93.getNumColumns(),
   94: Club94.getNumColumns(),
   Italia: Club94.getNumColumns(),
+  Italia95: Club94.getNumColumns(),
 };

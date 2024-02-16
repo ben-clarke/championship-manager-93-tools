@@ -31,7 +31,7 @@ export const buildData = (
   const startIndex = findStartIndex(parsed, requiredDataType, version);
   if (!startIndex) throw new Error(`No start index found for ${requiredDataType}`);
 
-  const { padding = 2, breakAt } = DATA_FIRST_INDEX[requiredDataType];
+  const { padding = 2, breakAt } = getDataFirstIndex(version)[requiredDataType];
 
   let item: string[] = [];
   let stopProcessing = false;
@@ -77,6 +77,45 @@ export const buildData = (
   }, initial);
 
   return matches;
+};
+
+export const replaceAllData = (
+  data: string[],
+  replacements: string[],
+  requiredDataType: DataType,
+  version: Version,
+): string[] => {
+  const startIndex = findStartIndex(data, requiredDataType, version);
+  // const items = buildData(data, requiredDataType, version);
+
+  const hex = replacements
+    .map((r) =>
+      r
+        .split("")
+        .map((r2) => utf8ToHex(r2))
+        .join(""),
+    )
+    .join("00");
+
+  // const originalHex = Object.values(items)
+  //   .map((r) =>
+  //     r.value
+  //       .split("")
+  //       .map((r2) => utf8ToHex(r2))
+  //       .join(""),
+  //   )
+  //   .join("00");
+
+  // expect(hex).toEqual(originalHex);
+
+  // console.log("HEX", hex.length);
+  // console.log("HEX ORIG", originalHex.length);
+  // console.log("replacements", Object.keys(replacements).length);
+  // console.log("Items", Object.keys(items).length);
+
+  data.splice(startIndex as number, hex.length / 2, hex);
+
+  return data;
 };
 
 export const replaceData = (data: string[], required: string, replacement: string): string[] => {
@@ -138,13 +177,19 @@ export const findStartIndex = (
   requiredDataType: DataType,
   version: Version,
 ): number | null => {
-  const dataFirstIndex = version === "Italia" ? ITA_DATA_FIRST_INDEX : DATA_FIRST_INDEX;
+  const dataFirstIndex = getDataFirstIndex(version);
   const { required, occurrence = 1 } = dataFirstIndex[requiredDataType];
 
   const indexes = findIndexes(parsed, required);
   if (!indexes || indexes.length === 0) return null;
 
   return indexes[occurrence - 1].start;
+};
+
+const getDataFirstIndex = (version: Version): Record<DataType, DataTypeData> => {
+  if (version === "Italia") return ITA_DATA_FIRST_INDEX;
+  if (version === "Italia95") return ITA_95_DATA_FIRST_INDEX;
+  return DATA_FIRST_INDEX;
 };
 
 const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
@@ -160,7 +205,8 @@ const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   "injury-type": { required: "severe" },
   wages: { required: "wants higher" },
   "style-of-play": { required: "Long ball" },
-  formation: { required: "four-four-two" },
+  formation: { required: "4-4-2" },
+  year: { required: "199", occurrence: 2 },
 };
 
 const ITA_DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
@@ -169,9 +215,17 @@ const ITA_DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   club: { required: "Atalanta" },
   ground: { required: "Stadio Communale" },
   "first-name": { required: "Francesco", padding: 4, breakAt: "Victor" },
-  "first-name-foreign": { required: "Francesco", padding: 4 }, // Actually Victor...?
+  "first-name-foreign": { required: "Francesco", padding: 4 },
   surname: { required: "Guidolin", padding: 4 },
-  "non-domestic-club": { required: "Porto", padding: 4 },
+};
+
+const ITA_95_DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
+  ...ITA_DATA_FIRST_INDEX,
+  club: { required: "Padova", occurrence: 2 },
+  ground: { required: "Euganeo" },
+  "first-name": { required: "Mauro", padding: 4, breakAt: "Sergei" },
+  "first-name-foreign": { required: "Mauro", padding: 4 },
+  surname: { required: "Sandreani", padding: 4 },
 };
 
 interface DataTypeData {

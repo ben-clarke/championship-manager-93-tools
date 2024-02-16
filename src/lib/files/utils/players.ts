@@ -9,11 +9,11 @@ export const parsePlayers = (hexes: string, historyIndex: number): string[][] =>
   const players = parsed.reduce((acc, hex, index) => {
     player.push(hex);
 
-    if (isBeginning(index) || !isPlayerEnd(parsed, hex, player, index, historyIndex)) return acc;
+    if (isBeginning(index) || !isPlayerEnd(hex, player, historyIndex)) return acc;
 
     acc.push(player);
-
     player = [];
+
     return acc;
   }, initial);
 
@@ -22,16 +22,18 @@ export const parsePlayers = (hexes: string, historyIndex: number): string[][] =>
 
 const isBeginning = (index: number): boolean => index === 0;
 
-const isPlayerEnd = (
-  parsed: string[],
-  hex: string,
-  player: string[],
-  index: number,
-  historyIndex: number,
-): boolean =>
+export const isPlayerEnd = (hex: string, player: string[], historyIndex: number): boolean => {
+  const isInHistory = player.length >= historyIndex;
+  const historyMod = isInHistory ? (player.length - historyIndex) % HISTORY_LENGTH : 0;
+
   // Line ending - however this is also used as a "randomise" character, so cannot look at this alone.
-  hex.toLowerCase() === "ff" &&
-  // We are into the player history (unfortunately this can be randomised (`ff`) as well)
-  player.length >= historyIndex &&
-  // The next hex is a name (always 00 or 01), if undefined it is the last player
-  (!parsed[index + 1] || ["00", "01"].includes(parsed[index + 1]));
+  const end =
+    hex.toLowerCase() === "ff" &&
+    // We are into the player history (unfortunately this can be randomised (`ff`) as well)
+    isInHistory;
+
+  // We cannot end until the history is complete.
+  return end && historyMod === 0;
+};
+
+const HISTORY_LENGTH = 4;

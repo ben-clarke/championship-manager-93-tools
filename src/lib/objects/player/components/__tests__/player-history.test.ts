@@ -1,3 +1,4 @@
+import { Version } from "../../../../types/version";
 import PlayerHistory from "../player-history";
 
 describe("player history", () => {
@@ -105,15 +106,33 @@ describe("player history", () => {
     ).toEqual({ errors: [], values: ["5b", "", "02", "00"] });
   });
 
-  test("history with non league, is italia", () => {
-    expect(
-      PlayerHistory.toHex(
-        "1991|Non league|2|0",
-        { "00": "Man Utd" },
-        { "0000": "Porto" },
-        { "02": "Spain" },
-        "Italia",
-      ),
-    ).toEqual({ errors: [], values: ["5b", "d7", "02", "00"] });
-  });
+  test.each([["Italia"], ["Italia95"]])(
+    "history with non league, when version is %s",
+    (version) => {
+      expect(
+        PlayerHistory.toHex(
+          "1991|Non league|2|0",
+          { "00": "Man Utd" },
+          { "0000": "Porto" },
+          { "02": "Spain" },
+          version as Version,
+        ),
+      ).toEqual({ errors: [], values: ["5b", "d7", "02", "00"] });
+    },
+  );
+
+  test.each([["Italia"], ["Italia95"]])(
+    "history with random club, when version is %s",
+    (version) => {
+      expect(
+        PlayerHistory.toHex(
+          "1991|255|2|0",
+          { "00": "Man Utd" },
+          { "0000": "Porto" },
+          { "02": "Spain" },
+          version as Version,
+        ),
+      ).toEqual({ errors: [], values: ["5b", "ff", "02", "00"] });
+    },
+  );
 });

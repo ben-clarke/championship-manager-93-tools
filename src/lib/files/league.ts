@@ -53,7 +53,7 @@ export default class League extends BaseDataFile {
       return acc;
     }, initial);
 
-    const numSquads = getNumSquads(getGameVersion(this.data.get("version")));
+    const numSquads = getNumSquads(getGameVersion(this.data.get("version"), this.data.get("year")));
     if (Object.keys(squads).length !== numSquads) {
       errors.push(
         `Invalid number of squads provided, must be ${numSquads}, got: ${Object.keys(squads).length}`,
@@ -112,6 +112,6 @@ const NUM_SQUADS = 80;
 const NUM_SQUADS_ITALIA = 38;
 
 const getNumSquads = (version: Version): number => {
-  if (version === "Italia") return NUM_SQUADS_ITALIA;
+  if (["Italia", "Italia95"].includes(version)) return NUM_SQUADS_ITALIA;
   return NUM_SQUADS;
 };

@@ -11,7 +11,7 @@ export class DomesticPlayer extends Player {
       club,
       data.get("club"),
       data.get("nationality"),
-      getGameVersion(data.get("version")),
+      getGameVersion(data.get("version"), data.get("year")),
     );
   }
 

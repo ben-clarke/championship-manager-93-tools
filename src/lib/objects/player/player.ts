@@ -50,7 +50,7 @@ export abstract class Player {
     const nationalities = data.get("nationality");
     const clubs = data.get("club");
     const nonDomesticClubs = data.get("non-domestic-club");
-    const version = getGameVersion(data.get("version"));
+    const version = getGameVersion(data.get("version"), data.get("year"));
 
     const [
       firstName1,
@@ -193,7 +193,7 @@ export abstract class Player {
       player[0],
       data.get("club"),
       data.get("nationality"),
-      getGameVersion(data.get("version")),
+      getGameVersion(data.get("version"), data.get("year")),
     );
     const {
       value1: firstName1,
@@ -269,7 +269,7 @@ export abstract class Player {
       data.get("club"),
       data.get("non-domestic-club"),
       data.get("nationality"),
-      getGameVersion(data.get("version")),
+      getGameVersion(data.get("version"), data.get("year")),
     );
 
     const errors = [

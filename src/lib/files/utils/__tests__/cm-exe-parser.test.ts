@@ -1,13 +1,20 @@
-import * as fs from "fs";
 import { unparse } from "papaparse";
 import { resolve } from "path";
 import { sum } from "ramda";
 import CMExeParser from "../../cm-exe-parser";
-import { findIndexes } from "../cm-exe-builder";
+import { findIndexes, resetConverted } from "../cm-exe-builder";
 import { getSortedList } from "../sorted";
 import { DATA } from "./data/parser-data";
 
 describe("cm exe parser", () => {
+  beforeEach(() => {
+    resetConverted();
+  });
+
+  afterEach(() => {
+    resetConverted();
+  });
+
   test("to human readable", () => {
     const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
     const parser = new CMExeParser({ fileDirectory: inputDirectory });
@@ -42,9 +49,9 @@ describe("cm exe parser", () => {
 
     const { hex } = parser.convertFromHumanReadable();
 
-    fs.writeFileSync("/Users/benclarke/CMEXE.EXE.2", hex, "hex");
-
+    resetConverted();
     const parser2 = new CMExeParser({ rawData: Buffer.from(hex, "hex").toString("base64") });
+
     expect(findIndexes(parser2.data, "XYZ    ")).toEqual([
       { end: 396382, start: 396376 },
       { end: 401999, start: 401993 },

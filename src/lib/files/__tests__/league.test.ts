@@ -130,7 +130,7 @@ describe("league", () => {
     ]);
   });
 
-  test("sqaud names must be known", () => {
+  test("squad names must be known", () => {
     const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
     const data = new CMExeParser({ fileDirectory: inputDirectory });
 
@@ -197,6 +197,64 @@ describe("league", () => {
 
     const league = new League({ fileDirectory: inputDirectory, data });
     league.convertFromHex();
-    expect(league.squads[0].players[1].history[0].club).toEqual("Non league");
+    expect(league.squads[0].players[1].history.map((h) => h.toString())).toEqual([
+      "1982|Non league|26|1",
+      "1983|Non league|26|0",
+      "1984|Non league|29|2",
+      "1985|Non league|4|0",
+      "1986|Non league|28|4",
+      "1987|Foggia|31|0",
+      "1988|Foggia|22|0",
+      "1989|Foggia|24|1",
+      "1990|Foggia|36|2",
+      "1991|Foggia|35|1",
+      "1992|Foggia|34|2",
+      "1993|Foggia|0|0",
+      "1993|Atalanta|18|0",
+    ]);
+  });
+
+  test("happy from hex - italia 95", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm-italia-95");
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const league = new League({ fileDirectory: inputDirectory, data });
+    league.convertFromHex();
+
+    // Player with random apps in history, followed by 0 goals.
+    expect(league.squads[5].players[0].history.map((h) => h.toString())).toEqual([
+      "1990|Reggiana|3|0",
+      "1991|Reggiana|6|0",
+      "1992|Reggiana|36|1",
+      "1993|Brescia|255|0",
+      "1994|Inter Milan|16|0",
+    ]);
+
+    // Player with non-league team in history
+    expect(league.squads[0].players[0].history.map((h) => h.toString())).toEqual([
+      "1985|Non league|14|1",
+      "1986|Non league|29|1",
+      "1987|Non league|34|2",
+      "1988|Padova|37|2",
+      "1989|Padova|23|1",
+      "1990|Pescara|36|0",
+      "1991|Padova|34|4",
+      "1992|Padova|33|4",
+      "1993|Padova|37|2",
+      "1994|Atalanta|37|6",
+    ]);
+
+    // Player with random club in history.
+    expect(league.squads[13].players[18].history.map((h) => h.toString())).toEqual([
+      "1986|Non league|22|5",
+      "1987|Non league|2|0",
+      "1987|Cosenza|21|2",
+      "1988|Cosenza|21|7",
+      "1989|Cosenza|30|5",
+      "1990|Cosenza|31|8",
+      "1991|Non league|30|11",
+      "1992|Napoli|27|7",
+      "1994|255|255|255",
+    ]);
   });
 });

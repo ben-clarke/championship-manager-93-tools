@@ -16,7 +16,7 @@ export default class PlayerClub {
         (parseInt(value, 16) - FOREIGN_PLAYER_CODE_MODIFIER).toString(16).padStart(2, "0")
       ] || clubs[value];
 
-    if (!this.value && version === "Italia") {
+    if (!this.value && ["Italia", "Italia95"].includes(version)) {
       this.value = ITALIA_MAPPING[value];
     }
   }
@@ -55,7 +55,7 @@ const textToHexConversion = (
 };
 
 const textToHexItaliaMapping = (value: string, version: Version): string => {
-  if (version !== "Italia") return "";
+  if (!["Italia", "Italia95"].includes(version)) return "";
 
   const mapping = invertObj(ITALIA_MAPPING);
   return mapping[value.toLowerCase()];

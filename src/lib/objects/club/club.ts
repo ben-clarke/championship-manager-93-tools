@@ -206,8 +206,18 @@ export abstract class Club {
       ...assistantSurnameError,
     ];
 
-    const homeColours = Club.hexColour(homeText, homeBackground, data.get("version"));
-    const awayColours = Club.hexColour(awayText, awayBackground, data.get("version"));
+    const homeColours = Club.hexColour(
+      homeText,
+      homeBackground,
+      data.get("version"),
+      data.get("year"),
+    );
+    const awayColours = Club.hexColour(
+      awayText,
+      awayBackground,
+      data.get("version"),
+      data.get("year"),
+    );
 
     return {
       values: [
@@ -237,8 +247,13 @@ export abstract class Club {
     };
   }
 
-  static hexColour(text: string, background: string, versions: Record<string, string>): string[] {
-    const version = getGameVersion(versions);
+  static hexColour(
+    text: string,
+    background: string,
+    versions: Record<string, string>,
+    years: Record<string, string>,
+  ): string[] {
+    const version = getGameVersion(versions, years);
     if (version === "93") return [`${text[1]}${background[1]}`];
     return [text, background];
   }

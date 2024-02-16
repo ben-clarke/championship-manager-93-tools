@@ -1,4 +1,5 @@
 import { saveAs } from "file-saver";
+import JSZip from "jszip";
 import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
 import {
   FileType,
@@ -13,6 +14,7 @@ export const createHumanReadableFiles = (
   league: string,
   team: string,
   exe: string,
+  isSafari: boolean,
 ): void => {
   const {
     data: { foreign: foreignCsv, league: leagueCsv, team: teamCsv, exe: exeCsv },
@@ -25,6 +27,20 @@ export const createHumanReadableFiles = (
     { filename: "CMEXE.EXE.csv", data: exeCsv },
   ];
 
+  if (isSafari) {
+    const zip = new JSZip();
+    items.forEach(({ filename, data }) => {
+      const file = new Blob([data], { type: "application/csv" });
+      zip.file(filename, file);
+    });
+
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, "cm-csv.zip");
+    });
+
+    return;
+  }
+
   items.forEach(({ filename, data }) => {
     const file = new Blob([data], { type: "application/csv" });
     saveAs(file, filename);
@@ -36,6 +52,7 @@ export const createDataFiles = (
   league: string,
   team: string,
   exe: string,
+  isSafari: boolean,
 ): string[] => {
   const {
     data: { foreign: foreignData, league: leagueData, team: teamData },
@@ -49,6 +66,20 @@ export const createDataFiles = (
     { filename: DAT_LEAGUE, data: leagueData },
     { filename: DAT_TEAM, data: teamData },
   ];
+
+  if (isSafari) {
+    const zip = new JSZip();
+    items.forEach(({ filename, data }) => {
+      const file = new Blob([data], { type: "application/csv" });
+      zip.file(filename, file);
+    });
+
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, "cm-dat.zip");
+    });
+
+    return [];
+  }
 
   items.forEach(({ filename, data }) => {
     convertAndStoreData(filename, data);

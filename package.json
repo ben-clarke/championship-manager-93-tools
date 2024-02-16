@@ -24,9 +24,11 @@
     "clsx": "2.1.0",
     "date-fns": "2.30.0",
     "file-saver": "2.0.5",
+    "jszip": "3.10.1",
     "papaparse": "5.4.1",
     "ramda": "0.29.1",
     "react": "18.2.0",
+    "react-device-detect": "2.2.3",
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
     "react-router": "6.22.0",
@@ -80,15 +82,7 @@
     "path": false
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   }
 }

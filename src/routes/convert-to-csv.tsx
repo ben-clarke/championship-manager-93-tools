@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { isSafari } from "react-device-detect";
 import DataUpload from "src/components/uploaders/data-upload";
 import { AlertVariant } from "../components/alert";
 import SubmittingOverlay from "../components/submitting-overlay";
@@ -38,7 +39,7 @@ const ConvertToCsv = (): JSX.Element => {
       teamContent.length > 0 &&
       exeContent.length > 0
     ) {
-      createHumanReadableFiles(foreignContent, leagueContent, teamContent, exeContent);
+      createHumanReadableFiles(foreignContent, leagueContent, teamContent, exeContent, isSafari);
       setForeignContent("");
       setLeagueContent("");
       setTeamContent("");

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { isSafari } from "react-device-detect";
 import ConvertToDataType from "src/components/convert-to-datatype";
 import Cloud from "src/components/upload-file/cloud";
 import CsvExeUpload from "src/components/uploaders/csv-exe-upload";
@@ -65,6 +66,7 @@ const ConvertToData = (): JSX.Element => {
         leagueCsvContent,
         teamCsvContent,
         exeContent,
+        isSafari,
       );
       setForeignCsvContent("");
       setLeagueCsvContent("");

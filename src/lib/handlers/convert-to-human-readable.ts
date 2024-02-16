@@ -45,6 +45,14 @@ export const convertToHumanReadableBlob = (
   };
 };
 
+export const convertToHumanReadableExeBlob = (exe: string): ConvertExeToHumanReadable => {
+  const data = new CMExeParser({ rawData: exe });
+
+  return {
+    data: { exe: [unparse(data.toHumanReadable())].join("\n") },
+  };
+};
+
 export const createHumanReadableFile = (
   directory: string,
   filename: string,
@@ -63,5 +71,11 @@ interface ConvertToHumanReadable {
     foreign: string;
     league: string;
     team: string;
+  };
+}
+
+interface ConvertExeToHumanReadable {
+  data: {
+    exe: string;
   };
 }

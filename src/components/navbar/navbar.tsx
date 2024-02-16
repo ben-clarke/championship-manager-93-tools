@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { NAV_CSV, NAV_DAT, NAV_HEADING } from "src/constants/strings";
+import { NAV_CSV, NAV_DAT, NAV_EXE, NAV_EXE_CSV, NAV_HEADING } from "src/constants/strings";
 import { GitHub } from "../icons";
 
 const NavBar = (): JSX.Element => (
@@ -39,7 +39,7 @@ const NavBar = (): JSX.Element => (
           <li>
             <Link
               to="/convert-to-csv"
-              className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0 "
+              className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0"
             >
               {NAV_CSV}
             </Link>
@@ -47,16 +47,32 @@ const NavBar = (): JSX.Element => (
           <li>
             <a
               href="/convert-to-data"
-              className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0 "
+              className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0"
             >
               {NAV_DAT}
+            </a>
+          </li>
+          <li>
+            <a
+              href="/convert-exe-to-csv"
+              className="block py-2 px-3 text-yellow-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0"
+            >
+              {NAV_EXE_CSV}
+            </a>
+          </li>
+          <li>
+            <a
+              href="/convert-csv-to-exe"
+              className="block py-2 px-3 text-yellow-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0"
+            >
+              {NAV_EXE}
             </a>
           </li>
           <li>
             {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <a
               href="https://github.com/ben-clarke/championship-manager-93-tools"
-              className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0 "
+              className="block py-2 px-3 text-gray-300 rounded hover:text-gray-100 md:hover:bg-transparent md:border-0  md:p-0"
               target="_blank"
               rel="noreferrer"
             >

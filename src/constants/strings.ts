@@ -119,3 +119,33 @@ export const HOME_EXE_EDITING_NOTE =
   "Editing the CMEXE is very restricted as it is basically a binary file with very strict rules on what can be changed and how it can be changed.";
 export const HOME_CONVERT_EXE_TO_CSV = "Convert CMEXE to CSV";
 export const HOME_REVERT_EXE_FROM_CSV = "Revert CSV file back into to CMEXE";
+
+export const EXE_CVS_HEADER = "Converting CMEXE to human readable CSV";
+
+export const EXE_CVS_INSTRUCTIONS_INTRO =
+  "Upload your CMEXE file here. It will then be converted into a human readable CSV spreadsheet.";
+export const EXE_CSV_SPREADSHEET_1 = "This will generate a ";
+export const EXE_CSV_SPREADSHEET_2 = "CMEXE.EXE.csv";
+export const EXE_CSV_SPREADSHEET_3 =
+  " CSV spreadsheet file, which will list all the available names.";
+
+export const EXE_CSV_INSTRUCTIONS_WARN =
+  "As the CMEXE.EXE file is basically the whole game, which just makes use of the DAT files, there are a lot of restrictions on what and how you can edit it. There are a number of rules that must be met:";
+export const EXE_CSV_INSTRUCTIONS_RESTRICTIONS = [
+  "there must be exactly the same number of items in each category (teams, names, nationalities etc.",
+  "each item in the category list must have exactly the same number of characters as previously. If you add less - this will be automatically padded with spaces, if you add more - this will cause a validation error when converting back to an EXE file.",
+];
+
+export const EXE_CSV_DISCLAIMER =
+  "This is an unfortunate downside of the attempts to edit the CMEXE.EXE file, there are currently no workarounds or other ways to handle this.";
+
+export const EXE_CSV_CATEGORY = "There will be a number of categories that you can edit:";
+export const EXE_CSV_CATEGORIES = ["Clubs", "Stadiums", "Nationalities", "First names", "Surnames"];
+
+export const CSV_EXE_HEADER = "Converting CSV human readable file back to EXE";
+export const CSV_EXE_INSTRUCTIONS_INTRO =
+  "Upload your edited CMEXE.EXE.csv and original CMEXE.EXE files here. The edits will be converted into a new EXE file with your changes.";
+export const CSV_EXE_REPLACE =
+  "The new file will be called CMEXE.EXE.new, so rename it CMEXE.EXE and place in the required folder.";
+export const CSV_EXE_USAGE =
+  "You can use with existing DAT files to create DAT human readable CSV files to allow you to include the new names.";

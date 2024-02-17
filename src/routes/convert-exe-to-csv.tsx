@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AlertVariant } from "../components/alert";
 import SubmittingOverlay from "../components/submitting-overlay";
+import ExeCsvInstructions from "../components/uploaders/csv/exe-csv-instructions";
 import ExeUpload from "../components/uploaders/exe-upload";
 import UploadComplete from "../components/uploaders/upload-complete";
 import { EXE_CM } from "../constants/files";
@@ -45,7 +46,7 @@ const ConvertExeToCsv = (): JSX.Element => {
       <div className="text-center bg-dark-gray text-white flex flex-wrap items-center justify-center">
         <div className="flex flex-wrap items-center justify-center w-full">
           <div className="w-1/2 text-sm pl-8 pr-4 text-justify text-gray-400 font-medium my-8">
-            TODO - BC
+            <ExeCsvInstructions />
           </div>
           <div className="w-1/2 mt-8 px-8">
             <div>

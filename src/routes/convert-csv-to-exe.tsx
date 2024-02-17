@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import CsvExeUpload from "src/components/uploaders/csv-exe-upload";
 import { AlertVariant } from "../components/alert";
 import SubmittingOverlay from "../components/submitting-overlay";
+import CsvExeUpload from "../components/uploaders/csv-exe-upload";
+import CsvExeInstructions from "../components/uploaders/data/csv-exe-instructions";
 import UploadComplete from "../components/uploaders/upload-complete";
 import { EXE_CM } from "../constants/files";
 import { UPLOAD_EDIT_EXE_PARSED } from "../constants/strings";
@@ -57,7 +58,7 @@ const ConvertCsvToExe = (): JSX.Element => {
             </div>
           </div>
           <div className="w-1/2 text-sm pl-4 pr-8 text-justify text-gray-400 font-medium my-8">
-            TODO - BC
+            <CsvExeInstructions />
           </div>
         </div>
       </div>

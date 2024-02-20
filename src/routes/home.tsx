@@ -46,7 +46,10 @@ const Home = (): JSX.Element => (
           >
             {HOME_CONVERT_DAT_TO_CSV}
           </Link>
-          <Link to="/convert-to-dat" className={clsx(linkClass, "hover:bg-gray-400 bg-gray-300")}>
+          <Link
+            to="/convert-to-dat"
+            className={clsx(linkClass, "hover:bg-gray-400 bg-gray-300 md:mt-0 sm:mt-2")}
+          >
             {HOME_REVERT_DAT_FROM_CSV}
           </Link>
         </div>
@@ -61,7 +64,7 @@ const Home = (): JSX.Element => (
           </Link>
           <Link
             to="/convert-csv-to-exe"
-            className={clsx(linkClass, "bg-yellow-300 hover:bg-yellow-500")}
+            className={clsx(linkClass, "bg-yellow-300 hover:bg-yellow-500 md:mt-0 sm:mt-2")}
           >
             {HOME_REVERT_EXE_FROM_CSV}
           </Link>

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { parse } from "papaparse";
 import { resolve } from "path";
-import { reduce, splitEvery, sum } from "ramda";
+import { flatten, reduce, splitEvery } from "ramda";
 import { getGameVersion } from "../constants/file";
 import { DataType } from "../types/executable";
 import { HumanReadableExe } from "../types/validation";
@@ -90,47 +90,73 @@ export default class CMExeParser {
     const errors: string[] = [];
     const newData = this.readHuman();
 
-    let newParsed = this.update([...this.data], newData, "club", 0);
-    newParsed = this.update(newParsed, newData, "ground", 1);
-    newParsed = this.update(newParsed, newData, "nationality", 2);
-    newParsed = this.update(newParsed, newData, "first-name", 3);
-    newParsed = this.update(newParsed, newData, "surname", 4);
+    const { updated: updated1, errors: errors1 } = this.update(
+      [...this.data],
+      newData,
+      "nationality",
+      2,
+    );
+    if (errors1.length > 0) return { converted: [], hex: "", errors: errors1 };
+
+    const { updated: updated2, errors: errors2 } = this.update(updated1, newData, "first-name", 3);
+    if (errors2.length > 0) return { converted: [], hex: "", errors: errors2 };
+
+    const { updated: updated3, errors: errors3 } = this.update(updated2, newData, "surname", 4);
+    if (errors3.length > 0) return { converted: [], hex: "", errors: errors3 };
+
+    const { updated: updated4, errors: errors4 } = this.update(updated3, newData, "club", 0);
+    if (errors4.length > 0) return { converted: [], hex: "", errors: errors4 };
+
+    const { updated: updated5, errors: errors5 } = this.update(updated4, newData, "ground", 1);
+    if (errors5.length > 0) return { converted: [], hex: "", errors: errors5 };
 
     return {
-      converted: newParsed,
-      hex: newParsed.join(""),
+      converted: updated5,
+      hex: updated5.join(""),
       errors,
     };
   }
 
-  update(data: string[], newData: string[][], dataType: DataType, dataTypeIndex: number): string[] {
-    const errors: string[] = [];
-
+  update(
+    data: string[],
+    newData: string[][],
+    dataType: DataType,
+    dataTypeIndex: number,
+  ): UpdateResponse {
     const items = getSortedList(this.get(dataType));
     const newItems = newData.map((d) => d[dataTypeIndex]).filter((d) => d);
 
+    // TODO - BC | Test for errors
+
     const itemCount = Object.keys(items).length;
-    const itemChars = sum(Object.values(items).map((c) => c.length));
-
-    const newItemCount = newItems.length;
-    const newItemChars = sum(newItems.map((c) => c.length));
-
-    const charDiff = itemChars - newItemChars;
-    if (itemCount !== newItemCount)
-      errors.push(`Invalid number of ${dataType}, must be ${itemCount}`);
-    if (charDiff < 0) {
-      errors.push(
-        `You have added too many characters to the ${dataType}, must be ${itemChars} or fewer`,
-      );
+    if (itemCount !== newItems.length) {
+      return { updated: [], errors: [`Invalid number of ${dataType}, must be ${itemCount}`] };
     }
 
-    let newParsed = [...data];
-
-    newItems.forEach((replacement, i) => {
-      newParsed = replaceData(newParsed, items[i], replacement);
+    const converted = newItems.map((replacement, i) => {
+      const required = items[i];
+      if (replacement.length > required.length) {
+        return {
+          errors: [
+            `You have added too many characters to the ${dataType}, in position ${i + 1} must be ${required.length} or fewer`,
+          ],
+          replacement: "",
+        };
+      }
+      return { errors: [], replacement: replacement.padEnd(required.length, " ") };
     });
 
-    return newParsed;
+    const errors = flatten(converted.map((c) => c.errors));
+    if (errors.length > 0) return { updated: [], errors };
+
+    const replacedItems = flatten(converted.map((c) => c.replacement));
+
+    let newParsed = [...data];
+    replacedItems.forEach((replacement, i) => {
+      newParsed = replaceData(newParsed, items[i], replacement, true);
+    });
+
+    return { updated: newParsed, errors };
   }
 
   readHuman(): string[][] {
@@ -156,3 +182,5 @@ export const getData = (
 type Input =
   | { fileDirectory: string; rawData?: null; rawCsv?: string }
   | { fileDirectory?: null; rawData: string; rawCsv?: string };
+
+type UpdateResponse = { updated: string[]; errors: string[] };

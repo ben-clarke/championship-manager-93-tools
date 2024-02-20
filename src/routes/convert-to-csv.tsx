@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { isSafari } from "react-device-detect";
-import DataUpload from "src/components/uploaders/data-upload";
 import { AlertVariant } from "../components/alert";
 import SubmittingOverlay from "../components/submitting-overlay";
+import DataUpload from "../components/uploaders/data-upload";
 import DataInstructions from "../components/uploaders/data/data-instructions";
 import UploadComplete from "../components/uploaders/upload-complete";
 import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM, EXE_CM } from "../constants/files";

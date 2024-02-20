@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Link, useLocation } from "react-router-dom";
-import { NAV_CSV, NAV_DAT, NAV_EXE, NAV_EXE_CSV, NAV_HEADING } from "src/constants/strings";
+import { NAV_CSV, NAV_DAT, NAV_EXE, NAV_EXE_CSV, NAV_HEADING } from "../../constants/strings";
 import { GitHub } from "../icons";
 import Home from "../icons/home";
 

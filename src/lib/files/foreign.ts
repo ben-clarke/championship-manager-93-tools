@@ -1,5 +1,5 @@
 import { map } from "ramda";
-import { DAT_FOREIGN } from "src/constants/files";
+import { DAT_FOREIGN } from "../../constants/files";
 import { ForeignPlayer } from "../objects/player";
 import { HumanReadableForeign } from "../types/validation";
 import BaseDataFile, { DataFileInput } from "./base";

@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { FileRejection } from "react-dropzone";
+import { EXE_CM } from "../../constants/files";
 import {
   UPLOAD_CSV_TO_EXE_FILE,
   UPLOAD_CSV_TO_EXE_TIP,
   UPLOAD_CSV_TO_EXE_TIP_2,
-} from "src/constants/strings";
-import { EXE_CM } from "../../constants/files";
+} from "../../constants/strings";
 import { AlertVariant } from "../alert";
 import UploadFile from "../upload-file/upload-file";
 

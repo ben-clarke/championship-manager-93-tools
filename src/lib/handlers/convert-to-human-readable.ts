@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { unparse } from "papaparse";
 import { resolve } from "path";
-import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "../../constants/files";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
 import League from "../files/league";

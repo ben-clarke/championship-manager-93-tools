@@ -1,6 +1,6 @@
 import { unparse } from "papaparse";
 import { resolve } from "path";
-import { DAT_LEAGUE } from "src/constants/files";
+import { DAT_LEAGUE } from "../../../constants/files";
 import CMExeParser from "../../files/cm-exe-parser";
 import Foreign from "../../files/foreign";
 import League from "../../files/league";

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { isSafari } from "react-device-detect";
-import ConvertToDataType from "src/components/convert-to-datatype";
-import Cloud from "src/components/upload-file/cloud";
-import CsvInstructions from "src/components/uploaders/csv/csv-instructions";
 import { AlertVariant } from "../components/alert";
+import ConvertToDataType from "../components/convert-to-datatype";
 import SubmittingOverlay from "../components/submitting-overlay";
+import Cloud from "../components/upload-file/cloud";
 import CsvUpload from "../components/uploaders/csv-upload";
+import CsvInstructions from "../components/uploaders/csv/csv-instructions";
 import UploadComplete from "../components/uploaders/upload-complete";
 import { CSV_FOREIGN, CSV_LEAGUE, CSV_TEAM, EXE_CM } from "../constants/files";
 import {

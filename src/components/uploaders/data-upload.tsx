@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { FileRejection } from "react-dropzone";
-import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM, EXE_CM } from "src/constants/files";
-import { UPLOAD_GAME_FILE, UPLOAD_GAME_TIP, UPLOAD_GAME_TIP_2 } from "src/constants/strings";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM, EXE_CM } from "../../constants/files";
+import { UPLOAD_GAME_FILE, UPLOAD_GAME_TIP, UPLOAD_GAME_TIP_2 } from "../../constants/strings";
 import { AlertVariant } from "../alert";
 import UploadFile from "../upload-file/upload-file";
 

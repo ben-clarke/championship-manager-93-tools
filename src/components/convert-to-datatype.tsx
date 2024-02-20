@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { EXE_CM } from "src/constants/files";
-import { FileType } from "src/lib/handlers/convert-to-hex";
+import { EXE_CM } from "../constants/files";
 import { UPLOAD_EDIT_PARSED } from "../constants/strings";
+import { FileType } from "../lib/handlers/convert-to-hex";
 import { Message } from "../types/web";
 import { createDataTypeFiles } from "../utils/file-conversion";
 import { AlertVariant } from "./alert";

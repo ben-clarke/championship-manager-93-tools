@@ -1,5 +1,5 @@
 import { map, splitEvery } from "ramda";
-import { DAT_TEAM } from "src/constants/files";
+import { DAT_TEAM } from "../../constants/files";
 import { getGameVersion } from "../constants/file";
 import Club, { Club93, Club94 } from "../objects/club";
 import { HumanReadableTeam } from "../types/validation";

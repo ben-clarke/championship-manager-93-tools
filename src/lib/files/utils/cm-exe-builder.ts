@@ -79,49 +79,13 @@ export const buildData = (
   return matches;
 };
 
-export const replaceAllData = (
+export const replaceData = (
   data: string[],
-  replacements: string[],
-  requiredDataType: DataType,
-  version: Version,
+  required: string,
+  replacement: string,
+  exactMatch: boolean,
 ): string[] => {
-  const startIndex = findStartIndex(data, requiredDataType, version);
-  // const items = buildData(data, requiredDataType, version);
-
-  const hex = replacements
-    .map((r) =>
-      r
-        .split("")
-        .map((r2) => utf8ToHex(r2))
-        .join(""),
-    )
-    .join("00");
-
-  // const originalHex = Object.values(items)
-  //   .map((r) =>
-  //     r.value
-  //       .split("")
-  //       .map((r2) => utf8ToHex(r2))
-  //       .join(""),
-  //   )
-  //   .join("00");
-
-  // expect(hex).toEqual(originalHex);
-
-  // console.log("HEX", hex.length);
-  // console.log("HEX ORIG", originalHex.length);
-  // console.log("replacements", Object.keys(replacements).length);
-  // console.log("Items", Object.keys(items).length);
-
-  data.splice(startIndex as number, hex.length / 2, hex);
-
-  return data;
-};
-
-export const replaceData = (data: string[], required: string, replacement: string): string[] => {
   if (required === replacement) return data;
-
-  // TODO - BC | Only replace exact matches
 
   let newReplacement = replacement;
   if (replacement.length > required.length) {
@@ -131,7 +95,7 @@ export const replaceData = (data: string[], required: string, replacement: strin
     newReplacement = replacement.padEnd(required.length, " ");
   }
 
-  const indexes = findIndexes(data, required);
+  const indexes = findIndexes(data, required, exactMatch);
   (indexes || []).forEach(({ start, end }) => {
     const shift = end - start + 1;
     data.splice(start, shift, ...newReplacement.split("").map((r) => utf8ToHex(r)));
@@ -140,7 +104,11 @@ export const replaceData = (data: string[], required: string, replacement: strin
   return data;
 };
 
-export const findIndexes = (parsed: string[], required: string): FoundIndex[] | null => {
+export const findIndexes = (
+  parsed: string[],
+  required: string,
+  exactMatch: boolean,
+): FoundIndex[] | null => {
   const found: FoundIndex[] = [];
 
   let sequence: string[] = [];
@@ -159,7 +127,7 @@ export const findIndexes = (parsed: string[], required: string): FoundIndex[] | 
     else if (char === required[0]) sequence = [char];
     else sequence = [];
 
-    if (sequence.join("") === required) {
+    if (sequence.join("") === required && (!exactMatch || parsed[i + 1] === "00")) {
       const start = i - required.length + 1;
       const end = i;
       found.push({ start, end });
@@ -180,13 +148,14 @@ export const findStartIndex = (
   const dataFirstIndex = getDataFirstIndex(version);
   const { required, occurrence = 1 } = dataFirstIndex[requiredDataType];
 
-  const indexes = findIndexes(parsed, required);
+  const exactMatch = false;
+  const indexes = findIndexes(parsed, required, exactMatch);
   if (!indexes || indexes.length === 0) return null;
 
   return indexes[occurrence - 1].start;
 };
 
-const getDataFirstIndex = (version: Version): Record<DataType, DataTypeData> => {
+export const getDataFirstIndex = (version: Version): Record<DataType, DataTypeData> => {
   if (version === "Italia") return ITA_DATA_FIRST_INDEX;
   if (version === "Italia95") return ITA_95_DATA_FIRST_INDEX;
   return DATA_FIRST_INDEX;

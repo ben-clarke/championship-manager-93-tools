@@ -1,4 +1,4 @@
-import { HumanReadable } from "src/lib/types/validation";
+import { HumanReadable } from "../../../types/validation";
 
 export default class Age {
   value: number;

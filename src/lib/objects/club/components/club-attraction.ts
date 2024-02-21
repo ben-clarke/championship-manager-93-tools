@@ -1,5 +1,5 @@
-import { HumanReadable } from "src/lib/types/validation";
 import { getSortedList } from "../../../files/utils/sorted";
+import { HumanReadable } from "../../../types/validation";
 import { invertObj } from "../../../utils/conversion";
 
 export default class ClubAttraction {

@@ -1,4 +1,4 @@
-import { HumanReadable } from "src/lib/types/validation";
+import { HumanReadable } from "../../types/validation";
 import { invertObj } from "../../utils/conversion";
 
 export default class Character {

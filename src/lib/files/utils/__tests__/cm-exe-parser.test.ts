@@ -26,7 +26,7 @@ describe("cm exe parser", () => {
   test("from human readable", () => {
     const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
 
-    const newData = [...DATA];
+    const newData = JSON.parse(JSON.stringify(DATA));
     newData[1].Club = "XYZ";
     newData[1].Ground = "New Trafford";
     newData[1].Nationality = "Mortugal";
@@ -35,29 +35,39 @@ describe("cm exe parser", () => {
 
     const parser = new CMExeParser({ fileDirectory: inputDirectory, rawCsv: unparse(newData) });
 
-    expect(findIndexes(parser.data, "XYZ")).toEqual([]);
-    expect(findIndexes(parser.data, "New Trafford")).toEqual([]);
-    expect(findIndexes(parser.data, "Mortugal")).toEqual([]);
-    expect(findIndexes(parser.data, "Xave")).toEqual([]);
-    expect(findIndexes(parser.data, "Lexton")).toEqual([]);
-    expect(findIndexes(parser.data, "Man Utd")).toEqual([
+    expect(findIndexes(parser.data, "XYZ", true)).toEqual([]);
+    expect(findIndexes(parser.data, "New Trafford", true)).toEqual([]);
+    expect(findIndexes(parser.data, "Mortugal", true)).toEqual([]);
+    expect(findIndexes(parser.data, "Xave", true)).toEqual([]);
+    expect(findIndexes(parser.data, "Lexton", true)).toEqual([]);
+    expect(findIndexes(parser.data, "Man Utd", true)).toEqual([
       { end: 396382, start: 396376 },
-      { end: 401999, start: 401993 },
       { end: 414002, start: 413996 },
     ]);
-    expect(findIndexes(parser.data, "Portugal")).toEqual([{ end: 316799, start: 316792 }]);
+    expect(findIndexes(parser.data, "Portugal", true)).toEqual([{ end: 316799, start: 316792 }]);
 
-    const { hex } = parser.convertFromHumanReadable();
+    // Only exact matches should be changed
+    expect(findIndexes(parser.data, "Dave", true)).toEqual([
+      { end: 339315, start: 339312 },
+      { end: 340663, start: 340660 },
+    ]);
+    expect(findIndexes(parser.data, "Davenport", true)).toEqual([{ end: 358091, start: 358083 }]);
+
+    const { hex, errors } = parser.convertFromHumanReadable();
+    expect(hex).not.toEqual("");
+    expect(errors).toHaveLength(0);
 
     resetConverted();
     const parser2 = new CMExeParser({ rawData: Buffer.from(hex, "hex").toString("base64") });
 
-    expect(findIndexes(parser2.data, "XYZ    ")).toEqual([
+    expect(findIndexes(parser2.data, "XYZ    ", true)).toEqual([
       { end: 396382, start: 396376 },
-      { end: 401999, start: 401993 },
       { end: 414002, start: 413996 },
     ]);
-    expect(findIndexes(parser2.data, "Mortugal")).toEqual([{ end: 316799, start: 316792 }]);
+    expect(findIndexes(parser2.data, "Mortugal", true)).toEqual([{ end: 316799, start: 316792 }]);
+
+    // Only exact matches should be changed
+    expect(findIndexes(parser2.data, "Davenport", true)).toEqual([{ end: 358091, start: 358083 }]);
 
     const club1 = getSortedList(parser.get("club"));
     const clubNum1 = Object.keys(club1).length;
@@ -69,5 +79,48 @@ describe("cm exe parser", () => {
 
     expect(clubNum1).toEqual(clubNum2);
     expect(clubChars1).toEqual(clubChars2);
+  });
+
+  test("from human readable - invalid item count", () => {
+    const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
+
+    const newData = JSON.parse(JSON.stringify(DATA));
+    newData[80].Club = "Newchester United";
+
+    const parser = new CMExeParser({ fileDirectory: inputDirectory, rawCsv: unparse(newData) });
+
+    const { hex, errors } = parser.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual(["Invalid number of clubs, must be 80"]);
+  });
+
+  test("from human readable - too many characters", () => {
+    const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
+
+    const newData = JSON.parse(JSON.stringify(DATA));
+    newData[1].Club = "Manchester United";
+
+    const parser = new CMExeParser({ fileDirectory: inputDirectory, rawCsv: unparse(newData) });
+
+    const { hex, errors } = parser.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual([
+      "You have added too many characters to the club in line 2 must be 7 or fewer",
+    ]);
+  });
+
+  test("from human readable - changing first item", () => {
+    const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
+
+    const newData = JSON.parse(JSON.stringify(DATA));
+    newData[0].Club = "Manchester United";
+
+    const parser = new CMExeParser({ fileDirectory: inputDirectory, rawCsv: unparse(newData) });
+
+    const { hex, errors } = parser.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual([
+      "You cannot change the first item in a category, first club must be Aston Villa",
+    ]);
   });
 });

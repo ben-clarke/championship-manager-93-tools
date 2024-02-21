@@ -1,13 +1,16 @@
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
-import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "src/constants/files";
+import { DAT_FOREIGN, DAT_LEAGUE, DAT_TEAM } from "../constants/files";
 import {
   FileType,
   convertToDataBlob,
   convertToExeBlob,
   convertToSingleDataBlob,
-} from "src/lib/handlers/convert-to-hex";
-import { convertToHumanReadableBlob } from "src/lib/handlers/convert-to-human-readable";
+} from "../lib/handlers/convert-to-hex";
+import {
+  convertToHumanReadableBlob,
+  convertToHumanReadableExeBlob,
+} from "../lib/handlers/convert-to-human-readable";
 
 export const createHumanReadableFiles = (
   foreign: string,
@@ -94,6 +97,17 @@ export const createDataTypeFiles = (content: string, fileType: FileType, exe: st
   if (errors.length > 0) return errors;
 
   convertAndStoreData(fileType, hex);
+
+  return [];
+};
+
+export const createExeCsvFile = (exe: string): string[] => {
+  const {
+    data: { exe: exeCsv },
+  } = convertToHumanReadableExeBlob(exe);
+
+  const file = new Blob([exeCsv], { type: "application/csv" });
+  saveAs(file, "CMEXE.EXE.csv");
 
   return [];
 };

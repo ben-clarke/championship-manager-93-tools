@@ -4,5 +4,9 @@ import App from "../app";
 
 test("renders learn react link", () => {
   render(<App />);
-  expect(screen.getByText("Converting to human readable CSV")).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      "This is the home page of a number of tools to facilitate the editing of Championship Manger '93 era games.",
+    ),
+  ).toBeInTheDocument();
 });

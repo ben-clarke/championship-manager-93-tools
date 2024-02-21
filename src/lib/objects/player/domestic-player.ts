@@ -1,4 +1,4 @@
-import { getGameVersion } from "src/lib/constants/file";
+import { getGameVersion } from "../../constants/file";
 import CMExeParser from "../../files/cm-exe-parser";
 import { HumanReadablePlayer } from "../../types/validation";
 import PlayerClub from "./components/player-club";

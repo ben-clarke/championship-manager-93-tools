@@ -1,4 +1,4 @@
-import { HumanReadableAttributes } from "src/lib/types/validation";
+import { HumanReadableAttributes } from "../../../types/validation";
 
 export default class PlayerAttributes {
   passing: number;

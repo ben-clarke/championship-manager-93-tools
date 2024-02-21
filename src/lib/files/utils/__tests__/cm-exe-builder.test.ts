@@ -5,11 +5,9 @@ import {
   FoundIndex,
   findIndexes,
   findStartIndex,
-  replaceAllData,
   replaceData,
   resetConverted,
 } from "../cm-exe-builder";
-import { getSortedList } from "../sorted";
 
 describe("cm exe builder", () => {
   const INPUT_DIRECTORY = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
@@ -35,7 +33,7 @@ describe("cm exe builder", () => {
 
   describe("findIndexes", () => {
     test("club", () => {
-      const indexes = findIndexes(PARSER.data, "Aston Villa") as FoundIndex[];
+      const indexes = findIndexes(PARSER.data, "Aston Villa", true) as FoundIndex[];
       expect(indexes).toEqual([
         { start: 396384, end: 396394 },
         { start: 413984, end: 413994 },
@@ -56,59 +54,38 @@ describe("cm exe builder", () => {
     });
 
     test("nationality", () => {
-      expect(findIndexes(PARSER.data, "England")).toEqual([
+      expect(findIndexes(PARSER.data, "England", false)).toEqual([
         { start: 316784, end: 316790 },
         { start: 369260, end: 369266 },
         { start: 369301, end: 369307 },
         { start: 382515, end: 382521 },
       ]);
+
+      expect(findIndexes(PARSER.data, "England", true)).toEqual([{ start: 316784, end: 316790 }]);
     });
-  });
 
-  describe("replaceAllData", () => {
-    test("replace club data", () => {
-      const clubs = PARSER.get("club");
+    test("exact match", () => {
+      expect(findIndexes(PARSER.data, "Dave", true)).toEqual([
+        { end: 339315, start: 339312 },
+        { end: 340663, start: 340660 },
+      ]);
+    });
 
-      // console.log(
-      //   [...PARSER.data].reduce((acc, d, i) => {
-      //     if (d !== "0c" || PARSER.data[i + 1] !== "08") return acc;
-
-      //     // if (PARSER.data[i + 2] !== "14") return acc;
-
-      //     const blah = [
-      //       d,
-      //       PARSER.data[i + 1],
-      //       PARSER.data[i + 2],
-      //       PARSER.data[i + 3],
-      //       PARSER.data[i + 4],
-      //     ];
-      //     acc.push(blah.join(" "));
-      //     return acc;
-      //   }, []),
-      // );
-
-      const sortedClubs = getSortedList(clubs);
-      const [av, mu, no, sw, ...rest] = sortedClubs;
-      const newClubs = [av, mu, sw, no, ...rest];
-
-      // 0, 12, 20, 28
-      // Aston Villa Man Utd Norwich  Sheff Wed
-      // Aston Villa  Man United  Norwich  Sheff Wed
-
-      replaceAllData([...PARSER.data], newClubs, "club", "94");
-
-      // fs.writeFileSync("/Users/benclarke/CMEXE.EXE", newData.join(""), "hex");
-
-      // const blah = new CMExeParser({ fileDirectory: "/Users/benclarke/" });
+    test("not exact match", () => {
+      expect(findIndexes(PARSER.data, "Dave", false)).toEqual([
+        { end: 339315, start: 339312 },
+        { end: 340663, start: 340660 },
+        { end: 358086, start: 358083 },
+      ]);
     });
   });
 
   describe("replaceData", () => {
     test("replace with same length", () => {
-      const newData = replaceData([...PARSER.data], "Aston Villa", "Aston Pills");
+      const newData = replaceData([...PARSER.data], "Aston Villa", "Aston Pills", true);
 
       resetConverted();
-      const indexes = findIndexes(newData, "Aston Pills") as FoundIndex[];
+      const indexes = findIndexes(newData, "Aston Pills", true) as FoundIndex[];
 
       expect(indexes).toEqual([
         { start: 396384, end: 396394 },
@@ -141,10 +118,10 @@ describe("cm exe builder", () => {
     });
 
     test("replace with shorter length", () => {
-      const newData = replaceData([...PARSER.data], "Aston Villa", "Aston City");
+      const newData = replaceData([...PARSER.data], "Aston Villa", "Aston City", true);
 
       resetConverted();
-      const indexes = findIndexes(newData, "Aston City ") as FoundIndex[];
+      const indexes = findIndexes(newData, "Aston City ", true) as FoundIndex[];
       expect(indexes).toEqual([
         { start: 396384, end: 396394 },
         { start: 413984, end: 413994 },

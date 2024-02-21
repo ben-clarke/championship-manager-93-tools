@@ -9,6 +9,16 @@ export const UPLOAD_EDIT_TIP =
 export const UPLOAD_EDIT_TIP_2 =
   "This will convert your edited files back into binary files to be used in the game.";
 
+export const UPLOAD_EXE_FILE = "Click to upload your CMEXE.EXE file";
+export const UPLOAD_EXE_TIP = "You must select the CMEXE.EXE file.";
+export const UPLOAD_EXE_TIP_2 =
+  "This will convert your CMEXE.EXE file back into a CSV file with the contained data.";
+
+export const UPLOAD_CSV_TO_EXE_FILE = "Click to upload your edited CMEXE file";
+export const UPLOAD_CSV_TO_EXE_TIP = "You must select the CMEXE.EXE and CMEXE.EXE.csv files.";
+export const UPLOAD_CSV_TO_EXE_TIP_2 =
+  "This will convert your CMEXE.EXE.csv file back into a EXE file called CMEXE.EXE.new.";
+
 export const UPLOAD_EDIT_FILE_FOREIGN = "Create your FOREIGN.DAT file";
 export const UPLOAD_EDIT_FILE_LEAGUE = "Create your LEAGUE.DAT file";
 export const UPLOAD_EDIT_FILE_TEAM = "Create your TEAM.DAT file";
@@ -24,8 +34,10 @@ export const UPLOAD_EDIT_PARSED = "Game data files have been saved to your downl
 export const UPLOAD_EDIT_EXE_PARSED = "Game EXE file has been saved to your downloads folder";
 
 export const NAV_HEADING = "Championship Manager '93 editing";
-export const NAV_CSV = "Create CSV";
-export const NAV_DAT = "Create .DAT";
+export const NAV_CSV = "DAT -> CSV";
+export const NAV_DAT = "CSV -> DAT";
+export const NAV_EXE_CSV = "EXE -> CSV";
+export const NAV_EXE = "CSV -> EXE";
 
 export const DAT_HEADER = "Converting to human readable CSV";
 
@@ -75,3 +87,65 @@ export const CSV_NOTE_EXAMPLE = "TEAMS (1).DAT";
 export const CSV_NOTE_2 = ", you will need to rename them after moving to your CM93 folder.";
 export const CSV_HELP =
   "You will need to select multiple files to upload - use the Ctrl button to click on multiple files (or command button on Mac). It may be easier to copy and CMEXE.EXE file into the same directory as your CSV files first.";
+
+export const HOME_HEADER = "Welcome";
+export const HOME_INTRO =
+  "This is the home page of a number of tools to facilitate the editing of Championship Manger '93 era games.";
+export const HOME_SUPPORTED = "The following versions are supported:";
+export const HOME_SUPPORTED_VERSION = [
+  "Championship Manager '93",
+  "Championship Manager '93/94",
+  "Championship Manager '94 (EOS)",
+  "Championship Manager Italia",
+  "Championship Manager Italia '95",
+];
+export const HOME_NOT_SUPPORTED = "The following versions are not currently supported:";
+export const HOME_NOT_SUPPORTED_VERSION = ["Championship Manager Norge '95"];
+
+export const HOME_FLOW = "There are currently two main editing flows possible:";
+export const HOME_FLOWS = [
+  "Editing DAT files by converting into human readable CSV files, making changes and then converting back.",
+  "Editing the CMEXE.EXE file directly to change the available hardcoded values used in the DAT files, although there are many restrictions on editing this file.",
+];
+
+export const HOME_DAT_EDITING = "DAT editing";
+export const HOME_DAT_EDITING_NOTE =
+  "This uses data from the CMEXE file, so if you want to add new names or teams etc., it is recommended you edit the CMEXE file first and convert it back, before generating the DAT-CSV files, as the names will not be selectable until you do.";
+export const HOME_CONVERT_DAT_TO_CSV = "Convert DAT files to CSV";
+export const HOME_REVERT_DAT_FROM_CSV = "Revert CSV files back into to DAT";
+
+export const HOME_EXE_EDITING = "CMEXE editing";
+export const HOME_EXE_EDITING_NOTE =
+  "Editing the CMEXE is very restricted as it is basically a binary file with very strict rules on what can be changed and how it can be changed.";
+export const HOME_CONVERT_EXE_TO_CSV = "Convert CMEXE to CSV";
+export const HOME_REVERT_EXE_FROM_CSV = "Revert CSV file back into to CMEXE";
+
+export const EXE_CVS_HEADER = "Converting CMEXE to human readable CSV";
+
+export const EXE_CVS_INSTRUCTIONS_INTRO =
+  "Upload your CMEXE file here. It will then be converted into a human readable CSV spreadsheet.";
+export const EXE_CSV_SPREADSHEET_1 = "This will generate a ";
+export const EXE_CSV_SPREADSHEET_2 = "CMEXE.EXE.csv";
+export const EXE_CSV_SPREADSHEET_3 =
+  " CSV spreadsheet file, which will list all the available names.";
+
+export const EXE_CSV_INSTRUCTIONS_WARN =
+  "As the CMEXE.EXE file is basically the whole game, which just makes use of the DAT files, there are a lot of restrictions on what and how you can edit it. There are a number of rules that must be met:";
+export const EXE_CSV_INSTRUCTIONS_RESTRICTIONS = [
+  "there must be exactly the same number of items in each category (teams, names, nationalities etc.",
+  "each item in the category list must have exactly the same number of characters as previously. If you add less - this will be automatically padded with spaces, if you add more - this will cause a validation error when converting back to an EXE file.",
+];
+
+export const EXE_CSV_DISCLAIMER =
+  "This is an unfortunate downside of the attempts to edit the CMEXE.EXE file, there are currently no workarounds or other ways to handle this.";
+
+export const EXE_CSV_CATEGORY = "There will be a number of categories that you can edit:";
+export const EXE_CSV_CATEGORIES = ["Clubs", "Stadiums", "Nationalities", "First names", "Surnames"];
+
+export const CSV_EXE_HEADER = "Converting CSV human readable file back to EXE";
+export const CSV_EXE_INSTRUCTIONS_INTRO =
+  "Upload your edited CMEXE.EXE.csv and original CMEXE.EXE files here. The edits will be converted into a new EXE file with your changes.";
+export const CSV_EXE_REPLACE =
+  "The new file will be called CMEXE.EXE.new, so rename it CMEXE.EXE and place in the required folder.";
+export const CSV_EXE_USAGE =
+  "You can use with existing DAT files to create DAT human readable CSV files to allow you to include the new names.";

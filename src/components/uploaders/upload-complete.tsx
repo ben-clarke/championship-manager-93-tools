@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { Banner } from "src/components/banner";
 import { Message } from "../../types/web";
+import { Banner } from "../banner";
 
 const UploadComplete = ({ message }: UploadCompleteProps): JSX.Element => (
   <div className="px-4">

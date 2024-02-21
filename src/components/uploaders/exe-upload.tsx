@@ -1,15 +1,11 @@
 import { useCallback } from "react";
 import { FileRejection } from "react-dropzone";
 import { EXE_CM } from "../../constants/files";
-import {
-  UPLOAD_CSV_TO_EXE_FILE,
-  UPLOAD_CSV_TO_EXE_TIP,
-  UPLOAD_CSV_TO_EXE_TIP_2,
-} from "../../constants/strings";
+import { UPLOAD_EXE_FILE, UPLOAD_EXE_TIP, UPLOAD_EXE_TIP_2 } from "../../constants/strings";
 import { AlertVariant } from "../alert";
 import UploadFile from "../upload-file/upload-file";
 
-const CsvExeUpload = ({ setFiles, setMessage }: DataUploadProps): JSX.Element => {
+const ExeUpload = ({ setFiles, setMessage }: DataUploadProps): JSX.Element => {
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     const acceptedFileItems = acceptedFiles.map(({ name }) => name.toUpperCase());
     const missingFiles = REQUIRED_FILES.filter(
@@ -40,9 +36,9 @@ const CsvExeUpload = ({ setFiles, setMessage }: DataUploadProps): JSX.Element =>
 
   return (
     <UploadFile
-      value={UPLOAD_CSV_TO_EXE_FILE}
-      tip={UPLOAD_CSV_TO_EXE_TIP}
-      tip2={UPLOAD_CSV_TO_EXE_TIP_2}
+      value={UPLOAD_EXE_FILE}
+      tip={UPLOAD_EXE_TIP}
+      tip2={UPLOAD_EXE_TIP_2}
       onDrop={onDrop}
       validator={fileValidator}
       id="csv-exe-upload"
@@ -76,7 +72,7 @@ const fileValidator = (file: File): { code: string; message: string } | null => 
   return null;
 };
 
-const REQUIRED_FILES = ["CMEXE.EXE.CSV", EXE_CM];
+const REQUIRED_FILES = [EXE_CM];
 
 const getMissingErrorMessage = (missingFiles: string[]): string =>
   `You have not uploaded the required files: ${missingFiles.join(", ")}`;
@@ -84,4 +80,4 @@ const getMissingErrorMessage = (missingFiles: string[]): string =>
 const getInvalidErrorMessage = (rejectedFiles: FileRejection[]): string[] =>
   rejectedFiles.map(({ errors }) => errors.map(({ message }) => message).join(", "));
 
-export default CsvExeUpload;
+export default ExeUpload;

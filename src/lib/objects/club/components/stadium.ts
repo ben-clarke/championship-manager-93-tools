@@ -1,4 +1,4 @@
-import { HumanReadableStadium } from "src/lib/types/validation";
+import { HumanReadableStadium } from "../../../types/validation";
 
 export default class Stadium {
   capacity: number;

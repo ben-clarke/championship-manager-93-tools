@@ -6,7 +6,7 @@ import { getGameVersion } from "../constants/file";
 import { DataType } from "../types/executable";
 import { HumanReadableExe } from "../types/validation";
 import { Version } from "../types/version";
-import { buildData, replaceData } from "./utils/cm-exe-builder";
+import { buildData, getDataFirstIndex, replaceData } from "./utils/cm-exe-builder";
 import { getSortedList } from "./utils/sorted";
 
 export default class CMExeParser {
@@ -94,20 +94,40 @@ export default class CMExeParser {
       [...this.data],
       newData,
       "nationality",
-      2,
+      CSV_INDEX_NATIONALITY,
     );
     if (errors1.length > 0) return { converted: [], hex: "", errors: errors1 };
 
-    const { updated: updated2, errors: errors2 } = this.update(updated1, newData, "first-name", 3);
+    const { updated: updated2, errors: errors2 } = this.update(
+      updated1,
+      newData,
+      "first-name",
+      CSV_INDEX_FIRST_NAME,
+    );
     if (errors2.length > 0) return { converted: [], hex: "", errors: errors2 };
 
-    const { updated: updated3, errors: errors3 } = this.update(updated2, newData, "surname", 4);
+    const { updated: updated3, errors: errors3 } = this.update(
+      updated2,
+      newData,
+      "surname",
+      CSV_INDEX_SURNAME,
+    );
     if (errors3.length > 0) return { converted: [], hex: "", errors: errors3 };
 
-    const { updated: updated4, errors: errors4 } = this.update(updated3, newData, "club", 0);
+    const { updated: updated4, errors: errors4 } = this.update(
+      updated3,
+      newData,
+      "club",
+      CSV_INDEX_CLUB,
+    );
     if (errors4.length > 0) return { converted: [], hex: "", errors: errors4 };
 
-    const { updated: updated5, errors: errors5 } = this.update(updated4, newData, "ground", 1);
+    const { updated: updated5, errors: errors5 } = this.update(
+      updated4,
+      newData,
+      "ground",
+      CSV_INDEX_GROUND,
+    );
     if (errors5.length > 0) return { converted: [], hex: "", errors: errors5 };
 
     return {
@@ -126,11 +146,24 @@ export default class CMExeParser {
     const items = getSortedList(this.get(dataType));
     const newItems = newData.map((d) => d[dataTypeIndex]).filter((d) => d);
 
-    // TODO - BC | Test for errors
+    const dataFirstIndex = getDataFirstIndex(this.version);
+    const { required: firstItem } = dataFirstIndex[dataType];
+
+    if (firstItem !== newItems[0]) {
+      return {
+        updated: [],
+        errors: [
+          `You cannot change the first item in a category, first ${dataType} must be ${firstItem}`,
+        ],
+      };
+    }
 
     const itemCount = Object.keys(items).length;
     if (itemCount !== newItems.length) {
-      return { updated: [], errors: [`Invalid number of ${dataType}, must be ${itemCount}`] };
+      return {
+        updated: [],
+        errors: [`Invalid number of ${ERROR_DATA_TYPE_MAP[dataType]}, must be ${itemCount}`],
+      };
     }
 
     const converted = newItems.map((replacement, i) => {
@@ -138,7 +171,7 @@ export default class CMExeParser {
       if (replacement.length > required.length) {
         return {
           errors: [
-            `You have added too many characters to the ${dataType}, in position ${i + 1} must be ${required.length} or fewer`,
+            `You have added too many characters to the ${dataType} in line ${i + 1} must be ${required.length} or fewer`,
           ],
           replacement: "",
         };
@@ -184,3 +217,26 @@ type Input =
   | { fileDirectory?: null; rawData: string; rawCsv?: string };
 
 type UpdateResponse = { updated: string[]; errors: string[] };
+
+const ERROR_DATA_TYPE_MAP: Record<DataType, string> = {
+  nationality: "nationalities",
+  character: "characters",
+  "injury-type": "injury types",
+  club: "clubs",
+  "non-domestic-club": "non domestic clubs",
+  ground: "grounds",
+  "first-name": "first names",
+  "first-name-foreign": "foreign first names",
+  surname: "surnames",
+  wages: "wages",
+  "style-of-play": "styles of play",
+  formation: "formations",
+  version: "versions",
+  year: "years",
+};
+
+const CSV_INDEX_CLUB = 0;
+const CSV_INDEX_GROUND = 1;
+const CSV_INDEX_NATIONALITY = 2;
+const CSV_INDEX_FIRST_NAME = 3;
+const CSV_INDEX_SURNAME = 4;

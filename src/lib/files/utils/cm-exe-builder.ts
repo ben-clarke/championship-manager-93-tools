@@ -155,7 +155,7 @@ export const findStartIndex = (
   return indexes[occurrence - 1].start;
 };
 
-const getDataFirstIndex = (version: Version): Record<DataType, DataTypeData> => {
+export const getDataFirstIndex = (version: Version): Record<DataType, DataTypeData> => {
   if (version === "Italia") return ITA_DATA_FIRST_INDEX;
   if (version === "Italia95") return ITA_95_DATA_FIRST_INDEX;
   return DATA_FIRST_INDEX;

@@ -26,7 +26,7 @@ describe("cm exe parser", () => {
   test("from human readable", () => {
     const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
 
-    const newData = [...DATA];
+    const newData = JSON.parse(JSON.stringify(DATA));
     newData[1].Club = "XYZ";
     newData[1].Ground = "New Trafford";
     newData[1].Nationality = "Mortugal";
@@ -79,5 +79,48 @@ describe("cm exe parser", () => {
 
     expect(clubNum1).toEqual(clubNum2);
     expect(clubChars1).toEqual(clubChars2);
+  });
+
+  test("from human readable - invalid item count", () => {
+    const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
+
+    const newData = JSON.parse(JSON.stringify(DATA));
+    newData[80].Club = "Newchester United";
+
+    const parser = new CMExeParser({ fileDirectory: inputDirectory, rawCsv: unparse(newData) });
+
+    const { hex, errors } = parser.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual(["Invalid number of clubs, must be 80"]);
+  });
+
+  test("from human readable - too many characters", () => {
+    const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
+
+    const newData = JSON.parse(JSON.stringify(DATA));
+    newData[1].Club = "Manchester United";
+
+    const parser = new CMExeParser({ fileDirectory: inputDirectory, rawCsv: unparse(newData) });
+
+    const { hex, errors } = parser.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual([
+      "You have added too many characters to the club in line 2 must be 7 or fewer",
+    ]);
+  });
+
+  test("from human readable - changing first item", () => {
+    const inputDirectory = resolve(__dirname, "../../../../../", "game-edits", "cm93-94");
+
+    const newData = JSON.parse(JSON.stringify(DATA));
+    newData[0].Club = "Manchester United";
+
+    const parser = new CMExeParser({ fileDirectory: inputDirectory, rawCsv: unparse(newData) });
+
+    const { hex, errors } = parser.convertFromHumanReadable();
+    expect(hex).toEqual("");
+    expect(errors).toEqual([
+      "You cannot change the first item in a category, first club must be Aston Villa",
+    ]);
   });
 });

@@ -67,6 +67,7 @@ export default class CMExeParser {
     const nationality = getSortedList(this.get("nationality"));
     const firstName = getSortedList(this.get("first-name"));
     const surname = getSortedList(this.get("surname"));
+    const nonDomestic = getSortedList(this.get("non-domestic-club"));
 
     const csvData: Record<string, string>[] = Array.from({ length: surname.length }).reduce(
       (acc: Record<string, string>[], _, i) => {
@@ -76,6 +77,7 @@ export default class CMExeParser {
           Nationality: nationality[i] || "",
           "First name": firstName[i] || "",
           Surname: surname[i] || "",
+          "Non domestic club": nonDomestic[i] || "",
         };
         acc.push(obj);
         return acc;
@@ -127,12 +129,22 @@ export default class CMExeParser {
       newData,
       "ground",
       CSV_INDEX_GROUND,
+      true,
     );
     if (errors5.length > 0) return { converted: [], hex: "", errors: errors5 };
 
+    const { updated: updated6, errors: errors6 } = this.update(
+      updated5,
+      newData,
+      "non-domestic-club",
+      CSV_INDEX_NON_DOMESTIC_CLUB,
+      true,
+    );
+    if (errors6.length > 0) return { converted: [], hex: "", errors: errors6 };
+
     return {
-      converted: updated5,
-      hex: updated5.join(""),
+      converted: updated6,
+      hex: updated6.join(""),
       errors,
     };
   }
@@ -142,6 +154,7 @@ export default class CMExeParser {
     newData: string[][],
     dataType: DataType,
     dataTypeIndex: number,
+    removeFirstIndex = false,
   ): UpdateResponse {
     const items = getSortedList(this.get(dataType));
     const newItems = newData.map((d) => d[dataTypeIndex]).filter((d) => d);
@@ -186,7 +199,7 @@ export default class CMExeParser {
 
     let newParsed = [...data];
     replacedItems.forEach((replacement, i) => {
-      newParsed = replaceData(newParsed, items[i], replacement, true);
+      newParsed = replaceData(newParsed, items[i], replacement, true, removeFirstIndex);
     });
 
     return { updated: newParsed, errors };
@@ -240,3 +253,4 @@ const CSV_INDEX_GROUND = 1;
 const CSV_INDEX_NATIONALITY = 2;
 const CSV_INDEX_FIRST_NAME = 3;
 const CSV_INDEX_SURNAME = 4;
+const CSV_INDEX_NON_DOMESTIC_CLUB = 5;

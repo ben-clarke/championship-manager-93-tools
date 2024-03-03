@@ -84,6 +84,7 @@ export const replaceData = (
   required: string,
   replacement: string,
   exactMatch: boolean,
+  removeFirstIndex = false,
 ): string[] => {
   if (required === replacement) return data;
 
@@ -95,7 +96,13 @@ export const replaceData = (
     newReplacement = replacement.padEnd(required.length, " ");
   }
 
-  const indexes = findIndexes(data, required, exactMatch);
+  let indexes = findIndexes(data, required, exactMatch);
+
+  if (removeFirstIndex && indexes && indexes?.length > 1) {
+    const [, ...newIndexes] = indexes;
+    indexes = newIndexes;
+  }
+
   (indexes || []).forEach(({ start, end }) => {
     const shift = end - start + 1;
     data.splice(start, shift, ...newReplacement.split("").map((r) => utf8ToHex(r)));

@@ -34,10 +34,10 @@ export const UPLOAD_EDIT_PARSED = "Game data files have been saved to your downl
 export const UPLOAD_EDIT_EXE_PARSED = "Game EXE file has been saved to your downloads folder";
 
 export const NAV_HEADING = "Championship Manager '93 editing";
-export const NAV_CSV = "DAT -> CSV";
-export const NAV_DAT = "CSV -> DAT";
-export const NAV_EXE_CSV = "EXE -> CSV";
-export const NAV_EXE = "CSV -> EXE";
+export const NAV_CSV = "DAT → CSV";
+export const NAV_DAT = "CSV → DAT";
+export const NAV_EXE_CSV = "EXE → CSV";
+export const NAV_EXE = "CSV → EXE";
 
 export const DAT_HEADER = "Converting to human readable CSV";
 

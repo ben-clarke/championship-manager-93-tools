@@ -31,7 +31,7 @@ export const buildData = (
   const startIndex = findStartIndex(parsed, requiredDataType, version);
   if (!startIndex) throw new Error(`No start index found for ${requiredDataType}`);
 
-  const { padding = 2, breakAt } = getDataFirstIndex(version)[requiredDataType];
+  const { padding = 2 } = getDataFirstIndex(version)[requiredDataType];
 
   let item: string[] = [];
   let stopProcessing = false;
@@ -58,12 +58,6 @@ export const buildData = (
 
     // We have hit the list separator, meaning that the item has no more characters in it.
     const value = item.join("");
-
-    // If we should break, then do not add and mark that we should stop processing.
-    if (breakAt && breakAt === value) {
-      stopProcessing = true;
-      return acc;
-    }
 
     // Add all these details to the object and then clear the item for the next one.
     const valueIndex = Object.keys(acc).length;
@@ -172,7 +166,7 @@ const DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   nationality: { required: "England" },
   club: { required: "Aston Villa", occurrence: 2 },
   ground: { required: "Villa Park" },
-  "first-name": { required: "Ron", padding: 4, breakAt: "Josep" },
+  "first-name": { required: "Ron", padding: 4 },
   "first-name-foreign": { required: "Ron", padding: 4 },
   surname: { required: "Atkinson", padding: 4 },
   "non-domestic-club": { required: "Porto", padding: 4 },
@@ -190,7 +184,7 @@ const ITA_DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   nationality: { required: "Italy" },
   club: { required: "Atalanta" },
   ground: { required: "Stadio Communale" },
-  "first-name": { required: "Francesco", padding: 4, breakAt: "Victor" },
+  "first-name": { required: "Francesco", padding: 4 },
   "first-name-foreign": { required: "Francesco", padding: 4 },
   surname: { required: "Guidolin", padding: 4 },
 };
@@ -199,14 +193,13 @@ const ITA_95_DATA_FIRST_INDEX: Record<DataType, DataTypeData> = {
   ...ITA_DATA_FIRST_INDEX,
   club: { required: "Padova", occurrence: 2 },
   ground: { required: "Euganeo" },
-  "first-name": { required: "Mauro", padding: 4, breakAt: "Sergei" },
+  "first-name": { required: "Mauro", padding: 4 },
   "first-name-foreign": { required: "Mauro", padding: 4 },
   surname: { required: "Sandreani", padding: 4 },
 };
 
 interface DataTypeData {
   required: string;
-  breakAt?: string;
   padding?: number;
   occurrence?: number;
 }

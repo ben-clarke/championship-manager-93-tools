@@ -24,5 +24,3 @@ export default class PersonName {
     return { value1: one, value2: two, errors: [] };
   }
 }
-
-export const FOREIGN_NAME_MODIFIER = 341;

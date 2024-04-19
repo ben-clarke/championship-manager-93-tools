@@ -16,7 +16,14 @@ export default class PersonName {
 
   static toHex(value: string, nameMap: Record<string, string>): HumanReadablePersonName {
     const mapping = invertObj(nameMap);
-    const hex = mapping[value.toLowerCase()];
+    let hex = mapping[value.toLowerCase()];
+
+    if (!hex && value.toLowerCase() === "random") {
+      const names = Object.keys(mapping);
+      const index = Math.floor(Math.random() * names.length);
+      hex = mapping[names[index]];
+      console.log("Picking random", names[index]);
+    }
 
     if (!hex) return { value1: "", value2: "", errors: [`No person name found for: ${value}`] };
 

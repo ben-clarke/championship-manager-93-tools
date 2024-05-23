@@ -16,6 +16,7 @@ import { PlayerDetails } from "./utils/generate-random";
 import { getNames } from "./utils/normalisation";
 
 export const processForeignPlayers = async (
+  year: number,
   filepath: string,
   numberOfForeignPlayersRequired: number,
   generate = true,
@@ -32,7 +33,7 @@ export const processForeignPlayers = async (
     firstNames,
     surnames,
     commonNames,
-  } = await load();
+  } = await load(year);
 
   const england = nations.find((n) => getText(n.Name) === ENGLAND) as Nation;
 

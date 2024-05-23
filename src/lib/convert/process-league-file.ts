@@ -18,6 +18,7 @@ import { getNames, getNormalisedClub } from "./utils/normalisation";
 import { applySquadFilter, rejectedPlayersFilter } from "./utils/squad-filtering";
 
 export const processSquads = async (
+  year: number,
   filepath: string,
   data: CMExeParser,
   generate = true,
@@ -34,7 +35,7 @@ export const processSquads = async (
     firstNames,
     surnames,
     commonNames,
-  } = await load();
+  } = await load(year);
 
   const england = nations.find((n) => getText(n.Name) === ENGLAND) as Nation;
 
@@ -72,7 +73,7 @@ export const processSquads = async (
           firstNames,
           surnames,
           commonNames,
-          Nationality.fromNewData(getText(nation)),
+          nation ? Nationality.fromNewData(getText(nation)) : "unknown",
         );
 
         const details: PlayerDetails = {
@@ -84,7 +85,7 @@ export const processSquads = async (
           ...PlayerPosition.fromNewData(playerDetails),
           Age: TCMDate.toAge(player.DateOfBirth),
           Character: RANDOM,
-          Nationality: Nationality.fromNewData(getText(nation)),
+          Nationality: nation ? Nationality.fromNewData(getText(nation)) : "unknown",
           "Current skill": playerDetails.CurrentAbility.toString(),
           "Potential skill": playerDetails.PotentialAbility.toString(),
           "Injury proneness": InjuryProneness.fromNewData(playerDetails.InjuryProneness),

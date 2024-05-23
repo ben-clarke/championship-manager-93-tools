@@ -20,11 +20,15 @@ import { getNormalisedClub, getNormalisedName, getNormalisedSurname } from "./ut
 import { getUnknown10, getUnknown8 } from "./utils/unknown-values";
 
 export const processTeams = async (
+  year: number,
   filepath: string,
   data: CMExeParser,
-): Promise<Record<string, Record<string, string>>> => {
+): Promise<{
+  leagueSquads: Record<string, Record<string, string>>;
+  divisions: Record<string, number>;
+}> => {
   const { clubs, competitions, nations, staff, firstNames, surnames, nonPlayers, stadiums } =
-    await load();
+    await load(year);
 
   const england = nations.find((n) => getText(n.Name) === ENGLAND) as Nation;
 
@@ -78,17 +82,24 @@ export const processTeams = async (
   );
 
   const leagueSquads: Record<string, Record<string, string>> = {};
+  const divisions: Record<string, number> = {};
 
   Object.entries(teams).forEach(([name, team]) => {
     const normalised = getNormalisedClub(name);
     const match = hardcodedClubs.includes(normalised);
-    if (match) leagueSquads[normalised] = team;
+    if (match) {
+      leagueSquads[normalised] = team;
+      divisions[normalised] = getDivision(
+        englishClubs.find((c) => getText(c.Name) === name) as Club,
+        competitions,
+      );
+    }
   });
 
   const csv = unparse(Object.values(leagueSquads));
   fs.writeFileSync(`${filepath}/TEAM.DAT.csv`, csv);
 
-  return leagueSquads;
+  return { leagueSquads, divisions };
 };
 
 const getCoach = (

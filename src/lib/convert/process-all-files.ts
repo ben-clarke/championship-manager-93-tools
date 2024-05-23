@@ -17,13 +17,14 @@ export const processAllFiles = async (): Promise<void> => {
   foreign.convertFromHex();
   const numberOfForeignPlayersRequired = foreign.players.length;
 
-  const players = await processSquads(filepath, data, true);
+  const players = await processSquads(YEAR_88, filepath, data, true);
   const foreignPlayers = await processForeignPlayers(
+    YEAR_88,
     filepath,
     numberOfForeignPlayersRequired,
     true,
   );
-  const teams = await processTeams(filepath, data);
+  const { leagueSquads: teams } = await processTeams(YEAR_88, filepath, data);
 
   const { matchedFirstNames, matchedSurnames, matchedNationalities } = getMatchedExeDetails(
     data,
@@ -83,3 +84,5 @@ interface Details {
 }
 
 type NameTuple = [string, string];
+
+const YEAR_88 = 88;

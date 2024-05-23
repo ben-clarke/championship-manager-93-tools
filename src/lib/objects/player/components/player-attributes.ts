@@ -1,3 +1,4 @@
+import { Player } from "../../../convert/pom/player";
 import { HumanReadableAttributes } from "../../../types/validation";
 
 export default class PlayerAttributes {
@@ -93,6 +94,47 @@ export default class PlayerAttributes {
     };
   }
 
+  static fromNewData(playerDetails: Player, temperament: number): Attributes {
+    const getAttribute = (attribute: number): string => {
+      if (attribute === 0) return RANDOM.toString();
+      return attribute.toString();
+    };
+
+    return {
+      Passing: getAttribute(playerDetails.Passing),
+      Tackling: getAttribute(playerDetails.Tackling),
+      Pace: getAttribute(playerDetails.PlayerPace),
+      Heading: getAttribute(playerDetails.Heading),
+      Flair: getAttribute(playerDetails.Flair),
+      Creativity: getAttribute(playerDetails.Vision),
+      Goalscoring: getAttribute(playerDetails.Finishing),
+      Agility: getAttribute(playerDetails.Agility),
+      Aggression: getAttribute(playerDetails.Aggression),
+      Influence: getAttribute(playerDetails.Leadership),
+      Temperament: getAttribute(temperament),
+      Consistency: getAttribute(playerDetails.Consistency),
+      Stamina: getAttribute(playerDetails.Strength),
+    };
+  }
+
+  static randomise(): Attributes {
+    return {
+      Passing: RANDOM.toString(),
+      Tackling: RANDOM.toString(),
+      Pace: RANDOM.toString(),
+      Heading: RANDOM.toString(),
+      Flair: RANDOM.toString(),
+      Creativity: RANDOM.toString(),
+      Goalscoring: RANDOM.toString(),
+      Agility: RANDOM.toString(),
+      Aggression: RANDOM.toString(),
+      Influence: RANDOM.toString(),
+      Temperament: RANDOM.toString(),
+      Consistency: RANDOM.toString(),
+      Stamina: RANDOM.toString(),
+    };
+  }
+
   static toHex(
     pass: string,
     tack: string,
@@ -169,3 +211,19 @@ const LOWER_RANGE = 0;
 const UPPER_RANGE = 20;
 
 const RANDOM = 255;
+
+interface Attributes {
+  Passing: string;
+  Tackling: string;
+  Pace: string;
+  Heading: string;
+  Flair: string;
+  Creativity: string;
+  Goalscoring: string;
+  Agility: string;
+  Aggression: string;
+  Influence: string;
+  Temperament: string;
+  Consistency: string;
+  Stamina: string;
+}

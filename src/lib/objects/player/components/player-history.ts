@@ -1,4 +1,5 @@
 import { flatten } from "ramda";
+import { StaffHistory } from "../../../convert/pom/staff-history";
 import { HumanReadableHistory } from "../../../types/validation";
 import { Version } from "../../../types/version";
 import { invertObj } from "../../../utils/conversion";
@@ -100,6 +101,12 @@ export default class PlayerHistory {
       values: flatten(histories.map((h) => h.history)),
       errors: flatten(histories.map((h) => h.errors)),
     };
+  }
+
+  static fromNewData(history: StaffHistory, clubNamesMaps: Record<number, string>): string {
+    return [history.Year, clubNamesMaps[history.ClubID], history.Apps, history.Goals].join(
+      HISTORY_PART_SEPARATOR,
+    );
   }
 }
 

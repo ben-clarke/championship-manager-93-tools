@@ -13,7 +13,7 @@ export const printExecutableCodes = (
   requiredDataType: DataType,
   version: Version,
 ): void => {
-  const matches = buildData(parsed, requiredDataType, version);
+  const { matches } = buildData(parsed, requiredDataType, version);
 
   // Print the stat
   const readme = Object.values(matches).map(({ code, value }) => `| ${code} | ${value} |`);
@@ -27,7 +27,7 @@ export const buildData = (
   parsed: string[],
   requiredDataType: DataType,
   version: Version,
-): Record<string, MatchedData> => {
+): { matches: Record<string, MatchedData>; startIndex: number; endIndex: number } => {
   const startIndex = findStartIndex(parsed, requiredDataType, version);
   if (!startIndex) throw new Error(`No start index found for ${requiredDataType}`);
 
@@ -35,6 +35,7 @@ export const buildData = (
 
   let item: string[] = [];
   let stopProcessing = false;
+  let endIndex = 0;
 
   const initial: Record<string, MatchedData> = {};
   const matches = parsed.reduce((acc, hex, index) => {
@@ -47,6 +48,7 @@ export const buildData = (
     ) {
       // We have hit the end of list, so can just stop adding to the list now.
       stopProcessing = true;
+      endIndex = index;
       return acc;
     }
 
@@ -70,7 +72,7 @@ export const buildData = (
     return acc;
   }, initial);
 
-  return matches;
+  return { matches, startIndex, endIndex };
 };
 
 export const replaceData = (
@@ -78,7 +80,8 @@ export const replaceData = (
   required: string,
   replacement: string,
   exactMatch: boolean,
-  removeFirstIndex = false,
+  startIndex: number,
+  endIndex: number,
 ): string[] => {
   if (required === replacement) return data;
 
@@ -92,10 +95,7 @@ export const replaceData = (
 
   let indexes = findIndexes(data, required, exactMatch);
 
-  if (removeFirstIndex && indexes && indexes?.length > 1) {
-    const [, ...newIndexes] = indexes;
-    indexes = newIndexes;
-  }
+  indexes = (indexes || []).filter(({ start }) => start >= startIndex && start <= endIndex);
 
   (indexes || []).forEach(({ start, end }) => {
     const shift = end - start + 1;

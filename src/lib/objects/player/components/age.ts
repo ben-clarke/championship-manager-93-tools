@@ -1,4 +1,5 @@
 import { HumanReadable } from "../../../types/validation";
+import { weightedRandom } from "../../../utils/weighted";
 
 export default class Age {
   value: number;
@@ -25,6 +26,29 @@ export default class Age {
     }
 
     return { value: decimal.toString(16).padStart(2, "0"), errors: [] };
+  }
+
+  static randomise(): string {
+    return weightedRandom<number>([
+      { item: 17, weight: 1 },
+      { item: 18, weight: 2 },
+      { item: 19, weight: 3 },
+      { item: 20, weight: 3 },
+      { item: 21, weight: 4 },
+      { item: 22, weight: 4 },
+      { item: 23, weight: 4 },
+      { item: 24, weight: 5 },
+      { item: 25, weight: 6 },
+      { item: 26, weight: 6 },
+      { item: 27, weight: 5 },
+      { item: 28, weight: 4 },
+      { item: 29, weight: 4 },
+      { item: 30, weight: 4 },
+      { item: 31, weight: 3 },
+      { item: 32, weight: 2 },
+      { item: 33, weight: 1 },
+      { item: 34, weight: 1 },
+    ]).toString();
   }
 }
 

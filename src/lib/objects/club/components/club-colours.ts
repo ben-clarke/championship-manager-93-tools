@@ -39,6 +39,50 @@ export default class ClubColours {
       errors,
     };
   }
+
+  static fromNewData(text: number, background: number, prefix: string): Record<string, string> {
+    const colours: Record<string, string> = {
+      0: "black",
+      1: "white",
+      2: "grey",
+      3: "grey",
+      4: "red",
+      5: "red",
+      6: "purple",
+      7: "orange",
+      8: "orange",
+      9: "yellow",
+      10: "yellow",
+      11: "dark green",
+      12: "green",
+      13: "blue",
+      14: "blue",
+      15: "blue",
+      16: "blue",
+      17: "light blue",
+      18: "purple",
+      19: "purple",
+      20: "purple",
+      21: "orange",
+      22: "orange",
+      23: "pink",
+      24: "orange",
+      25: "light grey",
+      26: "purple",
+      27: "green",
+      28: "green",
+      29: "orange",
+      30: "bright blue",
+      31: "bright blue",
+      32: "red",
+      33: "green",
+    };
+
+    return {
+      [`${prefix} text`]: colours[text.toString()] || "grey",
+      [`${prefix} background`]: colours[background.toString()] || "turquoise",
+    };
+  }
 }
 
 const MAPPING: Record<string, string> = {

@@ -1,4 +1,4 @@
-import ClubMoney from "../club-money";
+import ClubMoney, { convertFromMoney } from "../club-money";
 
 describe("money", () => {
   test("to hex happy", () => {
@@ -22,5 +22,17 @@ describe("money", () => {
   test("to hex not a number", () => {
     const hex = ClubMoney.toHex("A");
     expect(hex).toEqual({ value: "", errors: ["Money must be a decimal number"] });
+  });
+
+  describe("convertFromMoney", () => {
+    test.each([
+      [10_000_000, 39],
+      [1_000_000, 3],
+      [450_000, 1],
+      [350_000, 0],
+      [250_000, 0],
+    ])("convert %s", (value, expected) => {
+      expect(convertFromMoney(value)).toBe(expected);
+    });
   });
 });

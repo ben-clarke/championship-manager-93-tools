@@ -22,7 +22,6 @@ export default class PersonName {
       const names = Object.keys(mapping);
       const index = Math.floor(Math.random() * names.length);
       hex = mapping[names[index]];
-      console.log("Picking random", names[index]);
     }
 
     if (!hex) return { value1: "", value2: "", errors: [`No person name found for: ${value}`] };

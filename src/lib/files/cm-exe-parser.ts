@@ -18,6 +18,11 @@ export default class CMExeParser {
 
   retrieved: Record<DataType, Record<string, string>>;
 
+  retrievedWithIndexes: Record<
+    DataType,
+    { matches: Record<string, string>; startIndex: number; endIndex: number }
+  >;
+
   version: Version;
 
   constructor({ fileDirectory, rawData, rawCsv }: Input) {
@@ -29,8 +34,8 @@ export default class CMExeParser {
 
     this.data = splitEvery(2, raw);
 
-    const version = getData(this.data, "version", "94");
-    const year = getData(this.data, "year", "94");
+    const { matches: version } = getData(this.data, "version", "94");
+    const { matches: year } = getData(this.data, "year", "94");
     this.version = getGameVersion(version, year);
 
     // fs.writeFileSync("/tmp/cm", this.data.map((d) => hexToUtf8(d)).join(""));
@@ -51,14 +56,44 @@ export default class CMExeParser {
       version: {},
       year: {},
     };
+
+    this.retrievedWithIndexes = {
+      nationality: { matches: {}, startIndex: 0, endIndex: 0 },
+      character: { matches: {}, startIndex: 0, endIndex: 0 },
+      "injury-type": { matches: {}, startIndex: 0, endIndex: 0 },
+      club: { matches: {}, startIndex: 0, endIndex: 0 },
+      "non-domestic-club": { matches: {}, startIndex: 0, endIndex: 0 },
+      ground: { matches: {}, startIndex: 0, endIndex: 0 },
+      "first-name": { matches: {}, startIndex: 0, endIndex: 0 },
+      "first-name-foreign": { matches: {}, startIndex: 0, endIndex: 0 },
+      surname: { matches: {}, startIndex: 0, endIndex: 0 },
+      wages: { matches: {}, startIndex: 0, endIndex: 0 },
+      "style-of-play": { matches: {}, startIndex: 0, endIndex: 0 },
+      formation: { matches: {}, startIndex: 0, endIndex: 0 },
+      version: { matches: {}, startIndex: 0, endIndex: 0 },
+      year: { matches: {}, startIndex: 0, endIndex: 0 },
+    };
   }
 
   get(dataType: DataType): Record<string, string> {
     const storedData = this.retrieved[dataType];
     if (Object.keys(storedData).length > 0) return storedData;
 
-    this.retrieved[dataType] = getData(this.data, dataType, this.version);
+    const { matches } = getData(this.data, dataType, this.version);
+    this.retrieved[dataType] = matches;
     return this.retrieved[dataType];
+  }
+
+  getWithIndexes(dataType: DataType): {
+    matches: Record<string, string>;
+    startIndex: number;
+    endIndex: number;
+  } {
+    const storedData = this.retrievedWithIndexes[dataType];
+    if (Object.keys(storedData.matches).length > 0) return storedData;
+
+    this.retrievedWithIndexes[dataType] = getData(this.data, dataType, this.version);
+    return this.retrievedWithIndexes[dataType];
   }
 
   toHumanReadable(): Record<string, string>[] {
@@ -129,7 +164,6 @@ export default class CMExeParser {
       newData,
       "ground",
       CSV_INDEX_GROUND,
-      true,
     );
     if (errors5.length > 0) return { converted: [], hex: "", errors: errors5 };
 
@@ -138,7 +172,6 @@ export default class CMExeParser {
       newData,
       "non-domestic-club",
       CSV_INDEX_NON_DOMESTIC_CLUB,
-      true,
     );
     if (errors6.length > 0) return { converted: [], hex: "", errors: errors6 };
 
@@ -154,9 +187,9 @@ export default class CMExeParser {
     newData: string[][],
     dataType: DataType,
     dataTypeIndex: number,
-    removeFirstIndex = false,
   ): UpdateResponse {
-    const items = getSortedList(this.get(dataType));
+    const { matches, startIndex, endIndex } = this.getWithIndexes(dataType);
+    const items = getSortedList(matches);
     const newItems = newData.map((d) => d[dataTypeIndex]).filter((d) => d);
 
     const dataFirstIndex = getDataFirstIndex(this.version);
@@ -199,7 +232,7 @@ export default class CMExeParser {
 
     let newParsed = [...data];
     replacedItems.forEach((replacement, i) => {
-      newParsed = replaceData(newParsed, items[i], replacement, true, removeFirstIndex);
+      newParsed = replaceData(newParsed, items[i], replacement, true, startIndex, endIndex);
     });
 
     return { updated: newParsed, errors };
@@ -220,9 +253,15 @@ export const getData = (
   parsed: string[],
   requiredDataType: DataType,
   version: Version,
-): Record<string, string> => {
-  const data = buildData(parsed, requiredDataType, version);
-  return reduce((acc, { code, value }) => ({ ...acc, [code]: value }), {}, Object.values(data));
+): { matches: Record<string, string>; startIndex: number; endIndex: number } => {
+  const { matches, startIndex, endIndex } = buildData(parsed, requiredDataType, version);
+  const match = reduce(
+    (acc, { code, value }) => ({ ...acc, [code]: value }),
+    {},
+    Object.values(matches),
+  );
+
+  return { matches: match, startIndex, endIndex };
 };
 
 type Input =

@@ -157,6 +157,7 @@ export abstract class Club {
     } = ClubColours.toHex(team[4], team[5]);
     const { value: status, errors: statusErrors } = ClubAttraction.toHex(team[6]);
     const unknown8 = team[7].padStart(2, "0");
+
     const { value: money, errors: moneyErrors } = ClubMoney.toHex(team[8]);
     const unknown10 = team[9].padStart(2, "0");
     const { value: boardConfidence, errors: boardConfidenceErrors } = BoardConfidence.toHex(

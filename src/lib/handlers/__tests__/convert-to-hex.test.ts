@@ -47,7 +47,6 @@ describe("convertToHex", () => {
           att === "64"
         ) {
           // For some reason, some of the flags are 64 instead of 01
-          // console.log(data.get("first-name")[`${one}${two}`], data.get("surname")[`${three}${four}`]);
           return;
         }
 

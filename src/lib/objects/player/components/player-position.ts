@@ -1,5 +1,7 @@
 import { any } from "ramda";
+import { Player } from "../../../convert/pom/player";
 import { HumanReadablePosition } from "../../../types/validation";
+import { weightedRandom } from "../../../utils/weighted";
 
 export default class PlayerPosition {
   isGk: boolean;
@@ -42,10 +44,62 @@ export default class PlayerPosition {
     return [this.position, this.side].toString();
   }
 
-  toHumanReadable(): Record<string, string> {
+  toHumanReadable(): Position {
     return {
       Position: this.position,
       Side: this.side,
+    };
+  }
+
+  static fromNewData(playerDetails: Player): Position {
+    const getPositionAttribute = (pd: Player, positions: string[], position: string): string => {
+      // @ts-ignore
+      if (any((v) => pd[v] > 10, positions)) return position;
+      return "";
+    };
+    const getSideAttribute = (pd: Player, side: string, position: string): string => {
+      // @ts-ignore
+      if (pd[side] > 10) return position;
+      return "";
+    };
+
+    const goalkeeper = ["Goalkeeper"];
+    const defender = ["Sweeper", "Defender", "WingBack"];
+    const midfielder = ["DefensiveMidfielder", "Midfielder", "AttackingMidfielder", "WingBack"];
+    const attacker = ["Attacker", "AttackingMidfielder"];
+
+    return {
+      Position: [
+        getPositionAttribute(playerDetails, goalkeeper, GOAL),
+        getPositionAttribute(playerDetails, defender, DEF),
+        getPositionAttribute(playerDetails, midfielder, MID),
+        getPositionAttribute(playerDetails, attacker, ATT),
+      ].join(""),
+      Side: [
+        getSideAttribute(playerDetails, "LeftSide", LEFT),
+        getSideAttribute(playerDetails, "RightSide", RIGHT),
+        getSideAttribute(playerDetails, "Central", CENTRE),
+      ].join(""),
+    };
+  }
+
+  static randomise(position: string): Position {
+    if (position === GOAL) return { Position: GOAL, Side: "" };
+    if (position === ATT) return { Position: ATT, Side: "C" };
+
+    const side = weightedRandom<string>([
+      { item: LEFT, weight: 8 },
+      { item: RIGHT, weight: 8 },
+      { item: CENTRE, weight: 8 },
+      { item: [LEFT, CENTRE].join(""), weight: 4 },
+      { item: [RIGHT, CENTRE].join(""), weight: 4 },
+      { item: [LEFT, RIGHT].join(""), weight: 2 },
+      { item: [LEFT, RIGHT, CENTRE].join(""), weight: 1 },
+    ]);
+
+    return {
+      Position: position,
+      Side: position === GOAL ? "" : side,
     };
   }
 
@@ -100,11 +154,16 @@ export default class PlayerPosition {
 const NO = "00";
 const YES = "01";
 
-const GOAL = "GK";
-const DEF = "D";
-const MID = "M";
-const ATT = "A";
+export const GOAL = "GK";
+export const DEF = "D";
+export const MID = "M";
+export const ATT = "A";
 
 const LEFT = "L";
 const RIGHT = "R";
 const CENTRE = "C";
+
+interface Position {
+  Position: string;
+  Side: string;
+}

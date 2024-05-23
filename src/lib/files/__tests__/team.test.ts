@@ -32,6 +32,29 @@ describe("team", () => {
     expect(errors).toEqual([]);
   });
 
+  test("happy with club heading added", () => {
+    const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
+    const data = new CMExeParser({ fileDirectory: inputDirectory });
+
+    const teamData = [
+      ["Club", ...TEAM_DATA[0]],
+      ["Man Utd", ...TEAM_DATA[2]],
+      ["Aston Villa", ...TEAM_DATA[1]],
+    ];
+
+    const team = new Team({ rawData: unparse(teamData), data });
+    const { hex, errors } = team.convertFromHumanReadable();
+
+    expect(hex.length).toEqual(46 * 2); // Characters per team * number of teams
+    expect(hex).toEqual(
+      [
+        "2e1b050b0001100f0bb85a000000000100aa0700010001",
+        "2d2a01020f0611102ee05a000200020300be0700030003",
+      ].join(""),
+    );
+    expect(errors).toEqual([]);
+  });
+
   test("sad", () => {
     const inputDirectory = resolve(__dirname, "../../../../", "game-edits", "cm93-94");
     const data = new CMExeParser({ fileDirectory: inputDirectory });

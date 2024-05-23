@@ -1,4 +1,4 @@
-import Stadium from "../stadium";
+import Stadium, { convertCapacity } from "../stadium";
 
 describe("stadium", () => {
   test("to hex happy", () => {
@@ -37,5 +37,16 @@ describe("stadium", () => {
       seated: "",
       errors: ["Capacity must be greater than or equal to the seated capacity"],
     });
+  });
+
+  test.each([
+    [45_000, 45],
+    [12_500, 13],
+    [10_000, 10],
+    [1_000, 1],
+    [999, 1],
+    [500, 1],
+  ])("convertCapacity %s", (value, expected) => {
+    expect(convertCapacity(value)).toEqual(expected);
   });
 });

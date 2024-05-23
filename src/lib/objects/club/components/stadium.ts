@@ -1,3 +1,4 @@
+import { Stadium as StadiumType } from "../../../convert/pom/stadium";
 import { HumanReadableStadium } from "../../../types/validation";
 
 export default class Stadium {
@@ -46,12 +47,24 @@ export default class Stadium {
     if (errors.length > 0) return { capacity: "", seated: "", errors };
 
     return {
-      capacity: (decCapacity / CAPACITY_MULTIPLIER).toString(16).padStart(2, "0"),
-      seated: (decSeated / CAPACITY_MULTIPLIER).toString(16).padStart(2, "0"),
+      capacity: convertCapacity(decCapacity).toString(16).padStart(2, "0"),
+      seated: convertCapacity(decSeated).toString(16).padStart(2, "0"),
       errors,
     };
   }
+
+  static fromNewData(stadium: StadiumType): Record<string, string> {
+    return {
+      Capacity: stadium.StadiumCapacity.toString(),
+      "Seated capacity": stadium.StadiumSeatingCapacity.toString(),
+    };
+  }
 }
+
+export const convertCapacity = (value: number): number => {
+  const cap = Math.round(value / CAPACITY_MULTIPLIER);
+  return cap < 1 ? 1 : cap;
+};
 
 const CAPACITY_MULTIPLIER = 1_000;
 

@@ -1,5 +1,6 @@
 import { HumanReadable } from "../../../types/validation";
 import { invertObj } from "../../../utils/conversion";
+import { weightedRandom } from "../../../utils/weighted";
 
 export default class StyleOfPlay {
   value: Style;
@@ -23,6 +24,16 @@ export default class StyleOfPlay {
           ]
         : [],
     };
+  }
+
+  static randomise(): Style {
+    return weightedRandom<Style>([
+      { item: "long ball", weight: 40 },
+      { item: "direct ball", weight: 19 },
+      { item: "counter-attack", weight: 2 },
+      { item: "pass to feet", weight: 16 },
+      { item: "continental", weight: 5 },
+    ]);
   }
 }
 

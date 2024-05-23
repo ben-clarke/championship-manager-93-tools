@@ -1,3 +1,4 @@
+import { Club } from "../../../convert/pom/club";
 import { getSortedList } from "../../../files/utils/sorted";
 import { HumanReadable } from "../../../types/validation";
 import { invertObj } from "../../../utils/conversion";
@@ -24,6 +25,17 @@ export default class ClubAttraction {
           ]
         : [],
     };
+  }
+
+  static fromNewData(club: Club): string {
+    const reputation = club.Reputation;
+    if (reputation >= 15_000) return "world class";
+    if (reputation > 10_000) return "elite";
+    if (reputation >= 9_500) return "super";
+    if (reputation >= 8_000) return "high";
+    if (reputation >= 5_000) return "medium";
+    if (reputation >= 2_000) return "low";
+    return "none";
   }
 }
 

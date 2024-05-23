@@ -5,6 +5,7 @@ import Club, { Club93, Club94 } from "../objects/club";
 import { HumanReadableTeam } from "../types/validation";
 import { Version } from "../types/version";
 import BaseDataFile, { DataFileInput } from "./base";
+import { getSortedList } from "./utils/sorted";
 
 export default class Team extends BaseDataFile {
   parsed: string[][];
@@ -44,12 +45,15 @@ export default class Team extends BaseDataFile {
     const ClubClass =
       getGameVersion(this.data.get("version"), this.data.get("year")) === "93" ? Club93 : Club94;
 
-    const { data } = this.readHuman();
+    const { headings, data } = this.readHuman();
 
-    const hexed = map((d) => {
-      const { values, errors } = ClubClass.toHex(d, this.data);
-      return { converted: values, errors };
-    }, data);
+    const hexed = map(
+      (d) => {
+        const { values, errors } = ClubClass.toHex(d, this.data);
+        return { converted: values, errors };
+      },
+      this.orderedData(headings, data),
+    );
 
     const converted = map((h) => h.converted, hexed);
 
@@ -123,6 +127,21 @@ export default class Team extends BaseDataFile {
       // eslint-disable-next-line no-console
       console.log(r);
     });
+  }
+
+  orderedData(headings: string[], data: string[][]): string[][] {
+    const clubs = getSortedList(this.data.get("club"));
+
+    // If there is a Club heading, then use, else just return in order.
+    if (headings[0] === "Club") {
+      return clubs
+        .map((c) => {
+          const club = data.find((x) => x[0] === c) || [""];
+          return club.slice(1);
+        })
+        .filter((x) => x.length > 0);
+    }
+    return data;
   }
 }
 

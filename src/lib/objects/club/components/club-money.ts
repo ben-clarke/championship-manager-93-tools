@@ -1,3 +1,4 @@
+import { Club } from "../../../convert/pom/club";
 import { HumanReadable } from "../../../types/validation";
 
 export default class ClubMoney {
@@ -29,9 +30,17 @@ export default class ClubMoney {
       errors: [],
     };
   }
+
+  static fromNewData(club: Pick<Club, "Cash">): string {
+    const cash = club.Cash / 10;
+    if (cash < 250000) return "250000";
+
+    return cash.toString();
+  }
 }
 
-const convertFromMoney = (value: number): number => (value - MONEY_ADJUSTMENT) / MONEY_MULTIPLIER;
+export const convertFromMoney = (value: number): number =>
+  Math.round((value - MONEY_ADJUSTMENT) / MONEY_MULTIPLIER);
 
 const convertToMoney = (value: number): number => value * MONEY_MULTIPLIER + MONEY_ADJUSTMENT;
 

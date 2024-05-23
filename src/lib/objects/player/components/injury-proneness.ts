@@ -26,6 +26,15 @@ export default class InjuryProneness {
 
     return { value: decimal.toString(16).padStart(2, "0"), errors: [] };
   }
+
+  static fromNewData(value: number): string {
+    if (value > 0) return Math.ceil(value / 2).toString();
+    return RANDOM.toString();
+  }
+
+  static randomise(): string {
+    return RANDOM.toString();
+  }
 }
 const LOWER_RANGE = 1;
 const UPPER_RANGE = 10;

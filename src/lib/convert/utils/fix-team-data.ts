@@ -1,9 +1,18 @@
 import { getNormalisedClub } from "./normalisation";
 
 const FIXES: Record<number, Partial<TeamDetails>[]> = {
-  82: [],
+  82: [
+    {
+      Club: "Wolves",
+      "Club status": "medium",
+    },
+  ],
   86: [],
   88: [
+    {
+      Club: "Aston Villa",
+      "Club status": "high",
+    },
     {
       Club: "Barnet",
       "Manager first name": "Barry",
@@ -65,6 +74,11 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       "Manager surname": "Francis",
     },
     {
+      Club: "Burnley",
+      "Manager first name": "Brian",
+      "Manager surname": "Miller",
+    },
+    {
       Club: "Cambridge",
       "Manager first name": "Chris",
       "Manager surname": "Turner",
@@ -83,6 +97,10 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       Club: "Colchester",
       "Manager first name": "Mike",
       "Manager surname": "Walker",
+    },
+    {
+      Club: "Coventry",
+      "Club status": "medium",
     },
     {
       Club: "Crewe",
@@ -128,6 +146,7 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       Club: "Leeds",
       "Manager first name": "Billy",
       "Manager surname": "Bremner",
+      "Club status": "high",
     },
     {
       Club: "Leicester",
@@ -140,9 +159,14 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       "Manager surname": "Dalglish",
     },
     {
+      Club: "Luton",
+      "Club status": "medium",
+    },
+    {
       Club: "Man City",
       "Manager first name": "Jimmy",
       "Manager surname": "Frizzell",
+      "Club status": "medium",
     },
     {
       Club: "Mansfield",
@@ -178,6 +202,10 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       Club: "Preston",
       "Manager first name": "John",
       "Manager surname": "McGrath",
+    },
+    {
+      Club: "Q.P.R.",
+      "Club status": "medium",
     },
     {
       Club: "Reading",
@@ -235,9 +263,21 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       "Manager surname": "Knowles",
     },
     {
+      Club: "Tottenham",
+      "Club status": "high",
+    },
+    {
       Club: "Tranmere",
       "Manager first name": "John",
       "Manager surname": "King",
+    },
+    {
+      Club: "Watford",
+      "Club status": "medium",
+    },
+    {
+      Club: "Wimbledon",
+      "Club status": "medium",
     },
     {
       Club: "Wolves",
@@ -260,6 +300,8 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       "Manager surname": "Saxton",
     },
   ],
+  90: [],
+  98: [],
 };
 
 export const fixTeamData = (team: TeamDetails, year: number): TeamDetails => {

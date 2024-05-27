@@ -160,6 +160,8 @@ const FIRST_NAMES: Record<number, Record<string, string>> = {
     Darron: "Darren",
     Gudjon: "Gujon",
   },
+  90: {},
+  98: {},
 };
 
 const SURNAMES: Record<number, Record<string, string>> = {
@@ -223,6 +225,8 @@ const SURNAMES: Record<number, Record<string, string>> = {
     Jsnsson: "Jonsson",
     Mxlby: "Molby",
   },
+  90: {},
+  98: {},
 };
 
 export const getNormalisedName = (name: string, year: number): string =>

@@ -2,44 +2,39 @@ import * as fs from "fs";
 import { unparse } from "papaparse";
 import { flatten } from "ramda";
 import Character from "../objects/components/character";
+import { DomesticPlayer, ForeignPlayer } from "../objects/player";
 import InjuryProneness from "../objects/player/components/injury-proneness";
 import Nationality from "../objects/player/components/nationality";
 import PlayerAttributes from "../objects/player/components/player-attributes";
+import PlayerHistory from "../objects/player/components/player-history";
 import PlayerPosition from "../objects/player/components/player-position";
 import { load } from "./load-files";
 import { Player } from "./pom/player";
-import { StaffHistory } from "./pom/staff-history";
 import { TCMDate } from "./pom/tcm-date";
 import { getText } from "./read-file";
 import { fixData } from "./utils/fix-data";
 import { PlayerDetails } from "./utils/generate-random";
+import { getNation } from "./utils/get-nations";
 import { getNames } from "./utils/normalisation";
-import { applyPlayerFilter } from "./utils/player-filtering";
+import { applyPlayerFilter, getOriginalPlayer } from "./utils/player-filtering";
 
 export const processForeignPlayers = async (
   year: number,
   filepath: string,
-  numberOfForeignPlayersRequired: number,
+  originalPlayers: DomesticPlayer[],
+  originalForeignPlayers: ForeignPlayer[],
   generate = true,
 ): Promise<PlayerDetails[]> => {
   if (!generate) return [];
 
-  const { clubs, nations, staff, staffHistory, players, firstNames, surnames, commonNames } =
-    await load(year);
-
-  const histories = staffHistory.reduce(
-    (acc, h) => {
-      if (!acc[h.StaffID]) acc[h.StaffID] = [];
-      acc[h.StaffID].push(h);
-      return acc;
-    },
-    {} as Record<string, StaffHistory[]>,
-  );
+  const { clubs, nations, staff, players, firstNames, surnames, commonNames } = await load(year);
 
   const nonEnglishClubs = clubs.filter((c) => {
-    const clubNation = nations.find((n) => n.ID === c.Nation)?.Name as Buffer;
+    const clubNation = getNation(nations, c.Nation);
     return !((clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil") === "England");
   });
+
+  if (nonEnglishClubs.length > 0) return [];
 
   const foreignPlayers = nonEnglishClubs.reduce(
     (acc, c) => {
@@ -51,8 +46,8 @@ export const processForeignPlayers = async (
         const player = staff[id];
         const playerDetails = players.find((p) => p.ID === player.Player) as Player;
 
-        const nation = nations.find((n) => n.ID === player.Nation)?.Name as Buffer;
-        const clubNation = nations.find((n) => n.ID === c.Nation)?.Name as Buffer;
+        const nation = getNation(nations, player.Nation);
+        const clubNation = getNation(nations, c.Nation);
         const nationText = nation ? Nationality.fromNewData(getText(nation)) : "unknown";
 
         const { firstName, surname } = getNames(
@@ -75,8 +70,12 @@ export const processForeignPlayers = async (
           return null;
         }
 
-        const history = histories[playerDetails.ID] || [];
-        history.sort((a, b) => a.Year - b.Year);
+        const originalPlayer = getOriginalPlayer(
+          [...originalPlayers, ...originalForeignPlayers],
+          firstName,
+          surname,
+          name,
+        );
 
         const details: PlayerDetails = {
           Club: clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil",
@@ -86,13 +85,20 @@ export const processForeignPlayers = async (
           "Injury status": "fit",
           ...PlayerPosition.fromNewData(playerDetails),
           Age: TCMDate.toAge(player.DateOfBirth),
-          Character: Character.randomise(player.Temperament),
+          Character: Character.fromNewData(player.Temperament, originalPlayer?.character),
           Nationality: nationText,
           "Current skill": playerDetails.CurrentAbility.toString(),
           "Potential skill": playerDetails.PotentialAbility.toString(),
-          "Injury proneness": InjuryProneness.fromNewData(playerDetails.InjuryProneness),
-          ...PlayerAttributes.fromNewData(playerDetails, player.Temperament),
-          History: [].join(","),
+          "Injury proneness": InjuryProneness.fromNewData(
+            playerDetails.InjuryProneness,
+            originalPlayer?.injuryProneness,
+          ),
+          ...PlayerAttributes.fromNewData(
+            playerDetails,
+            player.Temperament,
+            originalPlayer?.attributes,
+          ),
+          History: PlayerHistory.fromNewData(year, originalPlayer?.history),
         };
         return fixData(details, year);
       });
@@ -103,15 +109,13 @@ export const processForeignPlayers = async (
     {} as Record<string, PlayerDetails[]>,
   );
 
-  const skilledPlayers = flatten(Object.values(foreignPlayers)).sort((a, b) => {
-    const ageA = parseInt(a["Potential skill"], 10);
-    const ageB = parseInt(b["Potential skill"], 10);
-    return ageB - ageA;
-  });
+  const skilledPlayers = flatten(Object.values(foreignPlayers)).sort(
+    (a, b) => parseInt(b["Potential skill"], 10) - parseInt(a["Potential skill"], 10),
+  );
 
   const filteredPlayers = skilledPlayers
     .filter(applyPlayerFilter)
-    .slice(0, numberOfForeignPlayersRequired);
+    .slice(0, originalForeignPlayers.length);
 
   const csv1 = unparse(
     filteredPlayers

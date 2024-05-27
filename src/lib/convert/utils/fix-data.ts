@@ -47,7 +47,10 @@ const FIXES: Record<number, Partial<PlayerDetails>[]> = {
     { Club: "Yugoslavia", "First name": "Steffen", Surname: "Steffen", Nationality: "Germany" },
     { Club: "Yugoslavia", "First name": "Sven", Surname: "Kmetsch", Nationality: "Germany" },
     { Club: "Yugoslavia", "First name": "Matthias", Surname: "Sammer", Nationality: "Germany" },
+    { Club: "Russia", "First name": "Andrei", Surname: "Kanchelskis", "Potential skill": "190" },
   ],
+  90: [],
+  98: [],
 };
 
 export const fixData = (player: PlayerDetails, year: number): PlayerDetails => {

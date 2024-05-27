@@ -5,7 +5,20 @@ import { TeamDetails } from "./fix-team-data";
 import { PlayerDetails } from "./generate-random";
 
 export const writeLeagueData = (players: PlayerDetails[], year: number, filepath: string): void => {
-  const csv = unparse(players.map((p) => ({ ...p, Club: getNewTeamName(p.Club, year) })));
+  const newPlayers = players.map((p) => ({
+    ...p,
+    Club: getNewTeamName(p.Club, year),
+    History: p.History.split(",")
+      .map((h) => {
+        const [y, c, a, g] = h.split("|");
+        if (!c) return "";
+        return [y, getNewTeamName(c, year), a, g].join("|");
+      })
+      .filter((h) => h)
+      .join(","),
+  }));
+
+  const csv = unparse(newPlayers);
   fs.writeFileSync(`${filepath}/LEAGUE.DAT.csv`, csv);
 };
 

@@ -21,7 +21,12 @@ export default class Character {
     };
   }
 
-  static randomise(temperament: number): CharacterValue {
+  static fromNewData(
+    temperament: number,
+    originalCharacter: Character | undefined,
+  ): CharacterValue {
+    if (originalCharacter) return originalCharacter.value;
+
     if (temperament < 1 || temperament > 20) return "random";
     return TEMPERAMENTS[temperament][Math.floor(Math.random() * TEMPERAMENTS[temperament].length)];
   }

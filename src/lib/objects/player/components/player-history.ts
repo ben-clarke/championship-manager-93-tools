@@ -1,5 +1,4 @@
 import { flatten } from "ramda";
-import { StaffHistory } from "../../../convert/pom/staff-history";
 import { HumanReadableHistory } from "../../../types/validation";
 import { Version } from "../../../types/version";
 import { invertObj } from "../../../utils/conversion";
@@ -103,10 +102,21 @@ export default class PlayerHistory {
     };
   }
 
-  static fromNewData(history: StaffHistory, clubNamesMaps: Record<number, string>): string {
-    return [history.Year, clubNamesMaps[history.ClubID], history.Apps, history.Goals].join(
-      HISTORY_PART_SEPARATOR,
-    );
+  static fromNewData(year: number, originalPlayerHistory: PlayerHistory[] | undefined): string {
+    if (!originalPlayerHistory) return "";
+
+    const requiredYear = 1994; // Using 93/94 game to generate from CM3 data.
+    const currentYear = year + 1900;
+    const difference = requiredYear - currentYear;
+
+    return originalPlayerHistory
+      .filter((h) => h.year < currentYear)
+      .map((h) => {
+        const updatedHistory = h;
+        updatedHistory.year = h.year + difference;
+        return updatedHistory.toString();
+      })
+      .join(",");
   }
 }
 

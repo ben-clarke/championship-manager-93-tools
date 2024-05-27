@@ -13,8 +13,10 @@ export const getMatchedDivision = (
   const exeDetails = splitEvery(20, groupItemsByIndex(clubs, grounds));
 
   const incorrectDivisions = removeCorrectItems(exeDetails, divisions);
+  // eslint-disable-next-line no-console
   console.log(incorrectDivisions);
   const corrected = swapItemsToCorrectDivision(incorrectDivisions);
+  // eslint-disable-next-line no-console
   console.log(corrected);
 
   return 1;
@@ -78,7 +80,9 @@ const swapItemsToCorrectDivision = (lists: UpdateRequirements[][]): UpdateRequir
       first[0].change.team !== second[0].team ||
       first[0].team.length !== second[0].change.team.length
     ) {
+      // eslint-disable-next-line no-console
       console.log(first[0].change.team, second[0].team);
+      // eslint-disable-next-line no-console
       console.log(first[0].team, second[0].change.team);
     }
 
@@ -86,7 +90,9 @@ const swapItemsToCorrectDivision = (lists: UpdateRequirements[][]): UpdateRequir
       first[1].change.team !== second[1].team ||
       first[1].team.length !== second[1].change.team.length
     ) {
+      // eslint-disable-next-line no-console
       console.log(first[0].change.team, second[0].team);
+      // eslint-disable-next-line no-console
       console.log(first[0].team, second[0].change.team);
     }
 
@@ -94,7 +100,9 @@ const swapItemsToCorrectDivision = (lists: UpdateRequirements[][]): UpdateRequir
       first[0].change.ground !== second[0].ground ||
       first[0].ground.length !== second[0].change.ground.length
     ) {
+      // eslint-disable-next-line no-console
       console.log(first[0].change.ground, second[0].ground);
+      // eslint-disable-next-line no-console
       console.log(first[0].ground, second[0].change.ground);
     }
 
@@ -102,7 +110,9 @@ const swapItemsToCorrectDivision = (lists: UpdateRequirements[][]): UpdateRequir
       first[1].change.ground !== second[1].ground ||
       first[1].ground.length !== second[1].change.ground.length
     ) {
+      // eslint-disable-next-line no-console
       console.log(first[0].change.ground, second[0].ground);
+      // eslint-disable-next-line no-console
       console.log(first[0].ground, second[0].change.ground);
     }
   });
@@ -974,6 +984,8 @@ const SWAPS: Record<
       ],
     },
   ],
+  90: [],
+  98: [],
 };
 
 const createRandomString = (length: number): string =>

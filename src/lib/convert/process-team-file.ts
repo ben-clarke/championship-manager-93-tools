@@ -151,6 +151,7 @@ const getDivision = (club: Club, competitions: Competition[], log = false): numb
     case "Third Division":
       return 4;
     default:
+      // eslint-disable-next-line no-console
       if (log) console.log("Unknown division", division, getText(club.Name));
       return 4;
   }

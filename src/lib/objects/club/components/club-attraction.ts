@@ -30,11 +30,11 @@ export default class ClubAttraction {
   static fromNewData(club: Club): string {
     const reputation = club.Reputation;
     if (reputation >= 15_000) return "world class";
-    if (reputation > 10_000) return "elite";
-    if (reputation >= 9_500) return "super";
-    if (reputation >= 8_000) return "high";
-    if (reputation >= 5_000) return "medium";
-    if (reputation >= 2_000) return "low";
+    if (reputation >= 9_500) return "elite";
+    if (reputation >= 9_000) return "super";
+    if (reputation >= 7_000) return "high";
+    if (reputation >= 5_500) return "medium";
+    if (reputation >= 4_000) return "low";
     return "none";
   }
 }

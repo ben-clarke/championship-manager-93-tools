@@ -174,6 +174,8 @@ const SQUAD_FILTERS: Record<number, Pick<PlayerDetails, "Club" | "First name" | 
     // WATFORD
     { Club: "Watford", "First name": "Barry", Surname: "Ashby" },
   ],
+  90: [],
+  98: [],
 };
 
 export const applySquadFilter = (player: PlayerDetails, year: number): boolean =>

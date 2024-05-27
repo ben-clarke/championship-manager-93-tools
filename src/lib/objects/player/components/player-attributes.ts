@@ -94,26 +94,34 @@ export default class PlayerAttributes {
     };
   }
 
-  static fromNewData(playerDetails: Player, temperament: number): Attributes {
-    const getAttribute = (attribute: number): string => {
+  static fromNewData(
+    playerDetails: Player,
+    temperament: number,
+    originalAttributes: PlayerAttributes | undefined,
+  ): Attributes {
+    const getAttribute = (attribute: number, attributeType: string): string => {
+      originalAttributes?.toHumanReadable();
+
+      if (attribute <= 1 && originalAttributes)
+        return originalAttributes?.toHumanReadable()[attributeType] || RANDOM.toString();
       if (attribute <= 1) return RANDOM.toString();
       return attribute.toString();
     };
 
     return {
-      Passing: getAttribute(playerDetails.Passing),
-      Tackling: getAttribute(playerDetails.Tackling),
-      Pace: getAttribute(playerDetails.PlayerPace),
-      Heading: getAttribute(playerDetails.Heading),
-      Flair: getAttribute(playerDetails.Flair),
-      Creativity: getAttribute(playerDetails.Vision),
-      Goalscoring: getAttribute(playerDetails.Finishing),
-      Agility: getAttribute(playerDetails.Agility),
-      Aggression: getAttribute(playerDetails.Aggression),
-      Influence: getAttribute(playerDetails.Leadership),
-      Temperament: getAttribute(temperament),
-      Consistency: getAttribute(playerDetails.Consistency),
-      Stamina: getAttribute(playerDetails.Strength),
+      Passing: getAttribute(playerDetails.Passing, "Passing"),
+      Tackling: getAttribute(playerDetails.Tackling, "Tackling"),
+      Pace: getAttribute(playerDetails.PlayerPace, "Pace"),
+      Heading: getAttribute(playerDetails.Heading, "Heading"),
+      Flair: getAttribute(playerDetails.Flair, "Flair"),
+      Creativity: getAttribute(playerDetails.Vision, "Creativity"),
+      Goalscoring: getAttribute(playerDetails.Finishing, "Goalscoring"),
+      Agility: getAttribute(playerDetails.Agility, "Agility"),
+      Aggression: getAttribute(playerDetails.Aggression, "Aggression"),
+      Influence: getAttribute(playerDetails.Leadership, "Influence"),
+      Temperament: getAttribute(temperament, "Temperament"),
+      Consistency: getAttribute(playerDetails.Consistency, "Consistency"),
+      Stamina: getAttribute(playerDetails.Strength, "Stamina"),
     };
   }
 

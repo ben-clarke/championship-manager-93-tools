@@ -32,12 +32,12 @@ export default class ClubMoney {
   }
 
   static fromNewData(club: Pick<Club, "Cash">, year: number): string {
-    const MODIFIER = year === 88 ? 10 : 1;
+    const MODIFIER = year === 88 ? YEAR_88_MODIFIER : 1;
 
     const cash = club.Cash / MODIFIER;
     if (cash < 250000) return "250000";
 
-    return cash.toString();
+    return Math.ceil(cash).toString();
   }
 }
 
@@ -51,3 +51,5 @@ const MONEY_ADJUSTMENT = 250_000;
 
 const LOWER_RANGE = 0;
 const UPPER_RANGE = 255;
+
+const YEAR_88_MODIFIER = 7;

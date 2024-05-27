@@ -1,8 +1,10 @@
 import * as fs from "fs";
 import { unparse } from "papaparse";
 import { resolve } from "path";
+import { flatten } from "ramda";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
+import League from "../files/league";
 import { resetConverted } from "../files/utils/cm-exe-builder";
 import { processForeignPlayers } from "./process-foreign-file";
 import { processSquads } from "./process-league-file";
@@ -17,15 +19,20 @@ export const processAllFiles = async (): Promise<void> => {
   const inputDirectory = resolve(__dirname, "../../../", "game-edits", "cm93-94");
   const data = new CMExeParser({ fileDirectory: inputDirectory });
 
+  const league = new League({ fileDirectory: inputDirectory, data });
+  league.convertFromHex();
+  const originalPlayers = flatten(league.squads.map((squad) => squad.players));
+
   const foreign = new Foreign({ fileDirectory: inputDirectory, data });
   foreign.convertFromHex();
-  const numberOfForeignPlayersRequired = foreign.players.length;
+  const originalForeignPlayers = foreign.players;
 
-  const players = await processSquads(YEAR, filepath, data, true);
+  const players = await processSquads(YEAR, filepath, data, originalPlayers, true);
   const foreignPlayers = await processForeignPlayers(
     YEAR,
     filepath,
-    numberOfForeignPlayersRequired,
+    originalPlayers,
+    originalForeignPlayers,
     true,
   );
   const { leagueSquads: teams } = await processTeams(YEAR, filepath, data);
@@ -64,4 +71,4 @@ export const processAllFiles = async (): Promise<void> => {
   fs.writeFileSync(`${filepath}/CMEXE.EXE.csv`, unparse(csv));
 };
 
-const YEAR = 82;
+const YEAR = 88;

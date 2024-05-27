@@ -28,10 +28,13 @@ export default class InjuryProneness {
     return { value: decimal.toString(16).padStart(2, "0"), errors: [] };
   }
 
-  static fromNewData(value: number): string {
+  static fromNewData(value: number, originalInjuryProneness: InjuryProneness | undefined): string {
     // Make injury proneness reasonably low
     const MODIFIER = 3;
     if (value > 0) return max(Math.floor(value / 2) - MODIFIER, 1).toString();
+
+    if (originalInjuryProneness) return originalInjuryProneness.toString();
+
     return RANDOM.toString();
   }
 

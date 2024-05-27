@@ -1,45 +1,38 @@
 import { flatten } from "ramda";
 import CMExeParser from "../files/cm-exe-parser";
 import Character from "../objects/components/character";
+import { DomesticPlayer } from "../objects/player";
 import InjuryProneness from "../objects/player/components/injury-proneness";
 import Nationality from "../objects/player/components/nationality";
 import PlayerAttributes from "../objects/player/components/player-attributes";
+import PlayerHistory from "../objects/player/components/player-history";
 import PlayerPosition from "../objects/player/components/player-position";
 import { load } from "./load-files";
 import { Player } from "./pom/player";
-import { StaffHistory } from "./pom/staff-history";
 import { TCMDate } from "./pom/tcm-date";
 import { getText } from "./read-file";
 import { fixData } from "./utils/fix-data";
 import { PlayerDetails, generateRandomPlayers, shuffleArray } from "./utils/generate-random";
+import { getNation } from "./utils/get-nations";
 import { getNames, getNormalisedClub } from "./utils/normalisation";
-import { applyPlayerFilter } from "./utils/player-filtering";
+import { applyPlayerFilter, getOriginalPlayer } from "./utils/player-filtering";
 import { applySquadFilter, rejectedPlayersFilter } from "./utils/squad-filtering";
 
 export const processSquads = async (
   year: number,
   filepath: string,
   data: CMExeParser,
+  originalPlayers: DomesticPlayer[],
   generate = true,
 ): Promise<PlayerDetails[]> => {
   if (!generate) return [];
 
-  const { clubs, nations, staff, staffHistory, players, firstNames, surnames, commonNames } =
-    await load(year);
-
-  const histories = staffHistory.reduce(
-    (acc, h) => {
-      if (!acc[h.StaffID]) acc[h.StaffID] = [];
-      acc[h.StaffID].push(h);
-      return acc;
-    },
-    {} as Record<string, StaffHistory[]>,
-  );
+  const { clubs, nations, staff, players, firstNames, surnames, commonNames } = await load(year);
 
   const hardcodedClubs = Object.values(data.get("club"));
 
   const englishClubs = clubs.filter((c) => {
-    const clubNation = nations.find((n) => n.ID === c.Nation)?.Name as Buffer;
+    const clubNation = getNation(nations, c.Nation);
     return (clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil") === "England";
   });
 
@@ -53,9 +46,7 @@ export const processSquads = async (
         const player = staff[id];
         const playerDetails = players.find((p) => p.ID === player.Player) as Player;
 
-        const nation = nations.find((n) => n.ID === player.Nation)?.Name as Buffer;
-        const history = histories[playerDetails.ID] || [];
-        history.sort((a, b) => a.Year - b.Year);
+        const nation = getNation(nations, player.Nation);
 
         const { firstName, surname } = getNames(
           year,
@@ -66,6 +57,8 @@ export const processSquads = async (
           nation ? Nationality.fromNewData(getText(nation)) : "unknown",
         );
 
+        const originalPlayer = getOriginalPlayer(originalPlayers, firstName, surname, name);
+
         const details: PlayerDetails = {
           Club: name,
           "First name": firstName,
@@ -74,13 +67,20 @@ export const processSquads = async (
           "Injury status": "fit",
           ...PlayerPosition.fromNewData(playerDetails),
           Age: TCMDate.toAge(player.DateOfBirth),
-          Character: Character.randomise(player.Temperament),
+          Character: Character.fromNewData(player.Temperament, originalPlayer?.character),
           Nationality: nation ? Nationality.fromNewData(getText(nation)) : "unknown",
           "Current skill": playerDetails.CurrentAbility.toString(),
           "Potential skill": playerDetails.PotentialAbility.toString(),
-          "Injury proneness": InjuryProneness.fromNewData(playerDetails.InjuryProneness),
-          ...PlayerAttributes.fromNewData(playerDetails, player.Temperament),
-          History: [].join(","),
+          "Injury proneness": InjuryProneness.fromNewData(
+            playerDetails.InjuryProneness,
+            originalPlayer?.injuryProneness,
+          ),
+          ...PlayerAttributes.fromNewData(
+            playerDetails,
+            player.Temperament,
+            originalPlayer?.attributes,
+          ),
+          History: PlayerHistory.fromNewData(year, originalPlayer?.history),
         };
         return fixData(details, year);
       });
@@ -91,8 +91,14 @@ export const processSquads = async (
     {} as Record<string, PlayerDetails[]>,
   );
 
-  const { leaguePlayers } = createPlayerLists(year, squads, hardcodedClubs);
-  return leaguePlayers;
+  try {
+    const { leaguePlayers } = createPlayerLists(year, squads, hardcodedClubs);
+    return leaguePlayers;
+  } catch (e) {
+    if ((e as Error).message === "Not enough players")
+      return processSquads(year, filepath, data, originalPlayers, generate);
+    throw e;
+  }
 };
 
 const createPlayerLists = (
@@ -144,9 +150,9 @@ const createPlayerLists = (
     ...flatten(Object.values(rejectedPlayers)),
   ]);
 
+  if (leaguePlayers.length < 1650) throw new Error("Not enough players");
   // eslint-disable-next-line no-console
   console.log("Number of players", leaguePlayers.length);
-  if (leaguePlayers.length < 1650) throw new Error("Not enough players");
 
   return { leaguePlayers };
 };

@@ -53,12 +53,10 @@ export default class Stadium {
     };
   }
 
-  static fromNewData(stadium: StadiumType): Record<string, string> {
-    if (!stadium) console.log("No stadium found");
-
+  static fromNewData(stadium: StadiumType): { Capacity: string; "Seated capacity": string } {
     return {
-      Capacity: (stadium?.StadiumCapacity || 1000).toString(),
-      "Seated capacity": (stadium?.StadiumSeatingCapacity || 1000).toString(),
+      Capacity: (stadium?.StadiumCapacity || 10_000).toString(),
+      "Seated capacity": (stadium?.StadiumSeatingCapacity || 10_000).toString(),
     };
   }
 }

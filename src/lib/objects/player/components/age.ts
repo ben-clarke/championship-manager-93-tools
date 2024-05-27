@@ -52,5 +52,5 @@ export default class Age {
   }
 }
 
-const LOWER_RANGE = 16;
+const LOWER_RANGE = 15;
 const UPPER_RANGE = 45;

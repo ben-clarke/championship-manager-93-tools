@@ -8,12 +8,12 @@ describe("age", () => {
 
   test("to hex old", () => {
     const hex = Age.toHex("46");
-    expect(hex).toEqual({ value: "", errors: ["Age must be between 16 and 45, got: 46"] });
+    expect(hex).toEqual({ value: "", errors: ["Age must be between 15 and 45, got: 46"] });
   });
 
   test("to hex young", () => {
-    const hex = Age.toHex("15");
-    expect(hex).toEqual({ value: "", errors: ["Age must be between 16 and 45, got: 15"] });
+    const hex = Age.toHex("14");
+    expect(hex).toEqual({ value: "", errors: ["Age must be between 15 and 45, got: 14"] });
   });
 
   test("to hex not a number", () => {

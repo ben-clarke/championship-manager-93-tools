@@ -1,13 +1,11 @@
-import * as fs from "fs";
-import { unparse } from "papaparse";
 import { flatten } from "ramda";
 import CMExeParser from "../files/cm-exe-parser";
+import Character from "../objects/components/character";
 import InjuryProneness from "../objects/player/components/injury-proneness";
 import Nationality from "../objects/player/components/nationality";
 import PlayerAttributes from "../objects/player/components/player-attributes";
 import PlayerPosition from "../objects/player/components/player-position";
 import { load } from "./load-files";
-import { Nation } from "./pom/nation";
 import { Player } from "./pom/player";
 import { StaffHistory } from "./pom/staff-history";
 import { TCMDate } from "./pom/tcm-date";
@@ -15,6 +13,7 @@ import { getText } from "./read-file";
 import { fixData } from "./utils/fix-data";
 import { PlayerDetails, generateRandomPlayers, shuffleArray } from "./utils/generate-random";
 import { getNames, getNormalisedClub } from "./utils/normalisation";
+import { applyPlayerFilter } from "./utils/player-filtering";
 import { applySquadFilter, rejectedPlayersFilter } from "./utils/squad-filtering";
 
 export const processSquads = async (
@@ -25,22 +24,8 @@ export const processSquads = async (
 ): Promise<PlayerDetails[]> => {
   if (!generate) return [];
 
-  const {
-    clubs,
-    competitions,
-    nations,
-    staff,
-    staffHistory,
-    players,
-    firstNames,
-    surnames,
-    commonNames,
-  } = await load(year);
-
-  const england = nations.find((n) => getText(n.Name) === ENGLAND) as Nation;
-
-  const englishCompetitions = competitions.filter((c) => c.ClubCompNation === england.ID);
-  const englishLeagues = englishCompetitions.map((c) => c.ID);
+  const { clubs, nations, staff, staffHistory, players, firstNames, surnames, commonNames } =
+    await load(year);
 
   const histories = staffHistory.reduce(
     (acc, h) => {
@@ -53,7 +38,11 @@ export const processSquads = async (
 
   const hardcodedClubs = Object.values(data.get("club"));
 
-  const englishClubs = clubs.filter((c) => englishLeagues.includes(c.Division));
+  const englishClubs = clubs.filter((c) => {
+    const clubNation = nations.find((n) => n.ID === c.Nation)?.Name as Buffer;
+    return (clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil") === "England";
+  });
+
   const squads = englishClubs.reduce(
     (acc, c) => {
       const name = getText(c.Name);
@@ -69,6 +58,7 @@ export const processSquads = async (
         history.sort((a, b) => a.Year - b.Year);
 
         const { firstName, surname } = getNames(
+          year,
           player,
           firstNames,
           surnames,
@@ -84,7 +74,7 @@ export const processSquads = async (
           "Injury status": "fit",
           ...PlayerPosition.fromNewData(playerDetails),
           Age: TCMDate.toAge(player.DateOfBirth),
-          Character: RANDOM,
+          Character: Character.randomise(player.Temperament),
           Nationality: nation ? Nationality.fromNewData(getText(nation)) : "unknown",
           "Current skill": playerDetails.CurrentAbility.toString(),
           "Potential skill": playerDetails.PotentialAbility.toString(),
@@ -92,24 +82,21 @@ export const processSquads = async (
           ...PlayerAttributes.fromNewData(playerDetails, player.Temperament),
           History: [].join(","),
         };
-        return fixData(details);
+        return fixData(details, year);
       });
 
-      acc[name] = generateRandomPlayers(name, squad, hardcodedClubs);
+      acc[name] = generateRandomPlayers(name, squad, hardcodedClubs, year);
       return acc;
     },
     {} as Record<string, PlayerDetails[]>,
   );
 
-  const { leaguePlayers } = createPlayerLists(squads, hardcodedClubs);
-
-  const csv = unparse(flatten(leaguePlayers));
-  fs.writeFileSync(`${filepath}/LEAGUE.DAT.csv`, csv);
-
+  const { leaguePlayers } = createPlayerLists(year, squads, hardcodedClubs);
   return leaguePlayers;
 };
 
 const createPlayerLists = (
+  year: number,
   squads: Record<string, PlayerDetails[]>,
   hardcodedClubs: string[],
 ): { leaguePlayers: PlayerDetails[] } => {
@@ -125,7 +112,15 @@ const createPlayerLists = (
 
   const resizedLeagueSquads = Object.entries(leagueSquads).reduce(
     (acc, [name, squad]) => {
-      acc[name] = squad.filter(applySquadFilter);
+      acc[name] = squad.filter(applyPlayerFilter).filter((s) => applySquadFilter(s, year));
+      return acc;
+    },
+    {} as Record<string, PlayerDetails[]>,
+  );
+
+  const filteredNonLeagueSquads = Object.entries(nonLeagueSquads).reduce(
+    (acc, [name, squad]) => {
+      acc[name] = squad.filter(applyPlayerFilter);
       return acc;
     },
     {} as Record<string, PlayerDetails[]>,
@@ -133,14 +128,16 @@ const createPlayerLists = (
 
   const rejectedPlayers = Object.entries(leagueSquads).reduce(
     (acc, [name, squad]) => {
-      acc[name] = squad.filter(rejectedPlayersFilter);
+      acc[name] = squad.filter((s) => rejectedPlayersFilter(s, year));
       return acc;
     },
     {} as Record<string, PlayerDetails[]>,
   );
 
   const sortedLeagueSquads = Object.values(resizedLeagueSquads).map((s) => s.filter((x) => x));
-  const sortedNonLeagueSquads = Object.values(nonLeagueSquads).map((s) => s.filter((x) => x));
+  const sortedNonLeagueSquads = Object.values(filteredNonLeagueSquads).map((s) =>
+    s.filter((x) => x),
+  );
 
   const leaguePlayers = replaceRandomPlayerWithRealPlayers(flatten(sortedLeagueSquads), [
     ...flatten(sortedNonLeagueSquads),
@@ -149,6 +146,7 @@ const createPlayerLists = (
 
   // eslint-disable-next-line no-console
   console.log("Number of players", leaguePlayers.length);
+  if (leaguePlayers.length < 1650) throw new Error("Not enough players");
 
   return { leaguePlayers };
 };
@@ -180,7 +178,3 @@ const replaceRandomPlayerWithRealPlayers = (
     })
     .sort((a, b) => a.Club.localeCompare(b.Club));
 };
-
-const ENGLAND = "England";
-
-const RANDOM = "random";

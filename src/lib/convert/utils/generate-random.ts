@@ -14,12 +14,13 @@ export const generateRandomPlayers = (
   name: string,
   players: PlayerDetails[],
   hardcodedClubs: string[],
+  year: number,
 ): PlayerDetails[] => {
   const normalised = getNormalisedClub(name);
   const match = hardcodedClubs.includes(normalised);
   if (!match) return players;
 
-  const remainingPositions = getRemainingPositions(players);
+  const remainingPositions = getRemainingPositions(players, year);
   const randomPlayers = remainingPositions.map((pos) => createRandomPlayer(name, pos));
   return [...players, ...randomPlayers];
 };
@@ -41,8 +42,10 @@ const createRandomPlayer = (club: string, position: string): PlayerDetails => ({
   History: [].join(","),
 });
 
-const getRemainingPositions = (currentPlayers: PlayerDetails[]): string[] => {
-  const sizeMod = Math.floor(Math.random() * 6); // 0-5 inclusive
+const getRemainingPositions = (currentPlayers: PlayerDetails[], year: number): string[] => {
+  const modVariable = year === 82 ? 4 : 6;
+
+  const sizeMod = Math.floor(Math.random() * modVariable); // 0-(modVariable-1) inclusive
 
   const filledPositions = currentPlayers.map((p) => p.Position);
   const remainingPositions = [

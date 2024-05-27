@@ -31,8 +31,10 @@ export default class ClubMoney {
     };
   }
 
-  static fromNewData(club: Pick<Club, "Cash">): string {
-    const cash = club.Cash / 10;
+  static fromNewData(club: Pick<Club, "Cash">, year: number): string {
+    const MODIFIER = year === 88 ? 10 : 1;
+
+    const cash = club.Cash / MODIFIER;
     if (cash < 250000) return "250000";
 
     return cash.toString();

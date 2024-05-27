@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import { unparse } from "papaparse";
 import { flatten } from "ramda";
+import Character from "../objects/components/character";
 import InjuryProneness from "../objects/player/components/injury-proneness";
 import Nationality from "../objects/player/components/nationality";
 import PlayerAttributes from "../objects/player/components/player-attributes";
 import PlayerPosition from "../objects/player/components/player-position";
 import { load } from "./load-files";
-import { Nation } from "./pom/nation";
 import { Player } from "./pom/player";
 import { StaffHistory } from "./pom/staff-history";
 import { TCMDate } from "./pom/tcm-date";
@@ -14,6 +14,7 @@ import { getText } from "./read-file";
 import { fixData } from "./utils/fix-data";
 import { PlayerDetails } from "./utils/generate-random";
 import { getNames } from "./utils/normalisation";
+import { applyPlayerFilter } from "./utils/player-filtering";
 
 export const processForeignPlayers = async (
   year: number,
@@ -23,22 +24,8 @@ export const processForeignPlayers = async (
 ): Promise<PlayerDetails[]> => {
   if (!generate) return [];
 
-  const {
-    clubs,
-    competitions,
-    nations,
-    staff,
-    staffHistory,
-    players,
-    firstNames,
-    surnames,
-    commonNames,
-  } = await load(year);
-
-  const england = nations.find((n) => getText(n.Name) === ENGLAND) as Nation;
-
-  const englishCompetitions = competitions.filter((c) => c.ClubCompNation === england.ID);
-  const englishLeagues = englishCompetitions.map((c) => c.ID);
+  const { clubs, nations, staff, staffHistory, players, firstNames, surnames, commonNames } =
+    await load(year);
 
   const histories = staffHistory.reduce(
     (acc, h) => {
@@ -49,7 +36,11 @@ export const processForeignPlayers = async (
     {} as Record<string, StaffHistory[]>,
   );
 
-  const nonEnglishClubs = clubs.filter((c) => !englishLeagues.includes(c.Division));
+  const nonEnglishClubs = clubs.filter((c) => {
+    const clubNation = nations.find((n) => n.ID === c.Nation)?.Name as Buffer;
+    return !((clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil") === "England");
+  });
+
   const foreignPlayers = nonEnglishClubs.reduce(
     (acc, c) => {
       const name = getText(c.Name);
@@ -65,6 +56,7 @@ export const processForeignPlayers = async (
         const nationText = nation ? Nationality.fromNewData(getText(nation)) : "unknown";
 
         const { firstName, surname } = getNames(
+          year,
           player,
           firstNames,
           surnames,
@@ -87,14 +79,14 @@ export const processForeignPlayers = async (
         history.sort((a, b) => a.Year - b.Year);
 
         const details: PlayerDetails = {
-          Club: clubNation ? Nationality.fromNewData(getText(clubNation)) : "unknown",
+          Club: clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil",
           "First name": firstName,
           Surname: surname,
           "Transfer status": "available",
           "Injury status": "fit",
           ...PlayerPosition.fromNewData(playerDetails),
           Age: TCMDate.toAge(player.DateOfBirth),
-          Character: RANDOM,
+          Character: Character.randomise(player.Temperament),
           Nationality: nationText,
           "Current skill": playerDetails.CurrentAbility.toString(),
           "Potential skill": playerDetails.PotentialAbility.toString(),
@@ -102,7 +94,7 @@ export const processForeignPlayers = async (
           ...PlayerAttributes.fromNewData(playerDetails, player.Temperament),
           History: [].join(","),
         };
-        return fixData(details);
+        return fixData(details, year);
       });
 
       acc[name] = squad.filter((x) => x) as PlayerDetails[];
@@ -117,7 +109,9 @@ export const processForeignPlayers = async (
     return ageB - ageA;
   });
 
-  const filteredPlayers = skilledPlayers.slice(0, numberOfForeignPlayersRequired);
+  const filteredPlayers = skilledPlayers
+    .filter(applyPlayerFilter)
+    .slice(0, numberOfForeignPlayersRequired);
 
   const csv1 = unparse(
     filteredPlayers
@@ -128,10 +122,6 @@ export const processForeignPlayers = async (
 
   return filteredPlayers;
 };
-
-const ENGLAND = "England";
-
-const RANDOM = "random";
 
 const EXCLUSIONS = [
   { firstName: "Goikoetxea", surname: "Goikoetxea Olaskoaga" },

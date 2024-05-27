@@ -3,9 +3,11 @@ import { Version } from "../../types/version";
 import { hexToUtf8, utf8ToHex } from "../../utils/conversion";
 
 let CONVERTED: string[] = [];
+let CONVERTED_STRING = "";
 
 export const resetConverted = (): void => {
   CONVERTED = [];
+  CONVERTED_STRING = "";
 };
 
 export const printExecutableCodes = (
@@ -94,7 +96,6 @@ export const replaceData = (
   }
 
   let indexes = findIndexes(data, required, exactMatch);
-
   indexes = (indexes || []).filter(({ start }) => start >= startIndex && start <= endIndex);
 
   (indexes || []).forEach(({ start, end }) => {
@@ -109,36 +110,51 @@ export const findIndexes = (
   parsed: string[],
   required: string,
   exactMatch: boolean,
-): FoundIndex[] | null => {
-  const found: FoundIndex[] = [];
+): FoundIndex[] => {
+  const exe = getConvertedString(parsed);
+  return findAllIndexes(exe, required, exactMatch);
+};
 
-  let sequence: string[] = [];
+const getConvertedString = (parsed: string[]): string => {
+  if (CONVERTED_STRING.length > 0) return CONVERTED_STRING;
 
-  const hasBeenConverted = CONVERTED.length > 0;
   const converted: string[] = [];
 
   for (let i = 0; i < parsed.length; i += 1) {
-    const hex = hasBeenConverted ? CONVERTED[i] : parsed[i];
-    const requiredIndex = sequence.length;
-
-    const char = hasBeenConverted ? hex : hexToUtf8(hex);
-    converted.push(char);
-
-    if (char === required[requiredIndex]) sequence.push(char);
-    else if (char === required[0]) sequence = [char];
-    else sequence = [];
-
-    if (sequence.join("") === required && (!exactMatch || parsed[i + 1] === "00")) {
-      const start = i - required.length + 1;
-      const end = i;
-      found.push({ start, end });
-      sequence = [];
-    }
+    const hex = parsed[i];
+    converted.push(hexToUtf8(hex));
   }
 
   CONVERTED = converted;
+  CONVERTED_STRING = CONVERTED.join("");
 
-  return found;
+  return CONVERTED_STRING;
+};
+
+const findAllIndexes = (
+  utf8FullString: string,
+  required: string,
+  exactMatch: boolean,
+): { start: number; end: number }[] => {
+  const result: { start: number; end: number }[] = [];
+
+  let startIndex = 0;
+  while (startIndex < utf8FullString.length) {
+    const start = utf8FullString.indexOf(required, startIndex);
+    if (start === -1) break; // No more occurrences found
+
+    // Find the end index
+    const end = start + required.length - 1;
+
+    const pre = utf8ToHex(utf8FullString[start - 1]);
+    const post = utf8ToHex(utf8FullString[end + 1]);
+    if (!exactMatch || (pre === "00" && post === "00")) result.push({ start, end });
+
+    // Move to the next position after the found index
+    startIndex = start + 1;
+  }
+
+  return result;
 };
 
 export const findStartIndex = (

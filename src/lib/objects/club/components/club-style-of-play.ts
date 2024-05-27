@@ -26,15 +26,40 @@ export default class StyleOfPlay {
     };
   }
 
-  static randomise(): Style {
-    return weightedRandom<Style>([
-      { item: "long ball", weight: 40 },
-      { item: "direct ball", weight: 19 },
-      { item: "counter-attack", weight: 2 },
-      { item: "pass to feet", weight: 16 },
-      { item: "continental", weight: 5 },
-    ]);
+  static randomise(division: number): Style {
+    const WEIGHTS: Record<number, WeightedStyle[]> = {
+      1: [
+        { item: "long ball", weight: 2 },
+        { item: "direct ball", weight: 4 },
+        { item: "counter-attack", weight: 5 },
+        { item: "pass to feet", weight: 5 },
+        { item: "continental", weight: 4 },
+      ],
+      2: [
+        { item: "long ball", weight: 4 },
+        { item: "direct ball", weight: 8 },
+        { item: "counter-attack", weight: 4 },
+        { item: "pass to feet", weight: 4 },
+        { item: "continental", weight: 0 },
+      ],
+      3: DEFAULT_WEIGHTS,
+      4: DEFAULT_WEIGHTS,
+    };
+
+    return weightedRandom<Style>(WEIGHTS[division] || DEFAULT_WEIGHTS);
   }
+}
+
+const DEFAULT_WEIGHTS: WeightedStyle[] = [
+  { item: "long ball", weight: 11 },
+  { item: "direct ball", weight: 9 },
+  { item: "counter-attack", weight: 4 },
+  { item: "pass to feet", weight: 2 },
+  { item: "continental", weight: 0 },
+];
+interface WeightedStyle {
+  item: Style;
+  weight: number;
 }
 
 type Style = "long ball" | "pass to feet" | "counter-attack" | "continental" | "direct ball";

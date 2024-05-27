@@ -20,7 +20,35 @@ export default class Character {
       errors: !hex ? [`No character found for: ${value}`] : [],
     };
   }
+
+  static randomise(temperament: number): CharacterValue {
+    if (temperament < 1 || temperament > 20) return "random";
+    return TEMPERAMENTS[temperament][Math.floor(Math.random() * TEMPERAMENTS[temperament].length)];
+  }
 }
+
+const TEMPERAMENTS: Record<number, CharacterValue[]> = {
+  1: ["rebellious", "rebellious", "selfish"],
+  2: ["rebellious", "selfish", "selfish"],
+  3: ["selfish", "selfish", "selfish"],
+  4: ["selfish", "selfish", "rash"],
+  5: ["rash", "rash", "selfish"],
+  6: ["rash", "arrogant"],
+  7: ["arrogant", "arrogant", "withdrawn"],
+  8: ["arrogant", "withdrawn"],
+  9: ["withdrawn", "withdrawn", "passive"],
+  10: ["withdrawn", "passive", "passive"],
+  11: ["passive", "passive", "passive", "unselfish"],
+  12: ["passive", "passive", "thoughtful", "unselfish", "unselfish"],
+  13: ["thoughtful", "thoughtful", "unselfish", "unselfish", "passive"],
+  14: ["thoughtful", "unselfish", "unselfish", "unselfish"],
+  15: ["unselfish", "unselfish", "unselfish", "unselfish"],
+  16: ["unselfish", "confident", "unselfish", "unselfish"],
+  17: ["confident", "responsible", "confident", "unselfish"],
+  18: ["responsible", "responsible", "confident"],
+  19: ["responsible", "responsible", "responsible"],
+  20: ["responsible", "responsible", "responsible", "responsible"],
+};
 
 type CharacterValue =
   | "withdrawn"

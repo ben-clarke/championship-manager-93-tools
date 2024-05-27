@@ -1,5 +1,3 @@
-import * as fs from "fs";
-import { unparse } from "papaparse";
 import CMExeParser from "../files/cm-exe-parser";
 import ClubAttraction from "../objects/club/components/club-attraction";
 import ClubColours from "../objects/club/components/club-colours";
@@ -16,6 +14,7 @@ import { Nation } from "./pom/nation";
 import { NonPlayer } from "./pom/non-player";
 import { Staff } from "./pom/staff";
 import { getText } from "./read-file";
+import { TeamDetails, fixTeamData } from "./utils/fix-team-data";
 import { getNormalisedClub, getNormalisedName, getNormalisedSurname } from "./utils/normalisation";
 import { getUnknown10, getUnknown8 } from "./utils/unknown-values";
 
@@ -24,7 +23,7 @@ export const processTeams = async (
   filepath: string,
   data: CMExeParser,
 ): Promise<{
-  leagueSquads: Record<string, Record<string, string>>;
+  leagueSquads: Record<string, TeamDetails>;
   divisions: Record<string, number>;
 }> => {
   const { clubs, competitions, nations, staff, firstNames, surnames, nonPlayers, stadiums } =
@@ -52,36 +51,55 @@ export const processTeams = async (
 
       const coachDetails = nonPlayers.find((p) => p.ID === coachId) as NonPlayer;
 
-      const team = {
+      const team: TeamDetails = {
         Club: getNormalisedClub(name),
         ...Stadium.fromNewData(stadiums[c.Stadium]),
-        ...ClubColours.fromNewData(c.ForeColour1, c.BackColour1, "Home"),
-        ...ClubColours.fromNewData(c.ForeColour2, c.BackColour2, "Away"),
+        ...ClubColours.fromNewDataHome(c.ForeColour1, c.BackColour1),
+        ...ClubColours.fromNewDataAway(c.ForeColour2, c.BackColour2),
         "Club status": ClubAttraction.fromNewData(c),
         "Unknown 8": getUnknown8(getNormalisedClub(name)),
-        Money: ClubMoney.fromNewData(c),
+        Money: ClubMoney.fromNewData(c, year),
         "Unknown 10": getUnknown10(getNormalisedClub(name)),
         "Board confidence": "80",
-        "Manager first name": getNormalisedName(first),
-        "Manager surname": getNormalisedSurname(surname),
-        "Style of play": StyleOfPlay.randomise(),
+        "Manager first name": getNormalisedName(first, year),
+        "Manager surname": getNormalisedSurname(surname, year),
+        "Style of play": StyleOfPlay.randomise(getDivision(c, competitions)),
         Formation: Formation.fromNewData(coachDetails),
         "Manager reputation": ManagerReputation.fromNewData(
           coachDetails?.CurrentReputation,
           getDivision(c, competitions),
         ),
         "Manager character": "random",
-        "Assistant first name": getNormalisedName(firstCoach),
-        "Assistant surname": getNormalisedSurname(surnameCoach),
+        "Assistant first name": getNormalisedName(firstCoach, year),
+        "Assistant surname": getNormalisedSurname(surnameCoach, year),
       };
 
-      acc[name] = team;
+      acc[name] = fixTeamData(team, year);
       return acc;
     },
-    {} as Record<string, Record<string, string>>,
+    {} as Record<string, TeamDetails>,
   );
 
-  const leagueSquads: Record<string, Record<string, string>> = {};
+  const { leagueSquads, divisions } = createTeams(
+    teams,
+    hardcodedClubs,
+    englishClubs,
+    englishCompetitions,
+  );
+
+  return { leagueSquads, divisions };
+};
+
+export const createTeams = (
+  teams: Record<string, TeamDetails>,
+  hardcodedClubs: string[],
+  englishClubs: Club[],
+  competitions: Competition[],
+): {
+  leagueSquads: Record<string, TeamDetails>;
+  divisions: Record<string, number>;
+} => {
+  const leagueSquads: Record<string, TeamDetails> = {};
   const divisions: Record<string, number> = {};
 
   Object.entries(teams).forEach(([name, team]) => {
@@ -92,12 +110,10 @@ export const processTeams = async (
       divisions[normalised] = getDivision(
         englishClubs.find((c) => getText(c.Name) === name) as Club,
         competitions,
+        true,
       );
     }
   });
-
-  const csv = unparse(Object.values(leagueSquads));
-  fs.writeFileSync(`${filepath}/TEAM.DAT.csv`, csv);
 
   return { leagueSquads, divisions };
 };
@@ -121,7 +137,7 @@ const getCoach = (
   };
 };
 
-const getDivision = (club: Club, competitions: Competition[]): number => {
+const getDivision = (club: Club, competitions: Competition[], log = false): number => {
   const division = getText(
     competitions.find((x) => x.ID === club.Division)?.ShortName || Buffer.from(""),
   );
@@ -133,7 +149,9 @@ const getDivision = (club: Club, competitions: Competition[]): number => {
     case "Second Division":
       return 3;
     case "Third Division":
+      return 4;
     default:
+      if (log) console.log("Unknown division", division, getText(club.Name));
       return 4;
   }
 };

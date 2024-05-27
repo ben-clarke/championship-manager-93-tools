@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 import CMExeParser from "src/lib/files/cm-exe-parser";
+import { TeamDetails } from "./fix-team-data";
 import { PlayerDetails } from "./generate-random";
 
 export const getMatchedExeDetails = (
   data: CMExeParser,
   players: PlayerDetails[],
   foreignPlayers: PlayerDetails[],
-  teams: Record<string, Record<string, string>>,
+  teams: Record<string, TeamDetails>,
 ): MatchedDetails => {
   const firstNames = [
     ...Array.from(new Set([...players, ...foreignPlayers].map((p) => p["First name"]))),
@@ -20,9 +21,10 @@ export const getMatchedExeDetails = (
     ...Array.from(new Set(Object.values(teams).map((p) => p["Assistant surname"]))),
   ].filter((name) => name !== "random");
 
-  const nationalities = Array.from(
-    new Set([...players, ...foreignPlayers].map((p) => p.Nationality)),
-  );
+  const nationalities = [
+    ...Array.from(new Set([...players, ...foreignPlayers].map((p) => p.Nationality))),
+    ...Array.from(new Set(foreignPlayers.map((p) => p.Club))),
+  ];
 
   const exeNames = Array.from(
     new Set(Object.values(data.get("first-name")).filter((name) => !["Ron"].includes(name))),
@@ -48,16 +50,27 @@ export const getMatchedExeDetails = (
 
   const unusedSurnames = getUnusedNames(surnames, exeSurnames);
   const requiredSurnames = getUnusedNames(exeSurnames, surnames);
-  const { matched: matchedSurnames, unmatchedRequired: unmatchedSurnamesRequired } =
-    matchNamesByLength(requiredSurnames, unusedSurnames);
-  if (unmatchedSurnamesRequired.length > 0) console.log("Surnames", unmatchedSurnamesRequired);
+  const {
+    matched: matchedSurnames,
+    unmatchedRequired: unmatchedSurnamesRequired,
+    unmatchedUnused: unmatchedSurnamesUnused,
+  } = matchNamesByLength(requiredSurnames, unusedSurnames);
+  if (unmatchedSurnamesRequired.length > 0)
+    console.log(
+      "Surnames",
+      unmatchedSurnamesRequired,
+      unmatchedSurnamesUnused.sort((a, b) => b.length - a.length),
+    );
 
   const unusedNationalities = getUnusedNames(nationalities, exeNationalities);
   const requiredNationalities = getUnusedNames(exeNationalities, nationalities);
-  const { matched: matchedNationalities, unmatchedRequired: unmatchedNationalitiesRequired } =
-    matchNamesByLength(requiredNationalities, unusedNationalities);
+  const {
+    matched: matchedNationalities,
+    unmatchedRequired: unmatchedNationalitiesRequired,
+    unmatchedUnused: unmatchedNationalitiesUnused,
+  } = matchNamesByLength(requiredNationalities, unusedNationalities);
   if (unmatchedNationalitiesRequired.length > 0)
-    console.log("Nations", unmatchedNationalitiesRequired);
+    console.log("Nations", unmatchedNationalitiesRequired, unmatchedNationalitiesUnused);
 
   return { matchedFirstNames, matchedSurnames, matchedNationalities };
 };

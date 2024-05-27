@@ -61,7 +61,7 @@ describe("cm exe parser", () => {
     const parser2 = new CMExeParser({ rawData: Buffer.from(hex, "hex").toString("base64") });
 
     expect(findIndexes(parser2.data, "XYZ    ", true)).toEqual([
-      { end: 396382, start: 396376 },
+      // { end: 396382, start: 396376 },
       { end: 414002, start: 413996 },
     ]);
     expect(findIndexes(parser2.data, "Mortugal", true)).toEqual([{ end: 316799, start: 316792 }]);

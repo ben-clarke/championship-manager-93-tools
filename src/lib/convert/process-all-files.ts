@@ -3,10 +3,14 @@ import { unparse } from "papaparse";
 import { resolve } from "path";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
+import { resetConverted } from "../files/utils/cm-exe-builder";
 import { processForeignPlayers } from "./process-foreign-file";
 import { processSquads } from "./process-league-file";
 import { processTeams } from "./process-team-file";
 import { getMatchedExeDetails } from "./utils/name-calculators";
+import { Details, replace, storeExe } from "./utils/process-utils";
+import { updateDivisions } from "./utils/update-divisions";
+import { writeLeagueData, writeTeamData } from "./utils/write-files";
 
 export const processAllFiles = async (): Promise<void> => {
   const filepath = "/Users/benclarke/cm-test";
@@ -17,14 +21,16 @@ export const processAllFiles = async (): Promise<void> => {
   foreign.convertFromHex();
   const numberOfForeignPlayersRequired = foreign.players.length;
 
-  const players = await processSquads(YEAR_88, filepath, data, true);
+  const players = await processSquads(YEAR, filepath, data, true);
   const foreignPlayers = await processForeignPlayers(
-    YEAR_88,
+    YEAR,
     filepath,
     numberOfForeignPlayersRequired,
     true,
   );
-  const { leagueSquads: teams } = await processTeams(YEAR_88, filepath, data);
+  const { leagueSquads: teams } = await processTeams(YEAR, filepath, data);
+
+  // getMatchedDivision(data, divisions);
 
   const { matchedFirstNames, matchedSurnames, matchedNationalities } = getMatchedExeDetails(
     data,
@@ -33,56 +39,29 @@ export const processAllFiles = async (): Promise<void> => {
     teams,
   );
 
-  let csv = data.toHumanReadable() as unknown as Details[];
+  updateDivisions(data, inputDirectory, YEAR);
+
+  resetConverted();
+  const updateData = new CMExeParser({ fileDirectory: "/tmp" });
+  let csv = updateData.toHumanReadable() as unknown as Details[];
   csv = replace("First name", csv as Details[], matchedFirstNames);
   csv = replace("Surname", csv as Details[], matchedSurnames);
   csv = replace("Nationality", csv as Details[], matchedNationalities);
 
-  const updatedData = new CMExeParser({
-    fileDirectory: inputDirectory,
-    rawCsv: unparse(csv),
-  });
-
-  // REMOVE THIS LINE TO WRITE THE FILES
-  if (matchedFirstNames.length) return;
-
-  const { hex, errors } = updatedData.convertFromHumanReadable();
+  resetConverted();
+  const finaliseData = new CMExeParser({ fileDirectory: "/tmp", rawCsv: unparse(csv) });
+  const { hex, errors } = finaliseData.convertFromHumanReadable();
   if (errors.length > 0) {
     // eslint-disable-next-line no-console
     console.log(errors);
     return;
   }
 
-  const byteArray = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < byteArray.length; i += 1) {
-    byteArray[i] = parseInt(hex.substr(i * 2, 2), 16);
-  }
-  fs.writeFileSync(`${filepath}/CMEXE.EXE`, byteArray);
+  writeLeagueData(players, YEAR, filepath);
+  writeTeamData(teams, YEAR, filepath);
+
+  storeExe(hex, `${filepath}/CMEXE.EXE`);
   fs.writeFileSync(`${filepath}/CMEXE.EXE.csv`, unparse(csv));
 };
 
-const replace = (key: string, details: Details[], nameTuples: NameTuple[]): Details[] =>
-  details.map((d) => {
-    const [updated] = nameTuples.find(([, current]) => d[key as keyof Details] === current) || [
-      "",
-      "",
-    ];
-
-    if (updated) {
-      return { ...d, [key]: updated };
-    }
-    return d;
-  });
-
-interface Details {
-  Club: string;
-  Ground: string;
-  Nationality: string;
-  "First name": string;
-  Surname: string;
-  "Non domestic club": string;
-}
-
-type NameTuple = [string, string];
-
-const YEAR_88 = 88;
+const YEAR = 82;

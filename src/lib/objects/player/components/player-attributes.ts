@@ -96,7 +96,7 @@ export default class PlayerAttributes {
 
   static fromNewData(playerDetails: Player, temperament: number): Attributes {
     const getAttribute = (attribute: number): string => {
-      if (attribute === 0) return RANDOM.toString();
+      if (attribute <= 1) return RANDOM.toString();
       return attribute.toString();
     };
 

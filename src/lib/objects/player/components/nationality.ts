@@ -32,9 +32,11 @@ export default class Nationality {
       Croatia: "Yugoslavia",
       "San Marino": "Italy",
       Colombia: "Columbia",
-      "United States": "U.S.A",
+      "United States": "U.S.A.",
+      "U.S.A": "U.S.A.",
       "Trinidad & Tobago": "Trinidad",
       "South Africa": "S.Africa",
+      "St Kitts & Nevis": "St Kitts",
     };
 
     return map[nation] || nation;

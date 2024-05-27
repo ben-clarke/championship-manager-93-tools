@@ -1,3 +1,4 @@
+import { max } from "ramda";
 import { HumanReadable } from "../../../types/validation";
 
 export default class InjuryProneness {
@@ -28,7 +29,9 @@ export default class InjuryProneness {
   }
 
   static fromNewData(value: number): string {
-    if (value > 0) return Math.ceil(value / 2).toString();
+    // Make injury proneness reasonably low
+    const MODIFIER = 3;
+    if (value > 0) return max(Math.floor(value / 2) - MODIFIER, 1).toString();
     return RANDOM.toString();
   }
 

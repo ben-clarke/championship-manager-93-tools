@@ -54,19 +54,13 @@ export class TCMDate {
   static toAge(tcmDate: TCMDate): string {
     const year = tcmDate.Year || 1970;
     const age = 2001 - year;
-    return age < 16 ? "16" : age.toString();
+    return age < 15 ? "15" : age.toString();
   }
 
   private static isLeapYear(year: number): boolean {
-    if (year % 4 !== 0) {
-      return false;
-    }
-    if (year % 100 !== 0) {
-      return true;
-    }
-    if (year % 400 !== 0) {
-      return false;
-    }
+    if (year % 4 !== 0) return false;
+    if (year % 100 !== 0) return true;
+    if (year % 400 !== 0) return false;
     return true;
   }
 }

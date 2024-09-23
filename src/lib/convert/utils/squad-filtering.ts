@@ -1,4 +1,4 @@
-import { PlayerDetails } from "./generate-random";
+import { PlayerDetails, generateRandomPlayers } from "./generate-random";
 
 const SQUAD_FILTERS: Record<number, Pick<PlayerDetails, "Club" | "First name" | "Surname">[]> = {
   82: [
@@ -185,3 +185,53 @@ export const applySquadFilter = (player: PlayerDetails, year: number): boolean =
 
 export const rejectedPlayersFilter = (player: PlayerDetails, year: number): boolean =>
   !applySquadFilter(player, year) && player.Surname !== "";
+
+export const applyAutoSquadFilter = (
+  players: PlayerDetails[],
+  hardcodedClubs: string[],
+  divisions: Record<string, number>,
+  year: number,
+): PlayerDetails[] => {
+  // ONLY do this for the 90 and 98 data
+  if (![90, 98].includes(year)) return players;
+
+  const division = divisions[players[0].Club];
+  const currentSize = [1, 2].includes(division) ? 17 : 13;
+  const promisingSize = [1, 2].includes(division) ? 5 : 3;
+
+  // Ensure 2 goalkeepers
+  const goalkeepers = players
+    .filter((p) => p.Position === "GK")
+    .sort((a, b) => a.Surname.localeCompare(b.Surname))
+    .sort((a, b) => parseInt(b.Age, 10) - parseInt(a.Age, 10))
+    .sort((a, b) => parseInt(b["Current skill"], 10) - parseInt(a["Current skill"], 10))
+    .slice(0, 2);
+
+  // Get the best players (minus the keepers)
+  const ordered = players
+    .filter((p) => !alreadyUsedFilter(p, goalkeepers))
+    .sort((a, b) => a.Surname.localeCompare(b.Surname))
+    .sort((a, b) => parseInt(b.Age, 10) - parseInt(a.Age, 10))
+    .sort((a, b) => parseInt(b["Current skill"], 10) - parseInt(a["Current skill"], 10));
+
+  const current = ordered.slice(0, currentSize - goalkeepers.length);
+  const rest = ordered.slice(currentSize - goalkeepers.length);
+
+  // Then get the 5 most promising players
+  const promising = rest
+    .sort((a, b) => a.Surname.localeCompare(b.Surname))
+    .sort((a, b) => parseInt(a.Age, 10) - parseInt(b.Age, 10))
+    .sort((a, b) => parseInt(b["Potential skill"], 10) - parseInt(a["Potential skill"], 10))
+    .slice(0, promisingSize);
+
+  const squad = [...goalkeepers, ...current, ...promising];
+  if ([1, 2].includes(division)) return squad;
+
+  return generateRandomPlayers(players[0].Club, squad, hardcodedClubs, year);
+};
+
+const alreadyUsedFilter = (player: PlayerDetails, goalkeepers: PlayerDetails[]): boolean =>
+  player.Position === "GK" &&
+  goalkeepers
+    .map((g) => `${g["First name"]} ${g.Surname}`)
+    .includes(`${player["First name"]} ${player.Surname}`);

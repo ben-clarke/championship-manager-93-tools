@@ -7,16 +7,22 @@ import Nationality from "../objects/player/components/nationality";
 import PlayerAttributes from "../objects/player/components/player-attributes";
 import PlayerHistory from "../objects/player/components/player-history";
 import PlayerPosition from "../objects/player/components/player-position";
+import Skill from "../objects/player/components/skill";
 import { load } from "./load-files";
 import { Player } from "./pom/player";
 import { TCMDate } from "./pom/tcm-date";
+import { getDivision } from "./process-team-file";
 import { getText } from "./read-file";
 import { fixData } from "./utils/fix-data";
 import { PlayerDetails, generateRandomPlayers, shuffleArray } from "./utils/generate-random";
 import { getNation } from "./utils/get-nations";
 import { getNames, getNormalisedClub } from "./utils/normalisation";
 import { applyPlayerFilter, getOriginalPlayer } from "./utils/player-filtering";
-import { applySquadFilter, rejectedPlayersFilter } from "./utils/squad-filtering";
+import {
+  applyAutoSquadFilter,
+  applySquadFilter,
+  rejectedPlayersFilter,
+} from "./utils/squad-filtering";
 
 export const processSquads = async (
   year: number,
@@ -27,7 +33,8 @@ export const processSquads = async (
 ): Promise<PlayerDetails[]> => {
   if (!generate) return [];
 
-  const { clubs, nations, staff, players, firstNames, surnames, commonNames } = await load(year);
+  const { clubs, nations, staff, players, firstNames, surnames, commonNames, competitions } =
+    await load(year);
 
   const hardcodedClubs = Object.values(data.get("club"));
 
@@ -36,9 +43,14 @@ export const processSquads = async (
     return (clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil") === "England";
   });
 
+  const divisions: Record<string, number> = {};
+
   const squads = englishClubs.reduce(
     (acc, c) => {
       const name = getText(c.Name);
+
+      const division = getDivision(c, competitions);
+      divisions[getNormalisedClub(name)] = division;
 
       const squadMembers = c.Squad.filter((id) => id >= 0);
 
@@ -70,7 +82,11 @@ export const processSquads = async (
           Character: Character.fromNewData(player.Temperament, originalPlayer?.character),
           Nationality: nation ? Nationality.fromNewData(getText(nation)) : "unknown",
           "Current skill": playerDetails.CurrentAbility.toString(),
-          "Potential skill": playerDetails.PotentialAbility.toString(),
+          "Potential skill": Skill.potentialFromNewData(
+            `${firstName} ${surname}`,
+            playerDetails.PotentialAbility,
+            playerDetails.CurrentAbility,
+          ),
           "Injury proneness": InjuryProneness.fromNewData(
             playerDetails.InjuryProneness,
             originalPlayer?.injuryProneness,
@@ -82,20 +98,32 @@ export const processSquads = async (
           ),
           History: PlayerHistory.fromNewData(year, originalPlayer?.history),
         };
-        return fixData(details, year);
+
+        const fixed = fixData(details, year);
+
+        if (/\S+\s+\S+/.test(fixed["First name"]) || /\S+\s+\S+/.test(fixed.Surname)) {
+          // eslint-disable-next-line no-console
+          console.log(
+            `### Space in name: ${fixed["First name"]} ${fixed.Surname} (${fixed["Current skill"]} / ${fixed["Potential skill"]})`,
+          );
+        }
+
+        return fixed;
       });
 
-      acc[name] = generateRandomPlayers(name, squad, hardcodedClubs, year);
+      const fullSquad = squad.filter((s) => s) as PlayerDetails[];
+
+      acc[name] = generateRandomPlayers(name, fullSquad, hardcodedClubs, year);
       return acc;
     },
     {} as Record<string, PlayerDetails[]>,
   );
 
   try {
-    const { leaguePlayers } = createPlayerLists(year, squads, hardcodedClubs);
+    const { leaguePlayers } = createPlayerLists(year, squads, hardcodedClubs, divisions);
     return leaguePlayers;
   } catch (e) {
-    if ((e as Error).message === "Not enough players")
+    if (["Not enough players", "Too many players"].includes((e as Error).message))
       return processSquads(year, filepath, data, originalPlayers, generate);
     throw e;
   }
@@ -105,6 +133,7 @@ const createPlayerLists = (
   year: number,
   squads: Record<string, PlayerDetails[]>,
   hardcodedClubs: string[],
+  divisions: Record<string, number>,
 ): { leaguePlayers: PlayerDetails[] } => {
   const leagueSquads: Record<string, PlayerDetails[]> = {};
   const nonLeagueSquads: Record<string, PlayerDetails[]> = {};
@@ -119,6 +148,13 @@ const createPlayerLists = (
   const resizedLeagueSquads = Object.entries(leagueSquads).reduce(
     (acc, [name, squad]) => {
       acc[name] = squad.filter(applyPlayerFilter).filter((s) => applySquadFilter(s, year));
+      return acc;
+    },
+    {} as Record<string, PlayerDetails[]>,
+  );
+  const autoResizedLeagueSquads = Object.entries(resizedLeagueSquads).reduce(
+    (acc, [name, squad]) => {
+      acc[name] = applyAutoSquadFilter(squad, hardcodedClubs, divisions, year);
       return acc;
     },
     {} as Record<string, PlayerDetails[]>,
@@ -140,17 +176,19 @@ const createPlayerLists = (
     {} as Record<string, PlayerDetails[]>,
   );
 
-  const sortedLeagueSquads = Object.values(resizedLeagueSquads).map((s) => s.filter((x) => x));
+  const sortedLeagueSquads = Object.values(autoResizedLeagueSquads).map((s) => s.filter((x) => x));
   const sortedNonLeagueSquads = Object.values(filteredNonLeagueSquads).map((s) =>
     s.filter((x) => x),
   );
 
-  const leaguePlayers = replaceRandomPlayerWithRealPlayers(flatten(sortedLeagueSquads), [
-    ...flatten(sortedNonLeagueSquads),
-    ...flatten(Object.values(rejectedPlayers)),
-  ]);
+  const leaguePlayers = replaceRandomPlayerWithRealPlayers(
+    flatten(sortedLeagueSquads),
+    [...flatten(sortedNonLeagueSquads), ...flatten(Object.values(rejectedPlayers))],
+    year,
+  );
 
   if (leaguePlayers.length < 1650) throw new Error("Not enough players");
+  if (leaguePlayers.length > 1680) throw new Error("Too many players");
   // eslint-disable-next-line no-console
   console.log("Number of players", leaguePlayers.length);
 
@@ -160,7 +198,10 @@ const createPlayerLists = (
 const replaceRandomPlayerWithRealPlayers = (
   players: PlayerDetails[],
   unusedPlayers: PlayerDetails[],
+  year: number,
 ): PlayerDetails[] => {
+  if ([90, 98].includes(year)) return players;
+
   let secondListIndex = 0;
 
   const updatedPlayers = shuffleArray<PlayerDetails>(players);

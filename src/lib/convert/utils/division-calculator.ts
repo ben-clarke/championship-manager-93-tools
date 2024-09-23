@@ -72,7 +72,7 @@ const swapItemsToCorrectDivision = (lists: UpdateRequirements[][]): UpdateRequir
 
   // console.log(JSON.stringify(swaps));
 
-  SWAPS[88].forEach((swap) => {
+  SWAPS[90].forEach((swap) => {
     const first = swap[1];
     const second = swap[2];
 
@@ -347,7 +347,7 @@ const SWAPS: Record<
           team: "305628e4a",
           ground: "ebc9310c62",
           division: 99,
-          change: { team: "Birmingha", ground: "St Andrews", division: 1 },
+          change: { team: "Birm'gham", ground: "St Andrews", division: 1 },
         },
       ],
     },
@@ -703,7 +703,7 @@ const SWAPS: Record<
           team: "X2f85279",
           ground: "Xd33900098d",
           division: 99,
-          change: { team: "Sheff U.", ground: "Bramall Ln.", division: 2 },
+          change: { team: "Sheff U ", ground: "Bramall Ln.", division: 2 },
         },
         {
           team: "Xb8d62c99",
@@ -984,7 +984,248 @@ const SWAPS: Record<
       ],
     },
   ],
-  90: [],
+  90: [
+    {
+      1: [
+        {
+          team: "Derby",
+          ground: "Baseball Ground",
+          division: 1,
+          change: { team: "f7498", ground: "ff72569e6945701" },
+        },
+        {
+          team: "Leeds",
+          ground: "Elland Road",
+          division: 2,
+          change: { team: "39ecc", ground: "c7d848a6db7" },
+        },
+      ],
+      2: [
+        {
+          team: "f7498",
+          ground: "ff72569e6945701",
+          division: 99,
+          change: { team: "Leeds", ground: "Elland Road    ", division: 2 },
+        },
+        {
+          team: "39ecc",
+          ground: "c7d848a6db7",
+          division: 99,
+          change: { team: "Derby", ground: "Baseball Gr", division: 1 },
+        },
+      ],
+    },
+    {
+      1: [
+        {
+          team: "N.Forest",
+          ground: "City Ground",
+          division: 1,
+          change: { team: "46decc53", ground: "26a5be64e24" },
+        },
+        {
+          team: "Ipswich",
+          ground: "Portman Road",
+          division: 2,
+          change: { team: "7b9e1e7", ground: "dee6b4df06f7" },
+        },
+      ],
+      2: [
+        {
+          team: "46decc53",
+          ground: "26a5be64e24",
+          division: 99,
+          change: { team: "Ipswich ", ground: "Portman Rd.", division: 2 },
+        },
+        {
+          team: "7b9e1e7",
+          ground: "dee6b4df06f7",
+          division: 99,
+          change: { team: "NForest", ground: "City Ground ", division: 1 },
+        },
+      ],
+    },
+    {
+      1: [
+        {
+          team: "C.Palace",
+          ground: "Selhurst Park",
+          division: 1,
+          change: { team: "d909999e", ground: "65ebaa2191351" },
+        },
+        {
+          team: "West Ham",
+          ground: "Upton Park",
+          division: 2,
+          change: { team: "8af4c063", ground: "08b8efeb00" },
+        },
+      ],
+      2: [
+        {
+          team: "d909999e",
+          ground: "65ebaa2191351",
+          division: 99,
+          change: { team: "West Ham", ground: "Upton Park   ", division: 2 },
+        },
+        {
+          team: "8af4c063",
+          ground: "08b8efeb00",
+          division: 99,
+          change: { team: "C.Palace", ground: "Selhurst P", division: 1 },
+        },
+      ],
+    },
+    {
+      1: [
+        {
+          team: "Millwall",
+          ground: "The Den",
+          division: 1,
+          change: { team: "d9ca5fbf", ground: "f08dda7" },
+        },
+        {
+          team: "Blackburn",
+          ground: "Ewood Park",
+          division: 2,
+          change: { team: "d47b5203c", ground: "93eba7070e" },
+        },
+      ],
+      2: [
+        {
+          team: "d9ca5fbf",
+          ground: "f08dda7",
+          division: 99,
+          change: { team: "Blackbrn", ground: "Ewood P", division: 2 },
+        },
+        {
+          team: "d47b5203c",
+          ground: "93eba7070e",
+          division: 99,
+          change: { team: "Millwall ", ground: "The Den   ", division: 1 },
+        },
+      ],
+    },
+    {
+      1: [
+        {
+          team: "Charlton",
+          ground: "The Valley",
+          division: 1,
+          change: { team: "79271b99", ground: "895b92969c" },
+        },
+        {
+          team: "Sheff Utd",
+          ground: "Bramall Lane",
+          division: 2,
+          change: { team: "083d5a2bc", ground: "fcecba5ec3c3" },
+        },
+      ],
+      2: [
+        {
+          team: "79271b99",
+          ground: "895b92969c",
+          division: 99,
+          change: { team: "Sheff U ", ground: "Bramall Ln", division: 2 },
+        },
+        {
+          team: "083d5a2bc",
+          ground: "fcecba5ec3c3",
+          division: 99,
+          change: { team: "Charlton ", ground: "The Valley  ", division: 1 },
+        },
+      ],
+    },
+    {
+      1: [
+        {
+          team: "Watford",
+          ground: "Vicarage Road",
+          division: 2,
+          change: { team: "822cfb9", ground: "33013fff9c449" },
+        },
+        {
+          team: "Notts C",
+          ground: "Meadow Lane",
+          division: 3,
+          change: { team: "1234d9c", ground: "71d50cafae0" },
+        },
+      ],
+      2: [
+        {
+          team: "822cfb9",
+          ground: "33013fff9c449",
+          division: 99,
+          change: { team: "Notts C", ground: "Meadow Lane  ", division: 3 },
+        },
+        {
+          team: "1234d9c",
+          ground: "71d50cafae0",
+          division: 99,
+          change: { team: "Watford", ground: "Vicarage Rd", division: 2 },
+        },
+      ],
+    },
+    {
+      1: [
+        {
+          team: "Plymouth",
+          ground: "Home Park",
+          division: 2,
+          change: { team: "de67910a", ground: "dddca28b0" },
+        },
+        {
+          team: "Southend",
+          ground: "Roots Hall",
+          division: 4,
+          change: { team: "93bbf73d", ground: "c606b50f29" },
+        },
+      ],
+      2: [
+        {
+          team: "de67910a",
+          ground: "dddca28b0",
+          division: 99,
+          change: { team: "Southend", ground: "Roots Hll", division: 4 },
+        },
+        {
+          team: "93bbf73d",
+          ground: "c606b50f29",
+          division: 99,
+          change: { team: "Plymouth", ground: "Home Park ", division: 2 },
+        },
+      ],
+    },
+    {
+      1: [
+        {
+          team: "Preston",
+          ground: "Deepdale",
+          division: 3,
+          change: { team: "aaf32f4", ground: "807325a3" },
+        },
+        {
+          team: "Burnley",
+          ground: "Turf Moor",
+          division: 4,
+          change: { team: "10f5f71", ground: "7a59637d2" },
+        },
+      ],
+      2: [
+        {
+          team: "aaf32f4",
+          ground: "807325a3",
+          division: 99,
+          change: { team: "Burnley", ground: "Turf M'r", division: 4 },
+        },
+        {
+          team: "10f5f71",
+          ground: "7a59637d2",
+          division: 99,
+          change: { team: "Preston", ground: "Deepdale ", division: 3 },
+        },
+      ],
+    },
+  ],
   98: [],
 };
 

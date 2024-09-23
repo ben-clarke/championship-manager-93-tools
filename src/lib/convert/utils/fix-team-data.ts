@@ -1,4 +1,4 @@
-import { getNormalisedClub } from "./normalisation";
+import { getNormalisedClub, getNormalisedName, getNormalisedSurname } from "./normalisation";
 
 const FIXES: Record<number, Partial<TeamDetails>[]> = {
   82: [
@@ -300,7 +300,25 @@ const FIXES: Record<number, Partial<TeamDetails>[]> = {
       "Manager surname": "Saxton",
     },
   ],
-  90: [],
+  90: [
+    { Club: "Man Utd", "Club status": "elite" },
+    { Club: "Brighton", "Club status": "low" },
+    { Club: "Charlton", "Club status": "low" },
+    { Club: "Hull", "Club status": "low" },
+    { Club: "Leicester", "Club status": "low" },
+    { Club: "Luton", "Club status": "low" },
+    { Club: "Middlesboro", "Club status": "low" },
+    { Club: "Millwall", "Club status": "low" },
+    { Club: "Oxford", "Club status": "low" },
+    { Club: "Portsmouth", "Club status": "low" },
+    { Club: "Sheff Utd", "Club status": "low" },
+    { Club: "Sunderland", "Club status": "low" },
+    { Club: "Tottenham", "Manager first name": "Terry", "Manager surname": "Venables" },
+    { Club: "W.B.A.", "Club status": "low" },
+    { Club: "Watford", "Club status": "low" },
+    { Club: "Wolves", "Club status": "low" },
+    { Club: "Wimbledon", "Manager reputation": "140" },
+  ],
   98: [],
 };
 
@@ -309,9 +327,15 @@ export const fixTeamData = (team: TeamDetails, year: number): TeamDetails => {
 
   if (!fixed) return team;
 
-  return {
+  const data = {
     ...team,
     ...fixed,
+  };
+
+  return {
+    ...data,
+    "Manager first name": getNormalisedName(data["Manager first name"], year),
+    "Manager surname": getNormalisedSurname(data["Manager surname"], year),
   };
 };
 

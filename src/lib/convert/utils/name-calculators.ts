@@ -30,17 +30,13 @@ export const getMatchedExeDetails = (
     new Set(Object.values(data.get("first-name")).filter((name) => !["Ron"].includes(name))),
   );
   const exeSurnames = Array.from(
-    new Set(
-      Object.values(data.get("surname")).filter(
-        (name) => !["Atkinson", "Ireland", "England"].includes(name),
-      ),
-    ),
+    new Set(Object.values(data.get("surname")).filter((name) => !["Atkinson"].includes(name))),
   );
 
   const exeNationalities = Array.from(new Set(Object.values(data.get("nationality"))));
 
   const unusedNames = getUnusedNames(firstNames, exeNames);
-  const requiredFirstNames = getUnusedNames(exeNames, firstNames);
+  const requiredFirstNames = getUnusedNames(["Ron", ...exeNames], firstNames);
   const {
     matched: matchedFirstNames,
     unmatchedRequired,
@@ -49,7 +45,7 @@ export const getMatchedExeDetails = (
   if (unmatchedRequired.length > 0) console.log("First names", unmatchedRequired, unmatchedUnused);
 
   const unusedSurnames = getUnusedNames(surnames, exeSurnames);
-  const requiredSurnames = getUnusedNames(exeSurnames, surnames);
+  const requiredSurnames = getUnusedNames(["Atkinson", ...exeSurnames], surnames);
   const {
     matched: matchedSurnames,
     unmatchedRequired: unmatchedSurnamesRequired,

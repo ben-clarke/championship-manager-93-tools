@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as fs from "fs";
 import { unparse } from "papaparse";
 import { resolve } from "path";
@@ -5,6 +6,7 @@ import { flatten } from "ramda";
 import CMExeParser from "../files/cm-exe-parser";
 import Foreign from "../files/foreign";
 import League from "../files/league";
+import Team from "../files/team";
 import { resetConverted } from "../files/utils/cm-exe-builder";
 import { processForeignPlayers } from "./process-foreign-file";
 import { processSquads } from "./process-league-file";
@@ -14,14 +16,22 @@ import { Details, replace, storeExe } from "./utils/process-utils";
 import { updateDivisions } from "./utils/update-divisions";
 import { writeLeagueData, writeTeamData } from "./utils/write-files";
 
+const YEAR = 90;
+
 export const processAllFiles = async (): Promise<void> => {
-  const filepath = "/Users/benclarke/cm-test";
+  console.log(`Processing all files for Year: ${YEAR}`);
+
+  const filepath = `/Users/benclarke/cm-test-${YEAR}`;
   const inputDirectory = resolve(__dirname, "../../../", "game-edits", "cm93-94");
   const data = new CMExeParser({ fileDirectory: inputDirectory });
 
   const league = new League({ fileDirectory: inputDirectory, data });
   league.convertFromHex();
   const originalPlayers = flatten(league.squads.map((squad) => squad.players));
+
+  const team = new Team({ fileDirectory: inputDirectory, data });
+  team.convertFromHex();
+  const originalTeams = team.teams;
 
   const foreign = new Foreign({ fileDirectory: inputDirectory, data });
   foreign.convertFromHex();
@@ -35,7 +45,7 @@ export const processAllFiles = async (): Promise<void> => {
     originalForeignPlayers,
     true,
   );
-  const { leagueSquads: teams } = await processTeams(YEAR, filepath, data);
+  const { leagueSquads: teams } = await processTeams(YEAR, filepath, data, originalTeams);
 
   // getMatchedDivision(data, divisions);
 
@@ -70,5 +80,3 @@ export const processAllFiles = async (): Promise<void> => {
   storeExe(hex, `${filepath}/CMEXE.EXE`);
   fs.writeFileSync(`${filepath}/CMEXE.EXE.csv`, unparse(csv));
 };
-
-const YEAR = 88;

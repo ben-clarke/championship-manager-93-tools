@@ -21,6 +21,12 @@ export const generateRandomPlayers = (
   if (!match) return players;
 
   const remainingPositions = getRemainingPositions(players, year);
+  if (remainingPositions.length > 0) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `Generating random players for ${name} with positions (${remainingPositions.length}): ${remainingPositions}`,
+    );
+  }
   const randomPlayers = remainingPositions.map((pos) => createRandomPlayer(name, pos));
   return [...players, ...randomPlayers];
 };

@@ -32,14 +32,23 @@ export default class ClubMoney {
   }
 
   static fromNewData(club: Pick<Club, "Cash">, year: number): string {
-    const MODIFIER = year === 88 ? YEAR_88_MODIFIER : 1;
-
-    const cash = club.Cash / MODIFIER;
+    const cash = club.Cash / getDataModifier(year);
     if (cash < 250000) return "250000";
 
     return Math.ceil(cash).toString();
   }
 }
+
+const getDataModifier = (year: number): number => {
+  switch (year) {
+    case 88:
+      return 7;
+    case 82:
+    case 90:
+    default:
+      return 1;
+  }
+};
 
 export const convertFromMoney = (value: number): number =>
   Math.round((value - MONEY_ADJUSTMENT) / MONEY_MULTIPLIER);
@@ -51,5 +60,3 @@ const MONEY_ADJUSTMENT = 250_000;
 
 const LOWER_RANGE = 0;
 const UPPER_RANGE = 255;
-
-const YEAR_88_MODIFIER = 7;

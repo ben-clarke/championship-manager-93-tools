@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { unparse } from "papaparse";
-import { flatten } from "ramda";
+import { defaultTo, find, flatten, map } from "ramda";
 import Character from "../objects/components/character";
 import { DomesticPlayer, ForeignPlayer } from "../objects/player";
 import InjuryProneness from "../objects/player/components/injury-proneness";
@@ -8,6 +8,7 @@ import Nationality from "../objects/player/components/nationality";
 import PlayerAttributes from "../objects/player/components/player-attributes";
 import PlayerHistory from "../objects/player/components/player-history";
 import PlayerPosition from "../objects/player/components/player-position";
+import Skill from "../objects/player/components/skill";
 import { load } from "./load-files";
 import { Player } from "./pom/player";
 import { TCMDate } from "./pom/tcm-date";
@@ -34,100 +35,129 @@ export const processForeignPlayers = async (
     return !((clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil") === "England");
   });
 
-  if (nonEnglishClubs.length > 0) return [];
+  const playersWithPotential = players
+    .sort((a, b) => b.PotentialAbility - a.PotentialAbility)
+    .slice(0, originalForeignPlayers.length * 2);
+  const playersWithPotentialIds = playersWithPotential.map((p) => p.ID);
 
-  const foreignPlayers = nonEnglishClubs.reduce(
-    (acc, c) => {
-      const name = getText(c.Name);
+  const filteredPlayers = map(
+    ({ id, clubNation }) => {
+      if (id < 0) return null;
 
-      const squad = c.Squad.map((id) => {
-        if (id < 0) return null;
+      const player = staff[id];
+      if (!playersWithPotentialIds.includes(player.Player)) return null;
 
-        const player = staff[id];
-        const playerDetails = players.find((p) => p.ID === player.Player) as Player;
-
-        const nation = getNation(nations, player.Nation);
-        const clubNation = getNation(nations, c.Nation);
-        const nationText = nation ? Nationality.fromNewData(getText(nation)) : "unknown";
-
-        const { firstName, surname } = getNames(
-          year,
-          player,
-          firstNames,
-          surnames,
-          commonNames,
-          nationText,
-        );
-
-        if (
-          EXCLUSIONS.find(
-            (x) =>
-              x.firstName === firstName &&
-              x.surname === surname &&
-              (!x.potentialSkill || x.potentialSkill === playerDetails.PotentialAbility),
-          )
-        ) {
-          return null;
-        }
-
-        const originalPlayer = getOriginalPlayer(
-          [...originalPlayers, ...originalForeignPlayers],
-          firstName,
-          surname,
-          name,
-        );
-
-        const details: PlayerDetails = {
-          Club: clubNation ? Nationality.fromNewData(getText(clubNation)) : "Brazil",
-          "First name": firstName,
-          Surname: surname,
-          "Transfer status": "available",
-          "Injury status": "fit",
-          ...PlayerPosition.fromNewData(playerDetails),
-          Age: TCMDate.toAge(player.DateOfBirth),
-          Character: Character.fromNewData(player.Temperament, originalPlayer?.character),
-          Nationality: nationText,
-          "Current skill": playerDetails.CurrentAbility.toString(),
-          "Potential skill": playerDetails.PotentialAbility.toString(),
-          "Injury proneness": InjuryProneness.fromNewData(
-            playerDetails.InjuryProneness,
-            originalPlayer?.injuryProneness,
-          ),
-          ...PlayerAttributes.fromNewData(
-            playerDetails,
-            player.Temperament,
-            originalPlayer?.attributes,
-          ),
-          History: PlayerHistory.fromNewData(year, originalPlayer?.history),
-        };
-        return fixData(details, year);
-      });
-
-      acc[name] = squad.filter((x) => x) as PlayerDetails[];
-      return acc;
+      const playerDetails = find((p) => p.ID === player.Player, playersWithPotential) as Player;
+      return { id, clubNation, skill: playerDetails.PotentialAbility };
     },
-    {} as Record<string, PlayerDetails[]>,
-  );
+    flatten(map((c) => map((id) => ({ id, clubNation: c.Nation }), c.Squad), nonEnglishClubs)),
+  )
+    .filter((x) => x)
+    .sort((a, b) => defaultTo(0, b?.skill) - defaultTo(0, a?.skill)) as {
+    id: number;
+    clubNation: number;
+    skill: number;
+  }[];
 
-  const skilledPlayers = flatten(Object.values(foreignPlayers)).sort(
-    (a, b) => parseInt(b["Potential skill"], 10) - parseInt(a["Potential skill"], 10),
-  );
+  const foreignPlayers = filteredPlayers.map(({ id, clubNation }) => {
+    const player = staff[id];
+    const playerDetails = players.find((p) => p.ID === player.Player) as Player;
 
-  const filteredPlayers = skilledPlayers
+    const nation = getNation(nations, player.Nation);
+    const club = getNation(nations, clubNation);
+    const nationText = nation ? Nationality.fromNewData(getText(nation)) : "unknown";
+
+    const { firstName, surname } = getNames(
+      year,
+      player,
+      firstNames,
+      surnames,
+      commonNames,
+      nationText,
+    );
+
+    if (
+      EXCLUSIONS.find(
+        (x) =>
+          x.firstName === firstName &&
+          x.surname === surname &&
+          (!x.potentialSkill || x.potentialSkill === playerDetails.PotentialAbility),
+      )
+    ) {
+      return null;
+    }
+
+    const originalPlayer = getOriginalPlayer(
+      [...originalPlayers, ...originalForeignPlayers],
+      firstName,
+      surname,
+      "name",
+    );
+
+    const details: PlayerDetails = {
+      Club: club ? Nationality.fromNewData(getText(club)) : "Brazil",
+      "First name": firstName,
+      Surname: surname,
+      "Transfer status": "available",
+      "Injury status": "fit",
+      ...PlayerPosition.fromNewData(playerDetails),
+      Age: TCMDate.toAge(player.DateOfBirth),
+      Character: Character.fromNewData(player.Temperament, originalPlayer?.character),
+      Nationality: nationText,
+      "Current skill": playerDetails.CurrentAbility.toString(),
+      "Potential skill": Skill.potentialFromNewData(
+        `${firstName} ${surname}`,
+        playerDetails.PotentialAbility,
+        playerDetails.CurrentAbility,
+      ),
+      "Injury proneness": InjuryProneness.fromNewData(
+        playerDetails.InjuryProneness,
+        originalPlayer?.injuryProneness,
+      ),
+      ...PlayerAttributes.fromNewData(
+        playerDetails,
+        player.Temperament,
+        originalPlayer?.attributes,
+      ),
+      History: PlayerHistory.fromNewData(year, originalPlayer?.history),
+    };
+
+    const fixed = fixData(details, year);
+
+    if (/\S+\s+\S+/.test(fixed["First name"]) || /\S+\s+\S+/.test(fixed.Surname)) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `### Space in name: ${fixed["First name"]} ${fixed.Surname} (${fixed["Current skill"]} / ${fixed["Potential skill"]})`,
+      );
+    }
+
+    return fixed;
+  }) as PlayerDetails[];
+
+  const skilledPlayers = foreignPlayers
+    .filter((x) => x)
+    .sort((a, b) => a.Surname.localeCompare(b.Surname))
+    .sort((a, b) => parseInt(a.Age, 10) - parseInt(b.Age, 10))
+    .sort((a, b) => parseInt(b["Potential skill"], 10) - parseInt(a["Potential skill"], 10));
+
+  const filteredPlayerDetails = skilledPlayers
     .filter(applyPlayerFilter)
     .slice(0, originalForeignPlayers.length);
 
-  const csv1 = unparse(
-    filteredPlayers
+  const csv = unparse(
+    filteredPlayerDetails
       .sort((a, b) => a.Surname.localeCompare(b.Surname))
       .sort((a, b) => a.Club.localeCompare(b.Club)),
   );
-  fs.writeFileSync(`${filepath}/FOREIGN.DAT.csv`, csv1);
+  fs.writeFileSync(`${filepath}/FOREIGN.DAT.csv`, csv);
 
-  return filteredPlayers;
+  return filteredPlayerDetails;
 };
 
 const EXCLUSIONS = [
+  { firstName: "Giampiero", surname: "Maini" },
+  { firstName: "Carrasco", surname: "Hidalgo" },
+  { firstName: "Gaetano", surname: "Scirea" },
   { firstName: "Goikoetxea", surname: "Goikoetxea Olaskoaga" },
   { firstName: "Fernandez", surname: "Roberto" },
   { firstName: "Tino", surname: "Asprilla", potentialSkill: 180 },

@@ -26,7 +26,7 @@ export default class Formation {
     };
   }
 
-  static fromNewData(coachDetails: NonPlayer): string {
+  static fromNewData(coachDetails: NonPlayer, originalFormation: string | null): string {
     const formations: Record<number, Form> = {
       0: "random",
       1: "five-three-two",
@@ -49,7 +49,7 @@ export default class Formation {
       18: "random",
     };
 
-    return formations[coachDetails?.Formation] || "random";
+    return formations[coachDetails?.Formation] || originalFormation || "random";
   }
 }
 

@@ -27,16 +27,19 @@ export default class Nationality {
 
   static fromNewData(nation: string): string {
     const map: Record<string, string> = {
+      "Bosnia-Herzegovina": "Yugoslavia",
+      Croatia: "Yugoslavia",
+      Colombia: "Columbia",
+      "Czech Republic": "Czech",
+      "FYR of Macedonia": "Yugoslavia",
       "Northern Ireland": "N.Ireland",
       "Republic of Ireland": "Eire",
-      Croatia: "Yugoslavia",
       "San Marino": "Italy",
-      Colombia: "Columbia",
-      "United States": "U.S.A.",
-      "U.S.A": "U.S.A.",
-      "Trinidad & Tobago": "Trinidad",
       "South Africa": "S.Africa",
       "St Kitts & Nevis": "St Kitts",
+      "Trinidad & Tobago": "Trinidad",
+      "United States": "U.S.A.",
+      "U.S.A": "U.S.A.",
     };
 
     return map[nation] || nation;

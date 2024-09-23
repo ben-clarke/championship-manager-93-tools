@@ -6,6 +6,7 @@ import { getGameVersion } from "../constants/file";
 import { DataType } from "../types/executable";
 import { HumanReadableExe } from "../types/validation";
 import { Version } from "../types/version";
+import { hexToUtf8 } from "../utils/conversion";
 import { buildData, getDataFirstIndex, replaceData } from "./utils/cm-exe-builder";
 import { getSortedList } from "./utils/sorted";
 
@@ -38,7 +39,7 @@ export default class CMExeParser {
     const { matches: year } = getData(this.data, "year", "94");
     this.version = getGameVersion(version, year);
 
-    // fs.writeFileSync("/tmp/cm", this.data.map((d) => hexToUtf8(d)).join(""));
+    fs.writeFileSync("/tmp/cm", this.data.map((d) => hexToUtf8(d)).join(""));
 
     this.retrieved = {
       nationality: {},
